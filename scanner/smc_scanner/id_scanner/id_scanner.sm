@@ -1,0 +1,33 @@
+%start IdMap::start
+%class id_scanner
+%header id_scanner.h
+
+%map IdMap
+%%
+start
+{
+    change_state(c: const char)
+    [c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c == '_' || c == '.']
+    valid_id {validate();}
+}
+
+valid_id
+{
+    change_state(c: const char)
+    [c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c == '_' || c == '.' || c >= '0' && c <= '9']
+    nil {}
+
+}
+
+Default
+{
+    change_state(c: const char) error {}
+}
+
+error
+Entry {invalidate();}
+{
+     change_state(c: const char) nil {}
+}
+
+%%

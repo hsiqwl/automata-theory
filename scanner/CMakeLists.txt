@@ -1,0 +1,22 @@
+cmake_minimum_required(VERSION 3.26)
+project(validator)
+
+set(CMAKE_CXX_STANDARD 20)
+add_subdirectory(recognizer)
+add_subdirectory(info_collector)
+add_subdirectory(regex_scanner)
+add_subdirectory(flex_scanner)
+add_subdirectory(smc_scanner)
+add_subdirectory(string_generator)
+
+
+add_executable(main main.cpp)
+if(COMPILE_VAR STREQUAL "FLEX")
+    target_link_libraries(main flex_scanner)
+elseif (COMPILE_VAR STREQUAL "SMC")
+    target_link_libraries(main smc_scanner)
+elseif (COMPILE_VAR STREQUAL "REGEX")
+    target_link_libraries(main regex_scanner)
+else ()
+    message(FATAL_ERROR "No compile var was defined")
+endif ()

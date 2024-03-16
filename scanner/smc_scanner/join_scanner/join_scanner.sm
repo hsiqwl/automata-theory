@@ -1,0 +1,49 @@
+%start JoinMap::start
+%class join_scanner
+%header join_scanner.h
+
+%map JoinMap
+%%
+start
+Entry {invalidate();}
+{
+    change_state(c: const char)
+        [c == 'j' || c == 'J']
+            j_state {}
+}
+
+j_state
+{
+    change_state(c: const char)
+            [c == 'o' || c == 'O']
+                o_state {}
+}
+
+o_state
+{
+    change_state(c: const char)
+            [c == 'i' || c == 'I']
+                i_state {}
+}
+
+i_state
+{
+    change_state(c: const char)
+            [c == 'n' || c == 'N']
+                n_state {validate();}
+}
+
+n_state
+{}
+
+error
+Entry{invalidate();}
+{
+    change_state(c: const char) nil {}
+}
+
+Default
+{
+    change_state(c: const char) error {}
+}
+%%

@@ -1,0 +1,60 @@
+%start CreateMap::start
+%class create_scanner
+%header create_scanner.h
+
+%map CreateMap
+%%
+start
+Entry {invalidate();}
+{
+    change_state(c: const char)
+        [c == 'c' || c == 'C']
+            c_state {}
+}
+
+c_state
+{
+    change_state(c: const char)
+            [c == 'r' || c == 'R']
+                r_state {}
+}
+
+r_state
+{
+    change_state(c: const char)
+            [c == 'e' || c == 'E']
+                e_state {}
+}
+
+e_state
+{
+    change_state(c: const char)
+            [c == 'a' || c == 'A']
+                a_state {}
+}
+
+a_state
+{
+    change_state(c: const char)
+            [c == 't' || c == 'T']
+                t_state {}
+}
+
+t_state
+{
+    change_state(c: const char)
+            [c == 'e' || c == 'E']
+                e_state {validate();}
+}
+
+error
+Entry{invalidate();}
+{
+    change_state(c: const char) nil {}
+}
+
+Default
+{
+    change_state(c: const char) error {}
+}
+%%

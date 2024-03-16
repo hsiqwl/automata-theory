@@ -1,0 +1,45 @@
+%option noyywrap
+%option c++
+
+ID [a-zA-Z_\.][a-zA-Z0-9_\.]*
+ARGUMENT_LIST \([ \t]*{ID}([ \t]*,[ \t]*{ID})*[ \t]*\)
+%x FIRST_COMMAND_AFTER_FIRST_TOKEN SECOND_COMMAND_AFTER_FIRST_TOKEN READING_ARGUMENT_LIST ENDING_LINE SECOND_COMMAND_SECOND_ARGUMENT
+%%
+
+<INITIAL>{
+^(?i:create)[ \t]+/{ID} {BEGIN(FIRST_COMMAND_AFTER_FIRST_TOKEN);}
+^{ID} {BEGIN(SECOND_COMMAND_AFTER_FIRST_TOKEN); return 1;}
+. |
+<<EOF>> {return 4;}
+}
+
+<FIRST_COMMAND_AFTER_FIRST_TOKEN>{
+{ID} {BEGIN(FIRST_COMMAND_AFTER_FIRST_TOKEN); return 0;}
+[ \t]*/{ARGUMENT_LIST} {BEGIN(READING_ARGUMENT_LIST);}
+. |
+<<EOF>> {BEGIN(INITIAL); return 4;}
+}
+
+<SECOND_COMMAND_AFTER_FIRST_TOKEN>{
+(?i:join)[ \t]+/({ID}[ \t]*) {BEGIN(SECOND_COMMAND_SECOND_ARGUMENT);}
+[ \t]* ;
+<<EOF>> {BEGIN(INITIAL); return 3;}
+. {BEGIN(INITIAL); return 4;}
+}
+
+<SECOND_COMMAND_SECOND_ARGUMENT>{
+{ID} {BEGIN(ENDING_LINE); return 1;}
+}
+
+<READING_ARGUMENT_LIST>{
+\) {BEGIN(ENDING_LINE);}
+{ID} {return 2;}
+. ;
+}
+
+<ENDING_LINE>{
+[ \t]* ;
+<<EOF>> {BEGIN(INITIAL); return 3;}
+.* {BEGIN(INITIAL); return 4;}
+}
+%%

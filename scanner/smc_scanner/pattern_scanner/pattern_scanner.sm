@@ -1,0 +1,157 @@
+%start MainMap::start
+%class parser
+%header scanner.h
+
+%map MainMap
+%%
+
+start
+Entry {invalidate();}
+{
+    read_next_token(string : std::string&)
+    [ctxt.scanners[1]->validate_string(string)]
+    first_command_after_first_token {
+       move_string_to_next_token_start(string);
+    }
+
+    read_next_token(string : std::string&)
+    [ctxt.scanners[2]->validate_string(string)]
+    second_command_after_first_token {
+        validate();
+        collector.remember_argument(ctxt.move_string_to_next_token_start(string));
+    }
+}
+
+second_command_after_first_token
+{
+    read_next_token(string : std::string&)
+    [!string.empty() && string.find_first_of(" \t") == 0]
+    nil {
+       move_string_to_next_token_start(string);
+    }
+
+    read_next_token(string : std::string&)
+    [ctxt.scanners[0]->validate_string(string)]
+    reading_argument_after_join_stmt{
+        invalidate();
+        move_string_to_next_token_start(string);
+    }
+}
+
+reading_argument_after_join_stmt
+{
+    read_next_token(string : std::string&)
+    [!string.empty() && string.find_first_of(" \t") == 0]
+    nil {
+       move_string_to_next_token_start(string);
+    }
+
+    read_next_token(string : std::string&)
+    [ctxt.scanners[2]->validate_string(string)]
+    finishing_second_command{
+        validate();
+        collector.remember_argument(ctxt.move_string_to_next_token_start(string));
+    }
+}
+
+finishing_second_command
+{
+    read_next_token(string : std::string&)
+    [!string.empty() && string.find_first_of(" \t") == 0]
+    nil{
+       move_string_to_next_token_start(string);
+    }
+}
+
+first_command_after_first_token
+{
+    read_next_token(string : std::string&)
+    [!string.empty() && string.find_first_of(" \t") == 0]
+    nil{
+       move_string_to_next_token_start(string);
+    }
+
+    read_next_token(string : std::string&)
+    [string.find_first_of('(') != std::string::npos && ctxt.scanners[2]->validate_string(string.substr(0,string.find_first_of('(')]
+    first_command_after_first_argument{
+       collector.accumulate_key_info(ctxt.move_string_to_next_token_start(string));
+    }
+}
+
+first_command_after_first_argument
+{
+    read_next_token(string : std::string&)
+    [!string.empty() && string.find_first_of(" \t") == 0]
+    nil{
+       move_string_to_next_token_start(string);
+    }
+
+    read_next_token(string : std::string&)
+    [!string.empty() && string[0] == '(']
+    reading_argument_list{
+       move_string_to_next_token_start(string);
+    }
+}
+
+reading_argument_list
+{
+    read_next_token(string : std::string&)
+    [!string.empty() && string.find_first_of(" \t") == 0]
+    nil{
+       move_string_to_next_token_start(string);
+    }
+
+    read_next_token(string : std::string&)
+    [string.find_first_of(",)") != std::string::npos && ctxt.scanners[2]->validate_string(string.substr(0,string.find_first_of(",)")]
+    valid_argument_list{
+        collector.accumulate_arg_info(ctxt.move_string_to_next_token_start(string));
+    }
+}
+
+valid_argument_list
+{
+    read_next_token(string : std::string&)
+    [!string.empty() && string.find_first_of(" \t") == 0]
+    nil{
+      move_string_to_next_token_start(string);
+    }
+
+    read_next_token(string : std::string&)
+    [!string.empty() && string[0] == ',']
+    reading_argument_list{
+      move_string_to_next_token_start(string);
+    }
+
+    read_next_token(string : std::string&)
+    [!string.empty() && string[0] == ')']
+    finishing_first_command{
+        validate();
+       move_string_to_next_token_start(string);
+    }
+}
+
+finishing_first_command
+{
+    read_next_token(string : std::string&)
+    [!string.empty() && string.find_first_of(" \t") == 0]
+    nil{
+       move_string_to_next_token_start(string);
+    }
+}
+
+Default
+{
+    read_next_token(string : std::string&) error {}
+}
+
+error
+Entry{
+    invalidate();
+    collector.clear_info_args();
+    collector.clear_accumulated_info();
+}
+{
+    Default nil {}
+}
+
+%%
