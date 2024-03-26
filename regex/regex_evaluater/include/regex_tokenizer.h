@@ -8,29 +8,31 @@
 class regex_tokenizer{
 private:
     std::vector<token> token_sequence;
-    inline static size_t mismatched_parenthesis;
+    size_t mismatched_parenthesis = 0;
 
 private:
 
-    static std::vector<token> turn_into_token_sequence(std::string_view expression);
+    void turn_into_token_sequence(std::string_view expression);
 
-    static void add_concat_tokens(std::vector<token>& token_sequence);
+    void add_concat_tokens();
 
-    static void assert_first_token(const token& token);
+    void assert_first_token(const token& token);
 
-    static void assert_last_token(const token& token);
+    void assert_last_token(const token& token);
 
-    static void assert_star_operation(const token& left_hand_token);
+    void assert_star_operation(const token& left_hand_token);
 
-    static void assert_alternation_operation(const token& left_hand_token, const token& right_hand_token);
+    void assert_alternation_operation(const token& left_hand_token, const token& right_hand_token);
 
-    static void assert_concatenation_operation(const token& left_hand_token, const token& right_hand_token);
+    void assert_concatenation_operation(const token& left_hand_token, const token& right_hand_token);
 
     void assert_expression();
 public:
+    typedef std::vector<token>::const_iterator token_iterator;
+
     regex_tokenizer(std::string_view expression);
 
-    [[nodiscard]] std::vector<token> get_token_sequence() const noexcept;
+    [[nodiscard]] std::pair<token_iterator ,token_iterator> get_token_sequence() const noexcept;
 };
 
 #endif

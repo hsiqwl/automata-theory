@@ -22,7 +22,7 @@ void print_token_sequence(const std::vector<token>& token_sequence) {
 }
 int main() {
     try {
-        regex_tokenizer regex{"abc(cd*)*"};
+        regex_tokenizer regex{"(a|b)c*"};
         print_token_sequence(dfa_builder::infix_to_postfix(regex.get_token_sequence()));
     } catch (std::exception &e) {
         std::cout << "exception: invalid regex\n";
