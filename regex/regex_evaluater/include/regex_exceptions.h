@@ -5,7 +5,7 @@
 #include <string_view>
 
 
-class regex_exception: public std::exception{
+class regex_exception: public std::exception{   
 protected:
     inline const static std::string_view bad_alternation = "bad '|' (alternation) operation, check arguments";
 
