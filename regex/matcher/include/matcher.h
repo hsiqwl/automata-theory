@@ -3,6 +3,7 @@
 
 class matcher{
 public:
+    matcher() = default;
     virtual bool matches(char c) = 0;
     virtual ~matcher() = default;
 };

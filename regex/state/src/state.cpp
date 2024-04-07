@@ -1,32 +1,37 @@
 #include "state.h"
 
-state::state(size_t state_id, bool accepting = false) :state_id(state_id), accepting(accepting) {}
+state::state(size_t state_id, bool accepting = false) :state_id(state_id), accepting(accepting) {
+    std::shared_ptr<state> from = std::make_shared<state>(std::move(*this));
+    std::shared_ptr<state> to = std::make_shared<state>(-1);
+    std::unique_ptr<matcher> transition_matcher{new any_matcher};
+    transitions.emplace_back(from, to, std::move(transition_matcher));
+}
 
-state::state(size_t state_id, const std::vector<transition> &transitions, bool accepting = false):state_id(state_id), accepting(accepting), transitions(transitions) {}
+state::state(size_t state_id, std::list<transition> &&_transitions, bool accepting = false)
+    : state(state_id, accepting) {
+    transitions.splice(transitions.end(),std::move(_transitions));
+}
 
-state::state() {
-    state_id = error_state_id;
-    accepting = false;
+state::state(): state(error_state_id, false) {}
+
+state::state(state &&other) noexcept{
+    state_id = other.state_id;
+    accepting = other.accepting;
+    transitions = std::move(other.transitions);
+}
+
+state &state::operator = (state &&other) noexcept {
+    if(this != &other){
+        state_id = other.state_id;
+        accepting = other.accepting;
+        transitions.clear();
+        transitions = std::move(other.transitions);
+    }
+    return *this;
 }
 
 size_t state::get_state_id() const noexcept {
     return state_id;
-}
-
-void state::add_transition(const transition& transition) {
-    transitions.emplace_back(transition);
-}
-
-void state::add_transition(const state &from, const state &to, const matcher &transition_matcher) {
-    transitions.emplace_back(from, to, transition_matcher);
-}
-
-state& state::get_following_state(char c) noexcept{
-    for(auto& _transition: transitions){
-        if(_transition.can_make_transition(c)){
-            return _transition.get_dest_state();
-        }
-    }
 }
 
 void state::make_accepting() noexcept {
@@ -35,4 +40,22 @@ void state::make_accepting() noexcept {
 
 void state::make_non_accepting() noexcept {
     accepting = false;
+}
+
+void state::add_transition(std::shared_ptr<state> &to, std::unique_ptr<matcher> &&transition_matcher) {
+    if(not_error_state()) {
+        std::shared_ptr<state> from = std::make_shared<state>(std::move(*this));
+        transitions.emplace_back(from, to, std::move(transition_matcher));
+    }
+}
+
+bool state::not_error_state() const noexcept {
+    return state_id != error_state_id;
+}
+
+state& state::get_next_state(char c) {
+    for(auto &t: transitions) {
+        if (t.can_make_transition(c))
+            return t.get_to_state();
+    }
 }

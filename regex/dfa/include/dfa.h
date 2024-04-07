@@ -8,22 +8,24 @@ class dfa{
 private:
     std::vector<state> states;
 
-    state curr_state;
+    std::shared_ptr<state> curr_state;
 
-    state initial_state;
+    std::shared_ptr<state> initial_state;
 
-public:
-    dfa() = default;
+protected:
+    void add_state(state new_state);
 
-    void declare_states(const std::initializer_list<state>& states_list);
-
-    void add_state(const state& new_state);
+    void declare_states(std::initializer_list<state>& states_list);
 
     void add_transition(state& from, const state& to, const matcher& transition_matcher);
 
     void set_initial_state(const state& state);
 
-    void set_accepting_states(const std::initializer_list<state>& states_list);
+    void set_accepting_states(std::initializer_list<state>& states_list);
+
+public:
+    dfa() = default;
+
 };
 
 #endif //REGEX_DFA_H

@@ -5,7 +5,7 @@ character_class_matcher::character_class_matcher(std::string_view single_chars, 
         character_class_matcher(' ', ' ', single_chars, is_negated) {}
 
 character_class_matcher::character_class_matcher(char min, char max, std::string_view single_chars,
-                                                 bool is_negated): is_negated(is_negated) {
+                                                 bool is_negated): is_negated(is_negated), matcher() {
     range_min = min;
     range_max = max;
     singles = single_chars;

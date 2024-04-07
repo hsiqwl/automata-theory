@@ -1,6 +1,6 @@
 #include "single_character_matcher.h"
 
-single_character_matcher::single_character_matcher(char c) {
+single_character_matcher::single_character_matcher(char c): matcher() {
     matching_char = c;
 }
 

@@ -1,26 +1,43 @@
 #include "transition.h"
+#include "state.h"
 
-
-transition::transition(const state &from, const state &to, const matcher& transition_matcher,const std::vector<size_t> &starts_groups, const std::vector<size_t> &ends_groups)
-    : from(const_cast<state*>(&from)),
-      to(const_cast<state*>(&to)),
-      transition_matcher(const_cast<matcher*>(&transition_matcher)),
-      starts_groups(starts_groups),
-      ends_groups(ends_groups)
-    {}
-
-transition::transition(const state &from, const state &to, const matcher &transition_matcher):
-    transition(from, to, transition_matcher, {}, {}){}
-
-transition::transition(const transition &other) noexcept {
-    ends_groups = other.ends_groups;
-    starts_groups = other.starts_groups;
-    from = other.from;
-    to = other.from;
-    transition_matcher = other.transition_matcher;
+transition::transition(std::shared_ptr<state> &from_state, std::shared_ptr<state> &to_state,
+                       std::unique_ptr<matcher> &&transition_matcher_, std::vector<size_t> &end_groups,
+                       std::vector<size_t> &start_groups) {
+    from = from_state;
+    to = to_state;
+    transition_matcher = std::move(transition_matcher_);
+    ends_groups = std::move(end_groups);
+    starts_groups = std::move(start_groups);
 }
 
-state& transition::get_dest_state() {
+transition::transition(std::shared_ptr<state> &from_state, std::shared_ptr<state> &to_state,
+                       std::unique_ptr<matcher> &&transition_matcher_) {
+    from = from_state;
+    to = to_state;
+    transition_matcher = std::move(transition_matcher_);
+}
+
+transition::transition(transition &&other) noexcept {
+    from = other.from;
+    to = other.to;
+    transition_matcher = std::move(other.transition_matcher);
+    ends_groups = std::move(other.ends_groups);
+    starts_groups = std::move(other.ends_groups);
+}
+
+transition &transition::operator=(transition &&other) noexcept {
+    if(this != &other) {
+        from.reset(other.from.get());
+        to.reset(other.to.get());
+        transition_matcher = std::move(other.transition_matcher);
+        ends_groups = std::move(other.ends_groups);
+        starts_groups = std::move(other.starts_groups);
+    }
+    return *this;
+}
+
+state &transition::get_to_state() {
     return *to;
 }
 
@@ -42,15 +59,4 @@ std::vector<size_t>& transition::get_ending_groups() noexcept {
 
 std::vector<size_t>& transition::get_starting_groups() noexcept {
     return starts_groups;
-}
-
-transition& transition::operator=(const transition &other) noexcept {
-    if(&other != this){
-        ends_groups = other.ends_groups;
-        starts_groups = other.starts_groups;
-        from = other.from;
-        to = other.from;
-        transition_matcher = other.transition_matcher;
-    }
-    return *this;
 }

@@ -2,7 +2,9 @@
 #define REGEX_TRANSITION_H
 #include <memory>
 #include "matcher.h"
-#include "state.h"
+#include <vector>
+
+class state;
 
 class transition{
 private:
@@ -14,29 +16,31 @@ private:
 
     std::shared_ptr<state> to;
 
-    std::shared_ptr<matcher> transition_matcher;
+    std::unique_ptr<matcher> transition_matcher;
 
 public:
-    transition(const state& from, const state& to, const matcher& matcher,
-               const std::vector<size_t>& starts_groups, const std::vector<size_t>& ends_groups);
+    transition(std::shared_ptr<state>& from_state, std::shared_ptr<state>& to_state,
+               std::unique_ptr<matcher>&& transition_matcher);
 
-    transition(const state& from, const state& to, const matcher& transition_matcher);
+    transition(std::shared_ptr<state>& from_state, std::shared_ptr<state>& to_state,
+               std::unique_ptr<matcher>&& transition_matcher, std::vector<size_t>& end_groups, std::vector<size_t>& start_groups);
 
-    transition(const transition& other) noexcept;
+    transition(transition&& other) noexcept;
 
     bool can_make_transition(char c);
 
-    state& get_dest_state();
+    state& get_to_state();
 
-    bool ends_some_groups() const noexcept;
+    [[nodiscard]] bool ends_some_groups() const noexcept;
 
-    bool starts_some_groups() const noexcept;
+    [[nodiscard]] bool starts_some_groups() const noexcept;
 
     std::vector<size_t>& get_ending_groups() noexcept;
 
     std::vector<size_t>& get_starting_groups() noexcept;
 
-    transition& operator = (const transition& other) noexcept;
+    transition& operator = (transition&& other) noexcept;
+
 };
 
 #endif //REGEX_TRANSITION_H
