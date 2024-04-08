@@ -1,66 +1,59 @@
 #include "dfa_builder.h"
 
-void dfa_builder::fill_operator_table() {
-    operator_table.try_emplace('|', '|', 1);
-    operator_table.try_emplace('.', '.', 2);
-    operator_table.try_emplace('*', '*', 3);
-    operator_table.try_emplace('?', '?', 3);
-}
-
-std::vector<token> dfa_builder::infix_to_postfix(std::pair<regex_tokenizer::token_iterator, regex_tokenizer::token_iterator>&& iterators) {
-    fill_operator_table();
-    std::stack<token> operator_stack;
-    std::vector<token> postfix_token_sequence;
-    auto handler = [&operator_stack, &postfix_token_sequence](const token& token){
-        switch (token.type) {
+std::vector<std::unique_ptr<token>> dfa_builder::infix_to_postfix(std::pair<regex_tokenizer::token_iterator, regex_tokenizer::token_iterator>&& iterators) {
+    std::stack<std::unique_ptr<token>> operator_stack;
+    std::vector<std::unique_ptr<token>> postfix_token_sequence;
+    for(auto& token_ptr = iterators.first; token_ptr != iterators.second; ++token_ptr) {
+        switch ((*token_ptr)->type) {
             case token::token_type::terminal:
-                handle_terminal(postfix_token_sequence, token);
+                handle_terminal(std::move(postfix_token_sequence), const_cast<std::unique_ptr<token> &&>(*token_ptr));
                 break;
             case token::token_type::left_parenthesis:
-                handle_left_parenthesis(operator_stack, token);
+                handle_left_parenthesis(std::move(operator_stack), const_cast<std::unique_ptr<token> &&>(*token_ptr));
                 break;
             case token::token_type::op:
-                handle_operator(operator_stack, postfix_token_sequence, token);
+                handle_operator(std::move(operator_stack), std::move(postfix_token_sequence), const_cast<std::unique_ptr<token> &&>(*token_ptr));
                 break;
             case token::token_type::right_parenthesis:
-                handle_right_parenthesis(operator_stack, postfix_token_sequence);
+                handle_right_parenthesis(std::move(operator_stack), std::move(postfix_token_sequence));
                 break;
         }
-    };
-    std::for_each(iterators.first, iterators.second, handler);
+    }
     while (!operator_stack.empty()) {
-        postfix_token_sequence.emplace_back(operator_stack.top());
+        postfix_token_sequence.emplace_back(std::move(operator_stack.top()));
         operator_stack.pop();
     }
     return postfix_token_sequence;
 }
 
-void dfa_builder::handle_terminal(std::vector<token> &postfix_token_sequence, const token &token) {
-    postfix_token_sequence.emplace_back(token);
+void dfa_builder::handle_terminal(std::vector<std::unique_ptr<token>>&& postfix_token_sequence, std::unique_ptr<token>&& token_ptr) {
+    postfix_token_sequence.emplace_back(std::move(token_ptr));
 }
 
-void dfa_builder::handle_left_parenthesis(std::stack<token> &operator_stack, const token &token) {
-    operator_stack.push(token);
+void dfa_builder::handle_left_parenthesis(std::stack<std::unique_ptr<token>> &&operator_stack, std::unique_ptr<token>&& token_ptr) {
+    operator_stack.push(std::move(token_ptr));
 }
 
-void dfa_builder::handle_operator(std::stack<token> &operator_stack, std::vector<token> &postfix_token_sequence,
-                                  const token &token) {
-    while (!operator_stack.empty() && operator_stack.top().type != token::token_type::left_parenthesis) {
-        unsigned short top_op_prec = operator_table[operator_stack.top().value].precedence;
-        unsigned short curr_op_prec = operator_table[token.value].precedence;
+void dfa_builder::handle_operator(std::stack<std::unique_ptr<token>> &&operator_stack, std::vector<std::unique_ptr<token>> &&postfix_token_sequence,
+                                  std::unique_ptr<token>&& token_ptr) {
+    while (!operator_stack.empty() && operator_stack.top()->type != token::token_type::left_parenthesis) {
+        auto stack_token = dynamic_cast<operator_token&&>(*operator_stack.top());
+        auto op_token = dynamic_cast<operator_token&&>(*token_ptr);
+        unsigned short top_op_prec = stack_token.precedence;
+        unsigned short curr_op_prec = op_token.precedence;
         if (top_op_prec >= curr_op_prec) {
-            postfix_token_sequence.emplace_back(operator_stack.top());
+            postfix_token_sequence.emplace_back(std::move(operator_stack.top()));
             operator_stack.pop();
         } else {
             break;
         }
     }
-    operator_stack.push(token);
+    operator_stack.push(std::move(token_ptr));
 }
 
-void dfa_builder::handle_right_parenthesis(std::stack<token> &operator_stack, std::vector<token> &postfix_token_sequence) {
-    while (operator_stack.top().type != token::token_type::left_parenthesis) {
-        postfix_token_sequence.emplace_back(operator_stack.top());
+void dfa_builder::handle_right_parenthesis(std::stack<std::unique_ptr<token>> &&operator_stack, std::vector<std::unique_ptr<token>> &&postfix_token_sequence) {
+    while (operator_stack.top()->type != token::token_type::left_parenthesis) {
+        postfix_token_sequence.emplace_back(std::move(operator_stack.top()));
         operator_stack.pop();
     }
     operator_stack.pop();

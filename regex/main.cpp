@@ -8,16 +8,15 @@
 #include "regex_tokenizer.h"
 #include "dfa_builder.h"
 
-void print_token_sequence(const std::vector<token>& token_sequence) {
+void print_token_sequence(const std::vector<std::unique_ptr<token>>& token_sequence) {
     for (auto &token: token_sequence) {
-        if (token.type == token::token_type::op) {
-            std::cout << "type: operation,";
-        } else if (token.type == token::token_type::terminal) {
-            std::cout << "type: terminal,";
+        if (token->type == token::token_type::op) {
+            std::cout << "type: operation";
+        } else if (token->type == token::token_type::terminal) {
+            std::cout << "type: terminal";
         } else {
-            std::cout << "type: parenthesis,";
+            std::cout << "type: parenthesis";
         }
-        std::cout << " value: " << token.value << '\n';
     }
 }
 int main() {

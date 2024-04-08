@@ -1,7 +1,6 @@
 #ifndef REGEX_TOKEN_H
 #define REGEX_TOKEN_H
-#include "operation_token_info.h"
-#include "terminal_token_info.h"
+#include <optional>
 
 struct token{
     enum class token_type{
@@ -11,14 +10,11 @@ struct token{
         terminal
     };
 
-    union token_info{
-        operation_token_info op_info;
-        terminal_token_info terminal_info;
-    };
-
     token_type type;
 
-    token(token_type type, char value);
+    token(token_type type);
+
+    virtual ~token() = default;
 };
 
 #endif //REGEX_TOKEN_H

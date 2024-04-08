@@ -2,7 +2,6 @@
 #define REGEX_DFA_BUILDER_H
 
 #include "token.h"
-#include "regex_operator.h"
 #include "regex_tokenizer.h"
 #include <unordered_map>
 #include <vector>
@@ -11,20 +10,16 @@
 
 class dfa_builder{
 private:
-    inline static std::unordered_map<char, regex_operator> operator_table{}; //std::array
+    static void handle_operator(std::stack<std::unique_ptr<token>>&& operator_stack, std::vector<std::unique_ptr<token>>&& postfix_token_sequence, std::unique_ptr<token>&& token_ptr);
 
-    static void fill_operator_table();
+    static void handle_left_parenthesis(std::stack<std::unique_ptr<token>>&& operator_stack, std::unique_ptr<token>&& token_ptr);
 
-    static void handle_operator(std::stack<token>& operator_stack, std::vector<token>& postfix_token_sequence, const token& token);
+    static void handle_right_parenthesis(std::stack<std::unique_ptr<token>>&& operator_stack, std::vector<std::unique_ptr<token>>&& postfix_token_sequence);
 
-    static void handle_left_parenthesis(std::stack<token>& operator_stack, const token& token);
-
-    static void handle_right_parenthesis(std::stack<token>& operator_stack, std::vector<token>& postfix_token_sequence);
-
-    static void handle_terminal(std::vector<token>& postfix_token_sequence, const token& token);
+    static void handle_terminal(std::vector<std::unique_ptr<token>>&& postfix_token_sequence, std::unique_ptr<token>&& token_ptr);
 
 public:
-    static std::vector<token> infix_to_postfix(std::pair<regex_tokenizer::token_iterator, regex_tokenizer::token_iterator>&& iterators);
+    static std::vector<std::unique_ptr<token>> infix_to_postfix(std::pair<regex_tokenizer::token_iterator, regex_tokenizer::token_iterator>&& iterators);
 
     // static dfa build(regex_tokenizer& regex);
 };
