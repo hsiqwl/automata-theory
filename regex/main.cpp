@@ -10,20 +10,44 @@
 
 void print_token_sequence(const std::vector<std::unique_ptr<token>>& token_sequence) {
     for (auto &token: token_sequence) {
-        if (token->type == token::token_type::op) {
-            std::cout << "type: operation";
-        } else if (token->type == token::token_type::terminal) {
-            std::cout << "type: terminal";
-        } else {
-            std::cout << "type: parenthesis";
+        switch (token->type) {
+            case token::token_type::terminal: {
+                auto &term_token = dynamic_cast<const single_character &>(*token);
+                std::cout << "'type: terminal, " << "value:" << term_token.value << "' ";
+                break;
+            }
+            case token::token_type::op: {
+                auto &op_token = dynamic_cast<const operator_token &>(*token);
+                switch (op_token.type) {
+                    case operator_token::operator_type::repetition: {
+                        std::cout << "'type: operation, value: * or + or ? or {}' ";
+                        break;
+                    }
+                    case operator_token::operator_type::alternation: {
+                        std::cout << "'type: operation, value: |' ";
+                        break;
+                    }
+                    case operator_token::operator_type::concatenation: {
+                        std::cout << "'type: operation, value .' ";
+                        break;
+                    }
+                }
+                break;
+            }
+            default: {
+                std::cout << "'unknown token' ";
+                break;
+            }
         }
     }
 }
+
 int main() {
     try {
-        regex_tokenizer regex{"(a|b)c*"};
+        regex_tokenizer regex{"(a|b)[a-c]"};
         print_token_sequence(dfa_builder::infix_to_postfix(regex.get_token_sequence()));
+        std::cout<<'\n';
     } catch (std::exception &e) {
-        std::cout << "exception: invalid regex\n";
+        std::cout << e.what();
     }
 }

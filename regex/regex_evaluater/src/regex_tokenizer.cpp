@@ -1,5 +1,5 @@
 #include "regex_tokenizer.h"
-
+#include <iostream>
 std::unique_ptr<token> regex_tokenizer::get_repetition_token_ptr(const char* &iter) {
     switch (*iter) {
         case '+': {
@@ -13,7 +13,7 @@ std::unique_ptr<token> regex_tokenizer::get_repetition_token_ptr(const char* &it
         }
         case '{':{
             size_t min_rep, max_rep;
-            parse_repetition_operator(iter, min_rep, max_rep);
+            parse_repetition_operator(++iter, min_rep, max_rep);
             return std::unique_ptr<token>(new repetition_operator{min_rep, max_rep});
         }
     }
@@ -80,7 +80,7 @@ void regex_tokenizer::turn_into_token_sequence(std::string_view expression) {
         if(c == '%' && !after_escape_character){
             after_escape_character = true;
         }else if((c == '*' || c == '+' || c == '?' || c == '{') && !after_escape_character){
-            if(c == '{' && expression.find('}', std::distance(it, expression.end())) == std::string_view::npos){
+            if(c == '{' && expression.find('}', std::distance(expression.begin(), it)) == std::string_view::npos){
                 throw std::invalid_argument("Invalid repetition operator");
             }
             token_sequence.emplace_back(get_repetition_token_ptr(it));
@@ -95,13 +95,13 @@ void regex_tokenizer::turn_into_token_sequence(std::string_view expression) {
         else if(c == ')' && !after_escape_character){
             token_sequence.emplace_back(new token{token::token_type::right_parenthesis});
         }else if(c == '[' && !after_escape_character){
-            if(expression.find(']', std::distance(it, expression.end()) == std::string_view::npos)){
+            if(expression.find(']', std::distance(expression.begin(), it))  == std::string_view::npos){
                 throw std::invalid_argument("Invalid character class");
             }else{
                 std::string singles;
                 char range_min = '\0';
                 char range_max = '\0';
-                parse_character_class_terminal(it, singles, range_min, range_max);
+                parse_character_class_terminal(++it, singles, range_min, range_max);
                 token_sequence.emplace_back(new character_class(range_min, range_max, singles));
             }
         }
@@ -115,18 +115,20 @@ void regex_tokenizer::turn_into_token_sequence(std::string_view expression) {
 
 void regex_tokenizer::add_concat_tokens() {
     for (auto iter = token_sequence.begin() + 1; iter != token_sequence.end(); ++iter) {
-        token prev_token = **(iter - 1);
-        token curr_token = **iter;
+        token& prev_token = **(iter - 1);
+        token& curr_token = **iter;
         bool first_predicate = curr_token.type == token::token_type::left_parenthesis ||
                                curr_token.type == token::token_type::terminal;
+        if(!first_predicate)
+            continue;
         bool second_predicate = prev_token.type == token::token_type::op;
         if(second_predicate) {
-            auto &op_token = dynamic_cast<operator_token &>(prev_token);
+            auto &op_token = dynamic_cast<operator_token&>(prev_token);
             second_predicate = op_token.type == operator_token::operator_type::repetition;
         }
         bool third_predicate = prev_token.type == token::token_type::right_parenthesis ||
                                prev_token.type == token::token_type::terminal;
-        if (first_predicate && (second_predicate || third_predicate)) {
+        if (second_predicate || third_predicate) {
             token_sequence.emplace(iter, new operator_token(operator_token::operator_type::concatenation));
         }
     }
