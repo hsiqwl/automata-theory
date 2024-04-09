@@ -44,10 +44,10 @@ void print_token_sequence(const std::vector<std::unique_ptr<token>>& token_seque
 
 int main() {
     try {
-        regex_tokenizer regex{"(a|b)[a-c]"};
+        regex_tokenizer regex{"(a|b)b(b**"};
         print_token_sequence(dfa_builder::infix_to_postfix(regex.get_token_sequence()));
         std::cout<<'\n';
     } catch (std::exception &e) {
-        std::cout << e.what();
+        std::cout << e.what()<<'\n';
     }
 }

@@ -1,6 +1,7 @@
 #include "dfa_builder.h"
 
 std::vector<std::unique_ptr<token>> dfa_builder::infix_to_postfix(std::pair<regex_tokenizer::token_iterator, regex_tokenizer::token_iterator>&& iterators) {
+    reset_counter();
     std::stack<std::unique_ptr<token>> operator_stack;
     std::vector<std::unique_ptr<token>> postfix_token_sequence;
     for(auto& token_ptr = iterators.first; token_ptr != iterators.second; ++token_ptr) {
@@ -57,4 +58,8 @@ void dfa_builder::handle_right_parenthesis(std::stack<std::unique_ptr<token>> &&
         operator_stack.pop();
     }
     operator_stack.pop();
+}
+
+void dfa_builder::reset_counter() noexcept {
+    state_id_counter = 0;
 }

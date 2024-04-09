@@ -4,6 +4,7 @@
 #include "state.h"
 #include "transition.h"
 
+
 class dfa{
 private:
     std::vector<std::shared_ptr<state>> states;
@@ -25,6 +26,8 @@ protected:
 
 public:
     dfa() = default;
+
+    state& get_curr_state() noexcept;
 
 };
 

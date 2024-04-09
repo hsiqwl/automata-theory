@@ -18,6 +18,10 @@ void dfa::set_initial_state(std::shared_ptr<state> &initial) {
 }
 
 void dfa::set_accepting_states(std::initializer_list<std::shared_ptr<state>> &states_list) {
-    for(const auto & it : states_list)
+    for(auto& it : states_list)
         it->make_accepting();
+}
+
+state &dfa::get_curr_state() noexcept {
+    return *curr_state;
 }
