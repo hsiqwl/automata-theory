@@ -1,6 +1,8 @@
 #ifndef REGEX_SINGLE_CHARACTER_DFA_H
 #define REGEX_SINGLE_CHARACTER_DFA_H
 #include "dfa.h"
+#include "single_character_matcher.h"
+#include "character_class_matcher.h"
 
 class character_dfa: public dfa{
 public:

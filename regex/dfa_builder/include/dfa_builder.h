@@ -9,8 +9,6 @@
 
 class dfa_builder{
 private:
-    static size_t state_id_counter;
-
     static void handle_operator(std::stack<std::unique_ptr<token>>&& operator_stack, std::vector<std::unique_ptr<token>>&& postfix_token_sequence, std::unique_ptr<token>&& token_ptr);
 
     static void handle_left_parenthesis(std::stack<std::unique_ptr<token>>&& operator_stack, std::unique_ptr<token>&& token_ptr);
@@ -20,9 +18,8 @@ private:
     static void handle_terminal(std::vector<std::unique_ptr<token>>&& postfix_token_sequence, std::unique_ptr<token>&& token_ptr);
 
 public:
-    static std::vector<std::unique_ptr<token>> infix_to_postfix(std::pair<regex_tokenizer::token_iterator, regex_tokenizer::token_iterator>&& iterators);
 
-    static void reset_counter() noexcept;
+    static std::vector<std::unique_ptr<token>> infix_to_postfix(std::pair<regex_tokenizer::token_iterator, regex_tokenizer::token_iterator>&& iterators);
 
 
     // static dfa build(regex_tokenizer& regex);
