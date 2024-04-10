@@ -4,6 +4,9 @@
 #include "state.h"
 #include "transition.h"
 #include "dfa_builder.h"
+#include "single_character_matcher.h"
+#include "character_class_matcher.h"
+#include <algorithm>
 
 class dfa{
 private:
@@ -11,7 +14,6 @@ private:
 
     std::shared_ptr<state> initial_state;
 
-protected:
     std::shared_ptr<state> curr_state;
 
     inline static size_t state_id_counter = 0;
@@ -27,7 +29,15 @@ protected:
     void set_accepting_states(std::initializer_list<std::shared_ptr<state>>&& states_list);
 
 public:
-    dfa() = default;
+    explicit dfa(char c);
+
+    dfa(char range_min, char range_max, std::string_view singles, bool negated);
+
+    void concatenate(dfa& other);
+
+    void alternate(dfa& other);
+
+    void repeat(size_t min_rep, size_t max_rep);
 
     static void reset_counter() noexcept;
 

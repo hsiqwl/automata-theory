@@ -31,6 +31,10 @@ public:
 
     state& get_to_state();
 
+    void replace_to_state(std::shared_ptr<state>& new_to);
+
+    void replace_from_state(std::shared_ptr<state>& new_from);
+
     [[nodiscard]] bool ends_some_groups() const noexcept;
 
     [[nodiscard]] bool starts_some_groups() const noexcept;

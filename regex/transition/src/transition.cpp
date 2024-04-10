@@ -60,3 +60,11 @@ std::vector<size_t>& transition::get_ending_groups() noexcept {
 std::vector<size_t>& transition::get_starting_groups() noexcept {
     return starts_groups;
 }
+
+void transition::replace_from_state(std::shared_ptr<state> &new_from) {
+    from = new_from;
+}
+
+void transition::replace_to_state(std::shared_ptr<state> &new_to) {
+    to = new_to;
+}
