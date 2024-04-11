@@ -1,8 +1,8 @@
 #ifndef REGEX_TERMINAL_H
 #define REGEX_TERMINAL_H
-#include "token.h"
+#include "terminal_token.h"
 
-struct single_character: public token{
+struct single_character: public terminal_token{
     char value;
 
     single_character(char c);

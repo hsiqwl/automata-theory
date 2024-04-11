@@ -30,12 +30,12 @@ private:
 
     void set_accepting_states(std::initializer_list<std::shared_ptr<state>>&& states_list);
 
-    dfa(const dfa& other);
-
 public:
     explicit dfa(char c);
 
     dfa(char range_min, char range_max, std::string_view singles, bool negated);
+
+    dfa(const dfa& other);
 
     void concatenate(dfa& other);
 

@@ -7,6 +7,7 @@ add_compile_options(-g)
 add_library(token STATIC src/token.cpp
         src/operator_token.cpp
         src/repetition_operator.cpp
+        src/terminal_token.cpp
         src/single_character.cpp
         src/character_class.cpp)
 target_include_directories(token PUBLIC include)

@@ -1,9 +1,9 @@
 #ifndef REGEX_CHARACTER_CLASS_H
 #define REGEX_CHARACTER_CLASS_H
-#include "token.h"
+#include "terminal_token.h"
 #include <string_view>
 
-struct character_class: public token{
+struct character_class: public terminal_token{
     std::string_view singles;
 
     char range_min;
