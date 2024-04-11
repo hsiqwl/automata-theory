@@ -37,11 +37,11 @@ transition &transition::operator=(transition &&other) noexcept {
     return *this;
 }
 
-state &transition::get_to_state() {
-    return *to;
+std::shared_ptr<state>& transition::get_to_state() {
+    return to;
 }
 
-bool transition::can_make_transition(char c) {
+bool transition::can_make_transition(char c) const noexcept {
     return transition_matcher->matches(c);
 }
 
@@ -67,4 +67,12 @@ void transition::replace_from_state(std::shared_ptr<state> &new_from) {
 
 void transition::replace_to_state(std::shared_ptr<state> &new_to) {
     to = new_to;
+}
+
+std::unique_ptr<matcher> &transition::get_transition_matcher() noexcept {
+    return transition_matcher;
+}
+
+bool transition::is_looped() const noexcept {
+    return from == to;
 }

@@ -9,16 +9,14 @@ class state{
 private:
     size_t state_id;
 
-    bool accepting;
-
     std::list<transition> transitions;
 
 public:
     static const size_t error_state_id = -1;
 
-    state(size_t state_id, bool accepting = false);
+    state(size_t state_id);
 
-    state(size_t state_id, std::list<transition>&& transitions, bool accepting);
+    state(size_t state_id, std::list<transition>&& transitions);
 
     state();
 
@@ -32,13 +30,7 @@ public:
 
     void remove_transition(std::shared_ptr<state>& to);
 
-    void make_accepting() noexcept;
-
-    void make_non_accepting() noexcept;
-
     [[nodiscard]] bool not_error_state() const noexcept;
-
-    [[nodiscard]] bool is_accepting() const noexcept;
 
     state& get_next_state(char c);
 

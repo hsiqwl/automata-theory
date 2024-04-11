@@ -27,24 +27,27 @@ public:
 
     transition(transition&& other) noexcept;
 
-    bool can_make_transition(char c);
+    transition& operator = (transition&& other) noexcept;
 
-    state& get_to_state();
-
-    void replace_to_state(std::shared_ptr<state>& new_to);
-
-    void replace_from_state(std::shared_ptr<state>& new_from);
-
-    [[nodiscard]] bool ends_some_groups() const noexcept;
-
-    [[nodiscard]] bool starts_some_groups() const noexcept;
+    std::shared_ptr<state>& get_to_state();
 
     std::vector<size_t>& get_ending_groups() noexcept;
 
     std::vector<size_t>& get_starting_groups() noexcept;
 
-    transition& operator = (transition&& other) noexcept;
+    std::unique_ptr<matcher>& get_transition_matcher() noexcept;
 
+    void replace_from_state(std::shared_ptr<state>& new_from);
+
+    void replace_to_state(std::shared_ptr<state>& new_to);
+
+    [[nodiscard]] bool ends_some_groups() const noexcept;
+
+    [[nodiscard]] bool starts_some_groups() const noexcept;
+
+    [[nodiscard]] bool can_make_transition(char c) const noexcept;
+
+    [[nodiscard]] bool is_looped() const noexcept;
 };
 
 #endif //REGEX_TRANSITION_H

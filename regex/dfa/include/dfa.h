@@ -12,6 +12,8 @@ class dfa{
 private:
     std::vector<std::shared_ptr<state>> states;
 
+    std::vector<std::shared_ptr<state>> accepting_states;
+
     std::shared_ptr<state> initial_state;
 
     std::shared_ptr<state> curr_state;
@@ -28,6 +30,8 @@ private:
 
     void set_accepting_states(std::initializer_list<std::shared_ptr<state>>&& states_list);
 
+    dfa(const dfa& other);
+
 public:
     explicit dfa(char c);
 
@@ -40,6 +44,12 @@ public:
     void repeat(size_t min_rep, size_t max_rep);
 
     static void reset_counter() noexcept;
+
+    bool state_is_accepting(std::shared_ptr<state>& state);
+
+    void make_state_accepting(std::shared_ptr<state>& state);
+
+    void make_state_non_accepting(std::shared_ptr<state>& state);
 
     std::shared_ptr<state>& get_curr_state() noexcept;
 
