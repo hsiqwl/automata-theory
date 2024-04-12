@@ -17,17 +17,15 @@ private:
 
     std::shared_ptr<state> curr_state;
 
-    inline static size_t state_id_counter = 0;
+    void add_state(const std::shared_ptr<state>& state);
 
-    void add_state(std::shared_ptr<state>&& state);
-
-    void declare_states(std::initializer_list<std::shared_ptr<state>>&& states_list);
+    void declare_states(const std::initializer_list<std::shared_ptr<state>>& states_list);
 
     void add_transition(std::shared_ptr<state>& from, std::shared_ptr<state>& to, std::shared_ptr<matcher>& transition_matcher);
 
-    void set_initial_state(std::shared_ptr<state>&& initial);
+    void set_initial_state(const std::shared_ptr<state>& initial);
 
-    void set_accepting_states(std::initializer_list<std::shared_ptr<state>>&& states_list);
+    void set_accepting_states(const std::initializer_list<std::shared_ptr<state>>& states_list);
 
 public:
     explicit dfa(char c);
@@ -41,8 +39,6 @@ public:
     void alternate(dfa& other);
 
     void repeat(size_t min_rep, size_t max_rep);
-
-    static void reset_counter() noexcept;
 
     bool state_is_accepting(std::shared_ptr<state>& state);
 

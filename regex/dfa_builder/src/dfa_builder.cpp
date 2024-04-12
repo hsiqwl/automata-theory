@@ -60,7 +60,6 @@ void dfa_builder::handle_right_parenthesis(std::stack<std::unique_ptr<token>> &&
 }
 
 dfa dfa_builder::build(const regex_tokenizer &tokens) {
-    dfa::reset_counter();
     std::vector<std::unique_ptr<token>> reverse_notation = infix_to_postfix(tokens.get_token_sequence());
     std::stack<dfa> dfa_stack;
     for(auto& token: reverse_notation) {
