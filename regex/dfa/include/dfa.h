@@ -6,6 +6,7 @@
 #include "single_character_matcher.h"
 #include "character_class_matcher.h"
 #include <algorithm>
+#include <unordered_map>
 
 class dfa{
 private:
@@ -27,7 +28,11 @@ private:
 
     void set_accepting_states(const std::initializer_list<std::shared_ptr<state>>& states_list);
 
+    dfa deep_copy() const;
+
 public:
+    dfa() = default;
+
     explicit dfa(char c);
 
     dfa(char range_min, char range_max, std::string_view singles, bool negated);

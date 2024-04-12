@@ -37,9 +37,9 @@ std::shared_ptr<state>& dfa::get_initial_state() noexcept {
 
 bool dfa::state_is_accepting(std::shared_ptr<state> &checked_state) {
     return std::any_of(accepting_states.begin(), accepting_states.end(),
-                       [&checked_state](std::shared_ptr<state>& state)->bool{
+                       [&checked_state](std::shared_ptr<state> &state) -> bool {
                            return state == checked_state;
-    });
+                       });
 }
 
 void dfa::make_state_accepting(std::shared_ptr<state> &state) {
@@ -53,6 +53,27 @@ void dfa::make_state_non_accepting(std::shared_ptr<state> &state) {
             return;
         }
     }
+}
+
+dfa dfa::deep_copy() const{
+    std::unordered_map<std::shared_ptr<state>, std::shared_ptr<state>> correspondence_table;
+    for(auto& state_of_this: states){
+        std::shared_ptr<state> state_of_copy = std::make_shared<state>();
+        correspondence_table.insert({state_of_this, state_of_copy});
+    }
+    dfa copy;
+    for(auto& state_of_this: states){
+        for(auto& transition: state_of_this->get_transitions()){
+            std::shared_ptr<state>& to_state = correspondence_table[transition.get_to_state()];
+            correspondence_table[state_of_this]->add_transition(to_state, transition.get_transition_matcher());
+        }
+        copy.add_state(correspondence_table[state_of_this]);
+    }
+    for(auto& accepting_state_of_this: accepting_states){
+        copy.make_state_accepting(correspondence_table[accepting_state_of_this]);
+    }
+    copy.set_initial_state(correspondence_table[initial_state]);
+    return copy;
 }
 
 dfa::dfa(const dfa &other) {
@@ -85,16 +106,16 @@ dfa::dfa(char range_min, char range_max, std::string_view singles, bool negated)
 }
 
 void dfa::alternate(dfa &other) {
-    auto& after_other_initial = other.initial_state->get_transitions();
+    auto &after_other_initial = other.initial_state->get_transitions();
     for (auto &transition: after_other_initial) {
         initial_state->add_transition(transition.get_to_state(), transition.get_transition_matcher());
     }
     if (state_is_accepting(initial_state) || other.state_is_accepting(other.initial_state))
-        set_accepting_states({initial_state});
+        make_state_accepting(initial_state);
     for (auto &state: other.states) {
         if (state != other.initial_state) {
             add_state(state);
-            if(other.state_is_accepting(state)){
+            if (other.state_is_accepting(state)) {
                 make_state_accepting(state);
             }
         }
@@ -103,7 +124,7 @@ void dfa::alternate(dfa &other) {
 }
 
 void dfa::concatenate(dfa &other) {
-    auto& after_other_initial = other.initial_state->get_transitions();
+    auto &after_other_initial = other.initial_state->get_transitions();
     for (auto &state: accepting_states) {
         for (auto &transition: after_other_initial) {
             if (!transition.is_looped()) {
@@ -112,24 +133,23 @@ void dfa::concatenate(dfa &other) {
                 state->add_transition(state, transition.get_transition_matcher());
             }
         }
-        if (other.state_is_accepting(other.initial_state)) {
-            make_state_accepting(state);
-        }else{
-            make_state_non_accepting(state);
-        }
     }
-     for (auto &state: other.states) {
+    auto new_end = std::remove_if(accepting_states.begin(), accepting_states.end(),
+                   [&other](const auto &state) -> bool { return !other.state_is_accepting(other.initial_state); });
+    accepting_states.erase(new_end, accepting_states.end());
+    for (auto &state: other.states) {
         for (auto &transition: state->get_transitions()) {
             if (transition.get_to_state() == other.initial_state && state != other.initial_state) {
                 for (auto &accepting_state: accepting_states)
                     state->add_transition(accepting_state, transition.get_transition_matcher());
             }
         }
-        std::remove_if(state->get_transitions().begin(), state->get_transitions().end(),
+        auto new_iter_end = std::remove_if(state->get_transitions().begin(), state->get_transitions().end(),
                        [&other](transition &t) -> bool { return t.get_to_state() == other.initial_state; });
+        state->get_transitions().erase(new_iter_end, state->get_transitions().end());
         if (state != other.initial_state) {
             add_state(state);
-            if(other.state_is_accepting(state)){
+            if (other.state_is_accepting(state)) {
                 make_state_accepting(state);
             }
         }
@@ -137,30 +157,32 @@ void dfa::concatenate(dfa &other) {
 }
 
 void dfa::repeat(size_t min_rep, size_t max_rep) {
-    dfa init(*this);
-    if (min_rep == -1) {
-        for (auto &transition: initial_state->get_transitions()) {
-            for (auto &state: accepting_states) {
-                state->add_transition(transition.get_to_state(), transition.get_transition_matcher());
-            }
-        }
-    } else {
-        for (size_t i = 0; i + 1 < min_rep; ++i) {
-            dfa copy(init);
+    const dfa before_operation = deep_copy();
+    if(min_rep == 0){
+        make_state_accepting(initial_state);
+    }
+    else{
+        for(size_t i = 0; i + 1 < min_rep; ++i){
+            dfa copy = before_operation.deep_copy();
             concatenate(copy);
         }
     }
-    if (max_rep == -1 && min_rep != -1) {
-        for (auto &transition: initial_state->get_transitions()) {
-            for (auto &state: accepting_states) {
-                state->add_transition(transition.get_to_state(), transition.get_transition_matcher());
+    if(max_rep == -1){
+        for(auto& accepting_state: accepting_states){
+            for(auto& transition: initial_state->get_transitions()){
+                accepting_state->add_transition(transition.get_to_state(), transition.get_transition_matcher());
             }
         }
-    } else {
-        for (size_t i = 0; i < max_rep - min_rep; ++i) {
-            dfa copy(init);
-            copy.set_accepting_states({copy.initial_state});
+    }else{
+        if(min_rep == 0){
+            ++min_rep;
+        }
+        for(int i = 0; i < (int)max_rep - (int)min_rep; ++i){
+            dfa copy = before_operation.deep_copy();
+            copy.make_state_accepting(copy.initial_state);
             concatenate(copy);
         }
     }
 }
+
+
