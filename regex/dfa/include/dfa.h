@@ -3,7 +3,6 @@
 
 #include "state.h"
 #include "transition.h"
-#include "dfa_builder.h"
 #include "single_character_matcher.h"
 #include "character_class_matcher.h"
 #include <algorithm>
@@ -24,7 +23,7 @@ private:
 
     void declare_states(std::initializer_list<std::shared_ptr<state>>&& states_list);
 
-    void add_transition(std::shared_ptr<state>& from, std::shared_ptr<state>& to, std::unique_ptr<matcher>&& transition_matcher);
+    void add_transition(std::shared_ptr<state>& from, std::shared_ptr<state>& to, std::shared_ptr<matcher>& transition_matcher);
 
     void set_initial_state(std::shared_ptr<state>&& initial);
 

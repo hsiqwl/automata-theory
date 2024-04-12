@@ -114,7 +114,7 @@ void regex_tokenizer::turn_into_token_sequence(std::string_view expression) {
 }
 
 void regex_tokenizer::add_concat_tokens() {
-    for (auto iter = token_sequence.begin() + 1; iter != token_sequence.end(); ++iter) {
+    for (auto iter = token_sequence.begin() + 1; iter < token_sequence.end(); ++iter) {
         token& prev_token = **(iter - 1);
         token& curr_token = **iter;
         bool first_predicate = curr_token.type == token::token_type::left_parenthesis ||
@@ -129,7 +129,8 @@ void regex_tokenizer::add_concat_tokens() {
         bool third_predicate = prev_token.type == token::token_type::right_parenthesis ||
                                prev_token.type == token::token_type::terminal;
         if (second_predicate || third_predicate) {
-            token_sequence.emplace(iter, new operator_token(operator_token::operator_type::concatenation));
+            iter = token_sequence.emplace(iter, new operator_token(operator_token::operator_type::concatenation));
+            ++iter;
         }
     }
 }
@@ -138,7 +139,7 @@ void regex_tokenizer::assert_expression() {
     mismatched_parenthesis = 0;
     assert_first_token(*token_sequence.front());
     assert_last_token(*token_sequence.back());
-    for (auto iter = token_sequence.begin() + 1; iter != token_sequence.end() - 1; ++iter) {
+    for (auto iter = token_sequence.begin() + 1; iter < token_sequence.end() - 1; ++iter) {
         if ((*iter)->type == token::token_type::op) {
             auto &op_token = dynamic_cast<operator_token &>(**iter);
             if (op_token.type == operator_token::operator_type::concatenation)

@@ -94,7 +94,7 @@ void dfa_builder::terminal_to_dfa(std::unique_ptr<token> &&token, std::stack<dfa
         }
         case terminal_token::terminal_type::character_class:{
             auto & char_class = dynamic_cast<character_class&>(terminal);
-            dfa_stack.emplace(char_class.range_min, char_class.range_max, char_class.singles);
+            dfa_stack.emplace(char_class.range_min, char_class.range_max, char_class.singles, false);
             return;
         }
     }
@@ -125,8 +125,8 @@ void dfa_builder::operation_to_dfa(std::unique_ptr<token> &&token, std::stack<df
             dfa_stack.pop();
             dfa second = dfa_stack.top();
             dfa_stack.pop();
-            first.concatenate(second);
-            dfa_stack.push(first);
+            second.concatenate(first);
+            dfa_stack.push(second);
             return;
         }
     }

@@ -10,6 +10,8 @@ public:
     single_character_matcher(char c);
 
     bool matches(char c) override;
+
+    std::string matching_string() const noexcept override;
 };
 
 #endif //REGEX_SINGLE_CHARACTER_MATCHER_H

@@ -9,8 +9,8 @@ void dfa::declare_states(std::initializer_list<std::shared_ptr<state>> &&states_
 }
 
 void dfa::add_transition(std::shared_ptr<state> &from, std::shared_ptr<state> &to,
-                         std::unique_ptr<matcher> &&transition_matcher) {
-    from->add_transition(to, std::move(transition_matcher));
+                         std::shared_ptr<matcher>& transition_matcher_) {
+    from->add_transition(to, transition_matcher_);
 }
 
 void dfa::set_initial_state(std::shared_ptr<state> &&initial) {
@@ -65,9 +65,9 @@ dfa::dfa(const dfa &other) {
 dfa::dfa(char c) {
     std::shared_ptr<state> initial {new state(state_id_counter++)};
     std::shared_ptr<state> ending {new state(state_id_counter++)};
-    std::unique_ptr<matcher> transition_matcher{new single_character_matcher(c)};
+    std::shared_ptr<matcher> transition_matcher{new single_character_matcher(c)};
     declare_states({initial, ending});
-    add_transition(initial, ending, std::move(transition_matcher));
+    add_transition(initial, ending, transition_matcher);
     set_initial_state(std::move(initial));
     set_accepting_states({ending});
     curr_state = initial;
@@ -76,9 +76,9 @@ dfa::dfa(char c) {
 dfa::dfa(char range_min, char range_max, std::string_view singles, bool negated) {
     std::shared_ptr<state> initial {new state(state_id_counter++)};
     std::shared_ptr<state> ending {new state(state_id_counter++)};
-    std::unique_ptr<matcher> transition_matcher {new character_class_matcher(range_min, range_max, singles, negated)};
+    std::shared_ptr<matcher> transition_matcher {new character_class_matcher(range_min, range_max, singles, negated)};
     declare_states({initial, ending});
-    add_transition(initial, ending, std::move(transition_matcher));
+    add_transition(initial, ending, transition_matcher);
     set_initial_state(std::move(initial));
     set_accepting_states({ending});
     curr_state = initial;
@@ -87,7 +87,7 @@ dfa::dfa(char range_min, char range_max, std::string_view singles, bool negated)
 void dfa::alternate(dfa &other) {
     auto after_other_initial = std::move(other.initial_state->get_transitions());
     for (auto &transition: after_other_initial) {
-        initial_state->add_transition(transition.get_to_state(), std::move(transition.get_transition_matcher()));
+        initial_state->add_transition(transition.get_to_state(), transition.get_transition_matcher());
     }
     if (state_is_accepting(initial_state) || state_is_accepting(other.initial_state))
         set_accepting_states({initial_state});
@@ -104,25 +104,27 @@ void dfa::concatenate(dfa &other) {
     for (auto &state: accepting_states) {
         for (auto &transition: after_other_initial) {
             if (!transition.is_looped()) {
-                state->add_transition(transition.get_to_state(), std::move(transition.get_transition_matcher()));
+                state->add_transition(transition.get_to_state(), transition.get_transition_matcher());
             } else {
-                state->add_transition(state, std::move(transition.get_transition_matcher()));
+                state->add_transition(state, transition.get_transition_matcher());
             }
         }
         if (other.state_is_accepting(other.initial_state)) {
             make_state_accepting(state);
         }
     }
-    for (auto &state: other.states) {
+     for (auto &state: other.states) {
         for (auto &transition: state->get_transitions()) {
             if (transition.get_to_state() == other.initial_state && state != other.initial_state) {
                 for (auto &accepting_state: accepting_states)
-                    state->add_transition(accepting_state, std::move(transition.get_transition_matcher()));
+                    state->add_transition(accepting_state, transition.get_transition_matcher());
             }
         }
         std::remove_if(state->get_transitions().begin(), state->get_transitions().end(),
                        [&other](transition &t) -> bool { return t.get_to_state() == other.initial_state; });
-        state->remove_transition(other.initial_state);
+        if (state != other.initial_state) {
+            add_state(std::move(state));
+        }
     }
 }
 
@@ -131,7 +133,7 @@ void dfa::repeat(size_t min_rep, size_t max_rep) {
     if (min_rep == -1) {
         for (auto &transition: initial_state->get_transitions()) {
             for (auto &state: accepting_states) {
-                state->add_transition(transition.get_to_state(), std::move(transition.get_transition_matcher()));
+                state->add_transition(transition.get_to_state(), transition.get_transition_matcher());
             }
         }
     } else {
@@ -143,7 +145,7 @@ void dfa::repeat(size_t min_rep, size_t max_rep) {
     if (max_rep == -1 && min_rep != -1) {
         for (auto &transition: initial_state->get_transitions()) {
             for (auto &state: accepting_states) {
-                state->add_transition(transition.get_to_state(), std::move(transition.get_transition_matcher()));
+                state->add_transition(transition.get_to_state(), transition.get_transition_matcher());
             }
         }
     } else {

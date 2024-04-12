@@ -20,13 +20,11 @@ public:
 
     state();
 
-    state(state&& other) noexcept;
-
-    state& operator = (state&& other) noexcept;
+    state(const state& other);
 
     [[nodiscard]] size_t get_state_id() const noexcept;
 
-    void add_transition(std::shared_ptr<state>& to, std::unique_ptr<matcher>&& transition_matcher);
+    void add_transition(std::shared_ptr<state>& to, std::shared_ptr<matcher>& transition_matcher);
 
     void remove_transition(std::shared_ptr<state>& to);
 

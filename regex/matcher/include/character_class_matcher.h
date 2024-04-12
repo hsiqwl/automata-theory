@@ -15,9 +15,12 @@ private:
 
 public:
     character_class_matcher(std::string_view single_chars, bool is_negated);
+
     character_class_matcher(char min, char max, std::string_view single_chars, bool is_negated);
 
     bool matches(char c) override;
+
+    std::string matching_string() const noexcept override;
 };
 
 #endif //REGEX_CHARACTER_CLASS_MATCHER_H

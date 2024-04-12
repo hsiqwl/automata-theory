@@ -2,39 +2,28 @@
 #include "state.h"
 
 transition::transition(std::shared_ptr<state> &from_state, std::shared_ptr<state> &to_state,
-                       std::unique_ptr<matcher> &&transition_matcher_, std::vector<size_t> &end_groups,
+                       std::shared_ptr<matcher> &transition_matcher_, std::vector<size_t> &end_groups,
                        std::vector<size_t> &start_groups) {
     from = from_state;
     to = to_state;
-    transition_matcher = std::move(transition_matcher_);
+    transition_matcher = transition_matcher_;
     ends_groups = std::move(end_groups);
     starts_groups = std::move(start_groups);
 }
 
 transition::transition(std::shared_ptr<state> &from_state, std::shared_ptr<state> &to_state,
-                       std::unique_ptr<matcher> &&transition_matcher_) {
+                       std::shared_ptr<matcher> &transition_matcher_) {
     from = from_state;
     to = to_state;
-    transition_matcher = std::move(transition_matcher_);
+    transition_matcher = transition_matcher_;
 }
 
-transition::transition(transition &&other) noexcept {
+transition::transition(const transition &other) {
     from = other.from;
     to = other.to;
-    transition_matcher = std::move(other.transition_matcher);
-    ends_groups = std::move(other.ends_groups);
-    starts_groups = std::move(other.ends_groups);
-}
-
-transition &transition::operator=(transition &&other) noexcept {
-    if(this != &other) {
-        from.reset(other.from.get());
-        to.reset(other.to.get());
-        transition_matcher = std::move(other.transition_matcher);
-        ends_groups = std::move(other.ends_groups);
-        starts_groups = std::move(other.starts_groups);
-    }
-    return *this;
+    transition_matcher = other.transition_matcher;
+    ends_groups = other.ends_groups;
+    starts_groups = other.starts_groups;
 }
 
 std::shared_ptr<state>& transition::get_to_state() {
@@ -69,7 +58,7 @@ void transition::replace_to_state(std::shared_ptr<state> &new_to) {
     to = new_to;
 }
 
-std::unique_ptr<matcher> &transition::get_transition_matcher() noexcept {
+std::shared_ptr<matcher> &transition::get_transition_matcher() noexcept {
     return transition_matcher;
 }
 
