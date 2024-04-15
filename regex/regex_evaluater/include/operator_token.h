@@ -9,9 +9,9 @@ struct operator_token: public token{
         concatenation
     };
 
-    operator_type type;
+    operator_type type; //const
 
-    short precedence;
+    short precedence; //const
 
     operator_token(operator_type _type);
 };

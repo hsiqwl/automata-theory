@@ -4,7 +4,7 @@
 #include <string_view>
 
 struct character_class: public terminal_token{
-    std::string_view singles;
+    std::string_view singles; // std::string
 
     char range_min;
 

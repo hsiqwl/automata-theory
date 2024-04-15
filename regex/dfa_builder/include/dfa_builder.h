@@ -2,7 +2,6 @@
 #define REGEX_DFA_BUILDER_H
 
 #include "regex_tokenizer.h"
-#include "dfa.h"
 #include <vector>
 #include <stack>
 
@@ -18,14 +17,7 @@ private:
 
     static std::vector<std::unique_ptr<token>> infix_to_postfix(std::pair<regex_tokenizer::token_iterator, regex_tokenizer::token_iterator>&& iterators);
 
-    static void token_to_dfa(std::unique_ptr<token>&& token, std::stack<dfa>& dfa_stack);
-
-    static void terminal_to_dfa(std::unique_ptr<token>&& token, std::stack<dfa>& dfa_stack);
-
-    static void operation_to_dfa(std::unique_ptr<token>&& token, std::stack<dfa>& dfa_stack);
-
 public:
-    static dfa build(const regex_tokenizer& tokens);
 };
 
 #endif //REGEX_DFA_BUILDER_H
