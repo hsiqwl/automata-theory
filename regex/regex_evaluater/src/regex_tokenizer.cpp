@@ -1,22 +1,34 @@
 #include "regex_tokenizer.h"
 #include <iostream>
-std::unique_ptr<token> regex_tokenizer::get_repetition_token_ptr(const char* &iter) {
+token regex_tokenizer::get_repetition_token_ptr(const char* &iter) {
+    token repetition_token(token::token_type::op);
+    operator_info info(operator_info::operator_type::repetition);
     switch (*iter) {
         case '+': {
-            return std::unique_ptr<token>(new repetition_operator{1});
+            info.set_min_num_of_repetitions(1);
+            info.set_max_num_of_repetitions();
+            break;
         }
-        case '*':{
-            return std::unique_ptr<token>(new repetition_operator{});
+        case '*': {
+            info.set_min_num_of_repetitions();
+            info.set_max_num_of_repetitions();
+            break;
         }
-        case '?':{
-            return std::unique_ptr<token>(new repetition_operator{0,1});
+        case '?': {
+            info.set_min_num_of_repetitions();
+            info.set_max_num_of_repetitions(1);
+            break;
         }
-        case '{':{
+        case '{': {
             size_t min_rep, max_rep;
             parse_repetition_operator(++iter, min_rep, max_rep);
-            return std::unique_ptr<token>(new repetition_operator{min_rep, max_rep});
+            info.set_min_num_of_repetitions(min_rep);
+            info.set_max_num_of_repetitions(max_rep);
+            break;
         }
     }
+    repetition_token.set_operator_info(info);
+    return repetition_token;
 }
 
 void regex_tokenizer::parse_repetition_operator(const char *&iter, size_t& min_rep, size_t& max_rep) {
@@ -85,28 +97,40 @@ void regex_tokenizer::turn_into_token_sequence(std::string_view expression) {
             }
             token_sequence.emplace_back(get_repetition_token_ptr(it));
         }else if(c == '.' && !after_escape_character){
-            token_sequence.emplace_back(new operator_token(operator_token::operator_type::concatenation));
+            token concat_token(token::token_type::op);
+            operator_info op_info(operator_info::operator_type::concatenation);
+            concat_token.set_operator_info(op_info);
+            token_sequence.emplace_back(std::move(concat_token));
         }else if(c == '|' && !after_escape_character){
-            token_sequence.emplace_back(new operator_token(operator_token::operator_type::alternation));
+            token alternation_token(token::token_type::op);
+            operator_info op_info(operator_info::operator_type::alternation);
+            alternation_token.set_operator_info(op_info);
+            token_sequence.emplace_back(std::move(alternation_token));
         }
         else if(c == '(' && !after_escape_character){
-            token_sequence.emplace_back(new token{token::token_type::left_parenthesis});
+            token_sequence.emplace_back(token::token_type::left_parenthesis);
         }
         else if(c == ')' && !after_escape_character){
-            token_sequence.emplace_back(new token{token::token_type::right_parenthesis});
+            token_sequence.emplace_back(token::token_type::right_parenthesis);
         }else if(c == '[' && !after_escape_character){
             if(expression.find(']', std::distance(expression.begin(), it))  == std::string_view::npos){
                 throw std::invalid_argument("Invalid character class");
             }else{
                 std::string singles;
-                char range_min = '\0';
-                char range_max = '\0';
+                char range_min;
+                char range_max;
                 parse_character_class_terminal(++it, singles, range_min, range_max);
-                token_sequence.emplace_back(new character_class(range_min, range_max, singles));
+                token terminal_token(token::token_type::terminal);
+                terminal_info term_info(range_min, range_max, singles);
+                terminal_token.set_terminal_info(term_info);
+                token_sequence.emplace_back(std::move(terminal_token));
             }
         }
         else{
-            token_sequence.emplace_back(new single_character(c));
+            token terminal_token(token::token_type::terminal);
+            terminal_info term_info(c);
+            terminal_token.set_terminal_info(term_info);
+            token_sequence.emplace_back(std::move(terminal_token));
             after_escape_character = false;
         }
     }
@@ -115,21 +139,23 @@ void regex_tokenizer::turn_into_token_sequence(std::string_view expression) {
 
 void regex_tokenizer::add_concat_tokens() {
     for (auto iter = token_sequence.begin() + 1; iter < token_sequence.end(); ++iter) {
-        token& prev_token = **(iter - 1);
-        token& curr_token = **iter;
-        bool first_predicate = curr_token.type == token::token_type::left_parenthesis ||
-                               curr_token.type == token::token_type::terminal;
+        token& prev_token = *(iter - 1);
+        token& curr_token = *iter;
+        bool first_predicate = curr_token.get_type() == token::token_type::left_parenthesis ||
+                               curr_token.get_type() == token::token_type::terminal;
         if(!first_predicate)
             continue;
-        bool second_predicate = prev_token.type == token::token_type::op;
+        bool second_predicate = prev_token.get_type() == token::token_type::op;
         if(second_predicate) {
-            auto &op_token = dynamic_cast<operator_token&>(prev_token);
-            second_predicate = op_token.type == operator_token::operator_type::repetition;
+            second_predicate = prev_token.get_operator_info().get_op_type() == operator_info::operator_type::repetition;
         }
-        bool third_predicate = prev_token.type == token::token_type::right_parenthesis ||
-                               prev_token.type == token::token_type::terminal;
+        bool third_predicate = prev_token.get_type() == token::token_type::right_parenthesis ||
+                               prev_token.get_type() == token::token_type::terminal;
         if (second_predicate || third_predicate) {
-            iter = token_sequence.emplace(iter, new operator_token(operator_token::operator_type::concatenation));
+            token concat_token(token::token_type::op);
+            operator_info op_info(operator_info::operator_type::concatenation);
+            concat_token.set_operator_info(op_info);
+            iter = token_sequence.emplace(iter, std::move(concat_token));
             ++iter;
         }
     }
@@ -137,25 +163,32 @@ void regex_tokenizer::add_concat_tokens() {
 
 void regex_tokenizer::assert_expression() {
     mismatched_parenthesis = 0;
-    assert_first_token(*token_sequence.front());
-    assert_last_token(*token_sequence.back());
+    assert_first_token(token_sequence.front());
+    assert_last_token(token_sequence.back());
     for (auto iter = token_sequence.begin() + 1; iter < token_sequence.end() - 1; ++iter) {
-        if ((*iter)->type == token::token_type::op) {
-            auto &op_token = dynamic_cast<operator_token &>(**iter);
-            if (op_token.type == operator_token::operator_type::concatenation)
-                assert_concatenation_operation(**(iter - 1), **(iter + 1));
-            else if (op_token.type == operator_token::operator_type::repetition)
-                assert_star_operation(**(iter - 1));
-            else
-                assert_alternation_operation(**(iter - 1), **(iter + 1));
+        if (iter->get_type() == token::token_type::op) {
+            switch (iter->get_operator_info().get_op_type()) {
+                case operator_info::operator_type::concatenation:{
+                    assert_concatenation_operation(*(iter - 1), *(iter + 1));
+                    break;
+                }
+                case operator_info::operator_type::alternation:{
+                    assert_alternation_operation(*(iter - 1), *(iter + 1));
+                    break;
+                }
+                case operator_info::operator_type::repetition:{
+                    assert_star_operation(*(iter - 1));
+                    break;
+                }
+            }
         }
-        if ((*iter)->type == token::token_type::left_parenthesis) {
+        if (iter->get_type() == token::token_type::left_parenthesis) {
             mismatched_parenthesis++;
-            assert_first_token(**(iter + 1));
+            assert_first_token(*(iter + 1));
         }
-        if ((*iter)->type == token::token_type::right_parenthesis) {
+        if (iter->get_type() == token::token_type::right_parenthesis) {
             mismatched_parenthesis--;
-            assert_last_token(**(iter - 1));
+            assert_last_token(*(iter - 1));
         }
     }
     if (mismatched_parenthesis != 0)
@@ -163,29 +196,28 @@ void regex_tokenizer::assert_expression() {
 }
 
 
-void regex_tokenizer::assert_first_token(const token &token) {
-    if (token.type == token::token_type::op || token.type == token::token_type::right_parenthesis)
+void regex_tokenizer::assert_first_token(const token &first_token) {
+    if (first_token.get_type() == token::token_type::op || first_token.get_type() == token::token_type::right_parenthesis)
         throw std::exception();
-    if (token.type == token::token_type::left_parenthesis)
+    if (first_token.get_type() == token::token_type::left_parenthesis)
         mismatched_parenthesis++;
 }
 
-void regex_tokenizer::assert_last_token(const token &token) {
-    if (token.type == token::token_type::op) {
-        auto &op_token = dynamic_cast<const operator_token&>(token);
-        if(op_token.type == operator_token::operator_type::concatenation ||
-            op_token.type == operator_token::operator_type::alternation){
+void regex_tokenizer::assert_last_token(const token &last_token) {
+    if (last_token.get_type() == token::token_type::op) {
+        auto op_type = last_token.get_operator_info().get_op_type();
+        if(op_type == operator_info::operator_type::alternation || op_type == operator_info::operator_type::concatenation){
             throw std::invalid_argument("Last symbol can't be alternation or concatenation operation");
         }
     }
-    if (token.type == token::token_type::left_parenthesis)
+    if (last_token.get_type() == token::token_type::left_parenthesis)
         throw std::invalid_argument("Last symbol can't be left parenthesis");
-    if (token.type == token::token_type::right_parenthesis)
+    if (last_token.get_type() == token::token_type::right_parenthesis)
         mismatched_parenthesis--;
 }
 
 void regex_tokenizer::assert_star_operation(const token &left_hand_token) {
-    if(left_hand_token.type != token::token_type::terminal && left_hand_token.type != token::token_type::right_parenthesis)
+    if(left_hand_token.get_type() != token::token_type::terminal && left_hand_token.get_type() != token::token_type::right_parenthesis)
         throw std::invalid_argument("Invalid repetition operator operand");
 }
 
@@ -195,21 +227,20 @@ void regex_tokenizer::assert_alternation_operation(const token &left_hand_token,
 }
 
 void regex_tokenizer::assert_concatenation_operation(const token &left_hand_token, const token &right_hand_token) {
-    bool first_predicate = right_hand_token.type == token::token_type::left_parenthesis ||
-                           right_hand_token.type == token::token_type::terminal;
-    bool second_predicate = left_hand_token.type == token::token_type::op;
+    bool first_predicate = right_hand_token.get_type() == token::token_type::left_parenthesis ||
+                           right_hand_token.get_type() == token::token_type::terminal;
+    bool second_predicate = left_hand_token.get_type() == token::token_type::op;
     if(second_predicate){
-        auto &op_token = dynamic_cast<const operator_token&>(left_hand_token);
-        second_predicate = op_token.type == operator_token::operator_type::repetition;
+        second_predicate = left_hand_token.get_operator_info().get_op_type() == operator_info::operator_type::repetition;
     }
-    bool third_predicate = left_hand_token.type == token::token_type::right_parenthesis ||
-                           left_hand_token.type == token::token_type::terminal;
+    bool third_predicate = left_hand_token.get_type() == token::token_type::right_parenthesis ||
+                           left_hand_token.get_type() == token::token_type::terminal;
     if (!(first_predicate && (second_predicate || third_predicate))) {
         throw std::invalid_argument("Invalid concatenation operation operand");
     }
 }
 
-regex_tokenizer::regex_tokenizer(std::string_view expression) {
+regex_tokenizer::regex_tokenizer(std::string& expression) {
     mismatched_parenthesis = 0;
     turn_into_token_sequence(expression);
     assert_expression();
@@ -218,4 +249,3 @@ regex_tokenizer::regex_tokenizer(std::string_view expression) {
 std::pair<regex_tokenizer::token_iterator, regex_tokenizer::token_iterator> regex_tokenizer::get_token_sequence() const noexcept {
     return {token_sequence.begin(), token_sequence.end()};
 }
-

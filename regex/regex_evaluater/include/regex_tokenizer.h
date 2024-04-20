@@ -3,19 +3,17 @@
 
 #include <string_view>
 #include <vector>
-#include "character_class.h"
-#include "single_character.h"
-#include "operator_token.h"
-#include "repetition_operator.h"
 #include <memory>
+#include <algorithm>
+#include "token.h"
 
 class regex_tokenizer{
 private:
-    std::vector<std::unique_ptr<token>> token_sequence;
+    std::vector<token> token_sequence;
     size_t mismatched_parenthesis = 0;
 
 private:
-    std::unique_ptr<token> get_repetition_token_ptr(std::string_view::iterator& iter);
+    token get_repetition_token_ptr(std::string_view::iterator& iter);
 
     void parse_repetition_operator(std::string_view::iterator& iter, size_t& min_rep, size_t& max_rep);
 
@@ -37,11 +35,12 @@ private:
 
     void assert_expression();
 public:
-    typedef std::vector<std::unique_ptr<token>>::const_iterator token_iterator;
+    typedef std::vector<token>::const_iterator token_iterator;
 
-    regex_tokenizer(std::string_view expression);
+    regex_tokenizer(std::string& expression);
 
-    [[nodiscard]] std::pair<token_iterator ,token_iterator> get_token_sequence() const noexcept;
+    std::pair<token_iterator, token_iterator> get_token_sequence() const noexcept;
+
 };
 
 #endif

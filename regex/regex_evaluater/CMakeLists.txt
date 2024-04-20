@@ -5,11 +5,8 @@ set(CMAKE_CXX_STANDARD 23)
 add_compile_options(-g)
 
 add_library(token STATIC src/token.cpp
-        src/operator_token.cpp
-        src/repetition_operator.cpp
-        src/terminal_token.cpp
-        src/single_character.cpp
-        src/character_class.cpp)
+        src/terminal_info.cpp
+        src/operator_info.cpp)
 target_include_directories(token PUBLIC include)
 
 add_library(regex_tokenizer STATIC src/regex_tokenizer.cpp)
