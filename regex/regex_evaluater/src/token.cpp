@@ -53,8 +53,7 @@ void token::add_to_last_pos(size_t pos) {
 }
 
 size_t token::get_sub_expression_length() const noexcept {
-    if(!last_pos.empty()){
-        return *std::min_element(last_pos.begin(), last_pos.end());
-    }
-    return 0;
+    size_t max_last_pos = *std::max_element(last_pos.begin(), last_pos.end());
+    size_t min_first_pos = *std::min_element(first_pos.begin(), first_pos.end());
+    return max_last_pos - min_first_pos + 1;
 }
