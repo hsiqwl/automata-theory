@@ -37,7 +37,7 @@ private:
 public:
     typedef std::vector<token>::const_iterator token_iterator;
 
-    regex_tokenizer(std::string& expression);
+    regex_tokenizer(std::string expression);
 
     std::pair<token_iterator, token_iterator> get_token_sequence() const noexcept;
 

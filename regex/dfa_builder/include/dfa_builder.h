@@ -4,10 +4,11 @@
 #include "regex_tokenizer.h"
 #include <vector>
 #include <stack>
+#include <algorithm>
 
 class dfa_builder{
 private:
-    static size_t pos_counter;
+    inline static size_t pos_counter = 1;
 
     static void handle_operator(std::stack<token>& operator_stack, std::vector<token>& postfix_token_sequence, const token& op_token);
 
@@ -43,8 +44,14 @@ private:
 
     static void set_positions_for_open_range(token& operation_token, const token& child);
 
-public:
+    static std::vector<std::vector<size_t>> calculate_follow_pos(const std::vector<token>& postfix_token_sequence);
 
+    static void calculate_follow_pos_for_cat_node(const token& left_child, const token& right_child, std::vector<std::vector<size_t>>& follow_pos);
+
+    static void calculate_follow_pos_for_star_node(const token& star_node, std::vector<std::vector<size_t>>& follow_pos);
+
+public:
+    static std::vector<std::vector<size_t>> get_pre_build_info(std::string_view expression);
 };
 
 #endif //REGEX_DFA_BUILDER_H

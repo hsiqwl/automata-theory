@@ -240,8 +240,9 @@ void regex_tokenizer::assert_concatenation_operation(const token &left_hand_toke
     }
 }
 
-regex_tokenizer::regex_tokenizer(std::string& expression) {
+regex_tokenizer::regex_tokenizer(std::string expression) {
     mismatched_parenthesis = 0;
+    expression.push_back('#');
     turn_into_token_sequence(expression);
     assert_expression();
 }

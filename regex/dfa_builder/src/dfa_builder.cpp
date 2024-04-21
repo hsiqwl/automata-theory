@@ -93,7 +93,7 @@ void dfa_builder::set_nullability_for_alternation(token &operation_token, const 
 
 void dfa_builder::set_nullability_for_concatenation(token &operation_token, const token &left_child,
                                                    const token &right_child) {
-    operation_token.set_nullability(left_child.is_nullable() || right_child.is_nullable());
+    operation_token.set_nullability(left_child.is_nullable() && right_child.is_nullable());
 }
 
 void dfa_builder::set_nullability_for_repetition(token &operation_token, const token &child) {
@@ -157,7 +157,7 @@ void dfa_builder::set_positions_for_repetition(token &operation_token, const tok
     size_t max_rep = operation_token.get_operator_info().get_max_num_of_repetitions();
     if (min_rep != 0 && max_rep != operator_info::get_max_possible_num_of_repetitions()) {
         set_positions_for_closed_range(operation_token, child);
-    } else if (min_rep == 0 && max_rep == 0) {
+    } else if (min_rep == 0 && max_rep == operator_info::get_max_possible_num_of_repetitions()) {
         set_positions_for_open_range(operation_token, child);
     } else if (min_rep == 0 && max_rep != operator_info::get_max_possible_num_of_repetitions()) {
         set_positions_for_right_open_range(operation_token, child);
@@ -216,4 +216,45 @@ void dfa_builder::set_positions_for_right_open_range(token &operation_token, con
     augmented_info.set_max_num_of_repetitions(operation_token.get_operator_info().get_max_num_of_repetitions());
     operation_token.set_operator_info(augmented_info);
     set_positions_for_closed_range(operation_token, child);
+}
+
+
+std::vector<std::vector<size_t>> dfa_builder::calculate_follow_pos(const std::vector<token> &postfix_token_sequence) {
+    size_t number_of_positions = postfix_token_sequence[postfix_token_sequence.size() - 1].get_sub_expression_length();
+    std::vector<std::vector<size_t>> follow_pos(number_of_positions);
+    for (auto iter = postfix_token_sequence.begin(); iter != postfix_token_sequence.end(); ++iter) {
+        if (iter->get_type() == token::token_type::op) {
+            auto op_type = iter->get_operator_info().get_op_type();
+            if (op_type == operator_info::operator_type::concatenation) {
+                calculate_follow_pos_for_cat_node(*(iter - 2), *(iter - 1), follow_pos);
+            }
+            if (op_type == operator_info::operator_type::repetition) {
+                calculate_follow_pos_for_star_node(*iter, follow_pos);
+            }
+        }
+    }
+    return follow_pos;
+}
+
+void dfa_builder::calculate_follow_pos_for_cat_node(const token &left_child, const token &right_child,
+                                                    std::vector<std::vector<size_t>> &follow_pos) {
+    for(auto pos: left_child.get_last_pos()){
+        follow_pos[pos - 1].insert(follow_pos[pos - 1].end(), right_child.get_first_pos().begin(), right_child.get_first_pos().end());
+    }
+}
+
+void dfa_builder::calculate_follow_pos_for_star_node(const token &star_node,
+                                                     std::vector<std::vector<size_t>> &follow_pos) {
+    for(auto pos: star_node.get_last_pos()){
+        follow_pos[pos - 1].insert(follow_pos[pos - 1].end(), star_node.get_first_pos().begin(), star_node.get_first_pos().end());
+    }
+}
+
+
+std::vector<std::vector<size_t>> dfa_builder::get_pre_build_info(std::string_view expression) {
+    regex_tokenizer tokenizer(static_cast<std::string>(expression));
+    std::vector<token> postfix_token_sequence = infix_to_postfix(tokenizer.get_token_sequence());
+    calculate_nullability_and_positions(postfix_token_sequence);
+    std::vector<std::vector<size_t>> follow_pos = calculate_follow_pos(postfix_token_sequence);
+    return follow_pos;
 }
