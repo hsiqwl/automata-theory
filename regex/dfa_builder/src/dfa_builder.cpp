@@ -1,84 +1,28 @@
 #include "dfa_builder.h"
 
-std::vector<token> dfa_builder::infix_to_postfix(std::pair<regex_tokenizer::token_iterator, regex_tokenizer::token_iterator>&& iterators) {
-    std::stack<token> operator_stack;
-    std::vector<token> postfix_token_sequence;
-    for(auto& token_ptr = iterators.first; token_ptr != iterators.second; ++token_ptr) {
-        switch (token_ptr->get_type()) {
-            case token::token_type::terminal:
-                handle_terminal(postfix_token_sequence, *token_ptr);
-                break;
-            case token::token_type::left_parenthesis:
-                handle_left_parenthesis(operator_stack, *token_ptr);
-                break;
-            case token::token_type::op:
-                handle_operator(operator_stack, postfix_token_sequence, *token_ptr);
-                break;
-            case token::token_type::right_parenthesis:
-                handle_right_parenthesis(operator_stack, postfix_token_sequence);
-                break;
-        }
-    }
-    while (!operator_stack.empty()) {
-        postfix_token_sequence.emplace_back(std::move(operator_stack.top()));
-        operator_stack.pop();
-    }
-
-    return postfix_token_sequence;
-}
-
-void dfa_builder::handle_terminal(std::vector<token>& postfix_token_sequence, const token& terminal_token) {
-    postfix_token_sequence.emplace_back(terminal_token);
-}
-
-void dfa_builder::handle_left_parenthesis(std::stack<token> &operator_stack, const token& parenthesis_token) {
-    operator_stack.push(parenthesis_token);
-}
-
-void dfa_builder::handle_operator(std::stack<token> &operator_stack, std::vector<token> &postfix_token_sequence,
-                                  const token& op_token) {
-    while (!operator_stack.empty() && operator_stack.top().get_type() != token::token_type::left_parenthesis) {
-        unsigned short top_op_precedence = operator_stack.top().get_operator_info().get_precedence();
-        unsigned short curr_op_precedence = op_token.get_operator_info().get_precedence();
-        if (top_op_precedence >= curr_op_precedence) {
-            postfix_token_sequence.emplace_back(std::move(operator_stack.top()));
-            operator_stack.pop();
-        } else {
-            break;
-        }
-    }
-    operator_stack.push(op_token);
-}
-
-void dfa_builder::handle_right_parenthesis(std::stack<token> &operator_stack, std::vector<token> &postfix_token_sequence) {
-    while (operator_stack.top().get_type() != token::token_type::left_parenthesis) {
-        postfix_token_sequence.emplace_back(std::move(operator_stack.top()));
-        operator_stack.pop();
-    }
-    operator_stack.pop();
-}
-
-void dfa_builder::calculate_nullability_and_positions(std::vector<token> &postfix_token_sequence) {
+void dfa_builder::calculate_nullability_and_positions(std::vector<token>& token_sequence) {
     pos_counter = 1;
-    for (auto iter = postfix_token_sequence.begin(); iter != postfix_token_sequence.end(); ++iter) {
-        if (iter->get_type() == token::token_type::terminal) {
-            iter->set_nullability(false);
-            set_positions_for_terminal(*iter);
+    for (auto &iter: token_sequence) {
+        if (iter.get_type() == token::token_type::terminal) {
+            iter.set_nullability(false);
+            set_positions_for_terminal(iter);
         } else {
-            switch (iter->get_operator_info().get_op_type()) {
+            const auto &left_child = token_sequence[iter.get_left_child_pos()];
+            const auto &right_child = token_sequence[iter.get_right_child_pos()];
+            switch (iter.get_operator_info().get_op_type()) {
                 case operator_info::operator_type::alternation: {
-                    set_nullability_for_alternation(*iter, *(iter - 2), *(iter - 1));
-                    set_positions_for_alternation(*iter, *(iter - 2), *(iter - 1));
+                    set_nullability_for_alternation(iter, left_child, right_child);
+                    set_positions_for_alternation(iter, left_child, right_child);
                     break;
                 }
                 case operator_info::operator_type::concatenation: {
-                    set_nullability_for_concatenation(*iter, *(iter - 2), *(iter - 1));
-                    set_positions_for_concatenation(*iter, *(iter - 2), *(iter - 1));
+                    set_nullability_for_concatenation(iter, left_child, right_child);
+                    set_positions_for_concatenation(iter, left_child, right_child);
                     break;
                 }
                 case operator_info::operator_type::repetition: {
-                    set_nullability_for_repetition(*iter, *(iter - 1));
-                    set_positions_for_repetition(*iter, *(iter - 1));
+                    set_nullability_for_repetition(iter, right_child);
+                    set_positions_for_repetition(iter, right_child);
                     break;
                 }
             }
@@ -245,16 +189,18 @@ void dfa_builder::set_positions_for_left_open_range(token &operation_token, cons
 }
 
 
-std::vector<std::vector<size_t>> dfa_builder::calculate_follow_pos(const std::vector<token> &postfix_token_sequence) {
+std::vector<std::vector<size_t>> dfa_builder::calculate_follow_pos(const std::vector<token>& token_sequence) {
     std::vector<std::vector<size_t>> follow_pos(pos_counter - 1);
-    for (auto iter = postfix_token_sequence.begin(); iter != postfix_token_sequence.end(); ++iter) {
-        if (iter->get_type() == token::token_type::op) {
-            auto op_type = iter->get_operator_info().get_op_type();
+    for (const auto &iter: token_sequence) {
+        if (iter.get_type() == token::token_type::op) {
+            auto op_type = iter.get_operator_info().get_op_type();
+            const auto &left_child = token_sequence[iter.get_left_child_pos()];
+            const auto &right_child = token_sequence[iter.get_right_child_pos()];
             if (op_type == operator_info::operator_type::concatenation) {
-                calculate_follow_pos_for_cat_node(*(iter - 2), *(iter - 1), follow_pos);
+                calculate_follow_pos_for_cat_node(left_child, right_child, follow_pos);
             }
             if (op_type == operator_info::operator_type::repetition) {
-                calculate_follow_pos_for_star_node(*iter, follow_pos);
+                calculate_follow_pos_for_star_node(iter, follow_pos);
             }
         }
     }
@@ -278,15 +224,15 @@ void dfa_builder::calculate_follow_pos_for_star_node(const token &star_node,
 
 std::vector<std::vector<size_t>> dfa_builder::get_pre_build_info(std::string_view expression) {
     regex_tokenizer tokenizer(static_cast<std::string>(expression));
-    std::vector<token> postfix_token_sequence = infix_to_postfix(tokenizer.get_token_sequence());
-    calculate_nullability_and_positions(postfix_token_sequence);
-    std::vector<std::vector<size_t>> follow_pos = calculate_follow_pos(postfix_token_sequence);
+    auto token_sequence = tokenizer.get_token_sequence();
+    calculate_nullability_and_positions(token_sequence);
+    std::vector<std::vector<size_t>> follow_pos = calculate_follow_pos(token_sequence);
     return follow_pos;
 }
 
 void dfa_builder::add_character_to_alphabet(char c) {
-    if (!correct_alphabet.contains(c)) {
-        correct_alphabet.push_back(c);
+    if (!alphabet.contains(c)) {
+        alphabet.push_back(c);
     }
 }
 

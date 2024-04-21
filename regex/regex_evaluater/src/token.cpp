@@ -57,3 +57,19 @@ size_t token::get_sub_expression_length() const noexcept {
     size_t min_first_pos = *std::min_element(first_pos.begin(), first_pos.end());
     return max_last_pos - min_first_pos + 1;
 }
+
+size_t token::get_left_child_pos() const noexcept {
+    return left_child_pos;
+}
+
+size_t token::get_right_child_pos() const noexcept {
+    return right_child_pos;
+}
+
+void token::set_right_child_pos(size_t pos) {
+    right_child_pos = pos;
+}
+
+void token::set_left_child_pos(size_t pos) {
+    left_child_pos = pos;
+}

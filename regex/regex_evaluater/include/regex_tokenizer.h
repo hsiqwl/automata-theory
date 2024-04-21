@@ -3,6 +3,7 @@
 
 #include <string_view>
 #include <vector>
+#include <stack>
 #include <memory>
 #include <algorithm>
 #include "token.h"
@@ -11,6 +12,13 @@ class regex_tokenizer{
 private:
     std::vector<token> token_sequence;
     size_t mismatched_parenthesis = 0;
+
+public:
+    typedef std::vector<token>::iterator token_iterator;
+
+    regex_tokenizer(std::string expression);
+
+    [[nodiscard]] const std::vector<token>& get_token_sequence() const noexcept;
 
 private:
     token get_repetition_token_ptr(std::string_view::iterator& iter);
@@ -34,13 +42,20 @@ private:
     void assert_concatenation_operation(const token& left_hand_token, const token& right_hand_token);
 
     void assert_expression();
-public:
-    typedef std::vector<token>::const_iterator token_iterator;
 
-    regex_tokenizer(std::string expression);
+    static void handle_operator(std::stack<token>& operator_stack, std::vector<token>& postfix_token_sequence, const token& op_token);
 
-    std::pair<token_iterator, token_iterator> get_token_sequence() const noexcept;
+    static void handle_left_parenthesis(std::stack<token>& operator_stack, const token& parenthesis_token);
 
+    static void handle_right_parenthesis(std::stack<token>& operator_stack, std::vector<token>& postfix_token_sequence);
+
+    static void handle_terminal(std::vector<token>& postfix_token_sequence,const token& terminal_token);
+
+    void infix_to_postfix(std::pair<token_iterator, token_iterator>&& iterators);
+
+    void assign_children();
+
+    size_t find_left_child_pos(size_t starting_position);
 };
 
 #endif

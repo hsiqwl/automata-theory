@@ -4,7 +4,7 @@
 
 
 int main() {
-    std::string expression("(a|b)a*bb");
+    std::string expression("(a|b)a?bb");
     dfa_builder builder;
     std::vector<std::vector<size_t>> follow_pos = builder.get_pre_build_info(expression);
     size_t i = 1;

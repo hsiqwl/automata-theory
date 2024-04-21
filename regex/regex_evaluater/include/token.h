@@ -3,6 +3,7 @@
 #include <vector>
 #include <variant>
 #include <algorithm>
+#include <memory>
 #include "terminal_info.h"
 #include "operator_info.h"
 
@@ -35,11 +36,19 @@ public:
 
     void set_terminal_info(const terminal_info& info);
 
-    const terminal_info& get_terminal_info() const;
+    [[nodiscard]] const terminal_info& get_terminal_info() const;
 
-    const operator_info& get_operator_info() const;
+    [[nodiscard]] const operator_info& get_operator_info() const;
 
-    size_t get_sub_expression_length() const noexcept;
+    [[nodiscard]] size_t get_sub_expression_length() const noexcept;
+
+    [[nodiscard]] size_t get_left_child_pos() const noexcept;
+
+    [[nodiscard]] size_t get_right_child_pos() const noexcept;
+
+    void set_right_child_pos(size_t pos);
+
+    void set_left_child_pos(size_t pos);
 
 private:
     token_type type;
@@ -51,6 +60,10 @@ private:
     std::vector<size_t> last_pos;
 
     std::variant<terminal_info, operator_info> token_info;
+
+    size_t left_child_pos;
+
+    size_t right_child_pos;
 };
 
 #endif //REGEX_TOKEN_H

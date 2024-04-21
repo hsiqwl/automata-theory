@@ -13,21 +13,11 @@ private:
 
     std::array<std::vector<size_t>, 256> char_to_pos_table;
 
-    std::string correct_alphabet;
+    std::string alphabet;
 
     size_t get_index_by_position(size_t pos);
 
-    static void handle_operator(std::stack<token>& operator_stack, std::vector<token>& postfix_token_sequence, const token& op_token);
-
-    static void handle_left_parenthesis(std::stack<token>& operator_stack, const token& parenthesis_token);
-
-    static void handle_right_parenthesis(std::stack<token>& operator_stack, std::vector<token>& postfix_token_sequence);
-
-    static void handle_terminal(std::vector<token>& postfix_token_sequence,const token& terminal_token);
-
-    static std::vector<token> infix_to_postfix(std::pair<regex_tokenizer::token_iterator, regex_tokenizer::token_iterator>&& iterators);
-
-    void calculate_nullability_and_positions(std::vector<token>& postfix_token_sequence);
+    void calculate_nullability_and_positions(std::vector<token>& token_sequence);
 
     static void set_nullability_for_alternation(token& operation_token, const token& left_child, const token& right_child);
 
@@ -55,7 +45,7 @@ private:
 
     static void set_positions_for_open_range(token& operation_token, const token& child);
 
-    std::vector<std::vector<size_t>> calculate_follow_pos(const std::vector<token>& postfix_token_sequence);
+    std::vector<std::vector<size_t>> calculate_follow_pos(const std::vector<token>& token_sequence);
 
     void calculate_follow_pos_for_cat_node(const token& left_child, const token& right_child, std::vector<std::vector<size_t>>& follow_pos);
 

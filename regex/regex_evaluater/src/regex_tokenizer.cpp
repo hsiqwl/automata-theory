@@ -245,8 +245,87 @@ regex_tokenizer::regex_tokenizer(std::string expression) {
     expression.push_back('#');
     turn_into_token_sequence(expression);
     assert_expression();
+    infix_to_postfix({token_sequence.begin(), token_sequence.end()});
+    assign_children();
 }
 
-std::pair<regex_tokenizer::token_iterator, regex_tokenizer::token_iterator> regex_tokenizer::get_token_sequence() const noexcept {
-    return {token_sequence.begin(), token_sequence.end()};
+const std::vector<token> &regex_tokenizer::get_token_sequence() const noexcept {
+    return token_sequence;
 }
+
+void regex_tokenizer::infix_to_postfix(std::pair<token_iterator, token_iterator>&& iterators) {
+    std::stack<token> operator_stack;
+    std::vector<token> postfix_token_sequence;
+    for(auto& token_ptr = iterators.first; token_ptr != iterators.second; ++token_ptr) {
+        switch (token_ptr->get_type()) {
+            case token::token_type::terminal:
+                handle_terminal(postfix_token_sequence, *token_ptr);
+                break;
+            case token::token_type::left_parenthesis:
+                handle_left_parenthesis(operator_stack, *token_ptr);
+                break;
+            case token::token_type::op:
+                handle_operator(operator_stack, postfix_token_sequence, *token_ptr);
+                break;
+            case token::token_type::right_parenthesis:
+                handle_right_parenthesis(operator_stack, postfix_token_sequence);
+                break;
+        }
+    }
+    while (!operator_stack.empty()) {
+        postfix_token_sequence.emplace_back(std::move(operator_stack.top()));
+        operator_stack.pop();
+    }
+
+    token_sequence = postfix_token_sequence;
+}
+
+void regex_tokenizer::handle_terminal(std::vector<token>& postfix_token_sequence, const token& terminal_token) {
+    postfix_token_sequence.emplace_back(terminal_token);
+}
+
+void regex_tokenizer::handle_left_parenthesis(std::stack<token> &operator_stack, const token& parenthesis_token) {
+    operator_stack.push(parenthesis_token);
+}
+
+void regex_tokenizer::handle_operator(std::stack<token> &operator_stack, std::vector<token> &postfix_token_sequence,
+                                  const token& op_token) {
+    while (!operator_stack.empty() && operator_stack.top().get_type() != token::token_type::left_parenthesis) {
+        unsigned short top_op_precedence = operator_stack.top().get_operator_info().get_precedence();
+        unsigned short curr_op_precedence = op_token.get_operator_info().get_precedence();
+        if (top_op_precedence >= curr_op_precedence) {
+            postfix_token_sequence.emplace_back(std::move(operator_stack.top()));
+            operator_stack.pop();
+        } else {
+            break;
+        }
+    }
+    operator_stack.push(op_token);
+}
+
+void regex_tokenizer::handle_right_parenthesis(std::stack<token> &operator_stack, std::vector<token> &postfix_token_sequence) {
+    while (operator_stack.top().get_type() != token::token_type::left_parenthesis) {
+        postfix_token_sequence.emplace_back(std::move(operator_stack.top()));
+        operator_stack.pop();
+    }
+    operator_stack.pop();
+}
+
+void regex_tokenizer::assign_children() {
+    for (auto iter = token_sequence.begin(); iter != token_sequence.end(); ++iter) {
+        if (iter->get_type() == token::token_type::op) {
+            iter->set_right_child_pos(std::distance(token_sequence.begin(), iter - 1));
+            if(iter->get_operator_info().get_op_type() != operator_info::operator_type::repetition)
+                iter->set_left_child_pos(find_left_child_pos(std::distance(token_sequence.begin(),iter - 2)));
+        }
+    }
+}
+
+size_t regex_tokenizer::find_left_child_pos(size_t starting_position) {
+    for (auto iter = token_sequence.begin() + starting_position; iter != token_sequence.begin(); --iter) {
+        if (iter->get_type() == token::token_type::op)
+            return std::distance( token_sequence.begin(), iter);
+    }
+    return 0;
+}
+
