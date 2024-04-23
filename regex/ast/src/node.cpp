@@ -10,7 +10,7 @@ node::node(node::node_type n_type, const std::shared_ptr<node>& child) {
         left_child = child;
         type = n_type;
         nullable = true;
-        label = '*';
+        label = (n_type == node_type::star) ? '*' : '?';
     } else {
         throw std::logic_error("bad node type");
     }
@@ -32,22 +32,22 @@ node::node(node::node_type n_type, const std::shared_ptr<node>& left, const std:
     }
 }
 
-void node::set_parent(const std::shared_ptr<node> &parent_ptr) {
-    parent = parent_ptr;
-}
-
 node::node_type node::get_node_type() const noexcept {
     return type;
 }
 
-const node &node::get_right_child() const noexcept {
+const node& node::get_right_child() const noexcept {
     return *right_child;
 }
 
-const node &node::get_left_child() const noexcept {
+const node& node::get_left_child() const noexcept {
     return *left_child;
 }
 
 char node::get_label() const noexcept {
     return label;
+}
+
+node::node(const node &other) {
+
 }

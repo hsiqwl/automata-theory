@@ -1,7 +1,8 @@
 #ifndef REGEX_NODE_H
 #define REGEX_NODE_H
-#include <set>
 #include <memory>
+
+class ast;
 
 class node {
 public:
@@ -14,9 +15,11 @@ public:
     };
 
 private:
+    friend class ast;
+
     bool nullable;
 
-    std::shared_ptr<node> parent;
+    std::shared_ptr<node> next;
 
     std::shared_ptr<node> left_child;
 
@@ -33,9 +36,9 @@ public:
 
     node(node_type type, const std::shared_ptr<node>& child);
 
-    void set_parent(const std::shared_ptr<node>& parent_ptr);
+    node(const node& other);
 
-    node_type get_node_type() const noexcept;
+    [[nodiscard]] node_type get_node_type() const noexcept;
 
     const node& get_right_child() const noexcept;
 

@@ -1,6 +1,7 @@
 #ifndef REGEX_AST_H
 #define REGEX_AST_H
 #include "node.h"
+#include <stack>
 #include <functional>
 
 class ast{
@@ -11,12 +12,15 @@ public:
 
     ast(node::node_type root_type, ast& sub_tree);
 
+    [[nodiscard]] ast get_deep_copy() const;
+
     void traverse(const std::function<void (const node&)>&);
 
 private:
     std::shared_ptr<node> root;
 
-    void visit_node(const std::function<void (const node&)>&, const node& visiting_node);
+    [[nodiscard]] std::shared_ptr<node> find_most_left() const noexcept;
+
 };
 
 

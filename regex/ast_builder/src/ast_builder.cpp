@@ -22,7 +22,7 @@ void operation_to_ast(const operator_info& info, std::stack<std::shared_ptr<ast>
             break;
         }
         case operator_info::operator_type::repetition: {
-            star_to_ast(subtree);
+            repetition_to_ast(info, subtree);
             break;
         }
     }
@@ -79,4 +79,49 @@ void character_class_to_ast(const terminal_info& info, std::stack<std::shared_pt
         tree = std::make_shared<ast>(node::node_type::alternation, *tree, *tree_from_curr_root);
     }
     subtree.push(tree);
+}
+
+void repetition_to_ast(const operator_info& info, std::stack<std::shared_ptr<ast>>& subtree){
+    size_t min = info.get_min_num_of_repetitions();
+    size_t max = info.get_max_num_of_repetitions();
+    if(max == operator_info::get_max_possible_num_of_repetitions()){
+        left_open_range_to_ast(min, subtree);
+        return;
+    }
+    if(min == 0){
+        right_open_range_to_ast(max, subtree);
+        return;
+    }
+    closed_range_to_ast(min, max, subtree);
+}
+
+void closed_range_to_ast(size_t lower_bound, size_t upper_bound, std::stack<std::shared_ptr<ast>>& subtree) {
+    std::shared_ptr<ast> accumulated = std::make_shared<ast>(subtree.top()->get_deep_copy());
+    for (size_t i = 0; i + 1 < lower_bound; ++i) {
+        std::shared_ptr<ast> copy = std::make_shared<ast>(subtree.top()->get_deep_copy());
+        accumulated = std::make_shared<ast>(node::node_type::concat, *accumulated, *copy);
+    }
+    for (size_t i = lower_bound; i < upper_bound; ++i) {
+        std::shared_ptr<ast> copy = std::make_shared<ast>(subtree.top()->get_deep_copy());
+        copy = std::make_shared<ast>(node::node_type::optional, *copy);
+        accumulated = std::make_shared<ast>(node::node_type::concat, *accumulated, *copy);
+    }
+    subtree.pop();
+    subtree.emplace(accumulated);
+}
+
+void left_open_range_to_ast(size_t lower_bound, std::stack<std::shared_ptr<ast>>& subtree) {
+    std::shared_ptr<ast> copy = std::make_shared<ast>(subtree.top()->get_deep_copy());
+    closed_range_to_ast(lower_bound, lower_bound, subtree);
+    copy = std::make_shared<ast>(node::node_type::star, *copy);
+    std::shared_ptr<ast> top = subtree.top();
+    subtree.pop();
+    subtree.emplace(std::make_shared<ast>(node::node_type::concat, *top, *copy));
+}
+
+void right_open_range_to_ast(size_t upper_bound, std::stack<std::shared_ptr<ast>>& subtree){
+    closed_range_to_ast(1, upper_bound, subtree);
+    std::shared_ptr<ast> top = subtree.top();
+    subtree.pop();
+    subtree.emplace(std::make_shared<ast>(node::node_type::optional, *top));
 }

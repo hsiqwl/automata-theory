@@ -19,4 +19,12 @@ void character_class_to_ast(const terminal_info& info, std::stack<std::shared_pt
 
 void single_character_to_ast(const terminal_info& info, std::stack<std::shared_ptr<ast>>& subtree);
 
+void repetition_to_ast(const operator_info& info, std::stack<std::shared_ptr<ast>>& subtree);
+
+void left_open_range_to_ast(size_t lower_bound, std::stack<std::shared_ptr<ast>>& subtree);
+
+void closed_range_to_ast(size_t lower_bound, size_t upper_bound, std::stack<std::shared_ptr<ast>>& subtree);
+
+void right_open_range_to_ast(size_t upper_bound, std::stack<std::shared_ptr<ast>>& subtree);
+
 #endif //REGEX_AST_BUILDER_H
