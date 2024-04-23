@@ -197,27 +197,40 @@ std::vector<std::vector<size_t>> dfa_builder::calculate_follow_pos(const std::ve
             const auto &left_child = token_sequence[iter.get_left_child_pos()];
             const auto &right_child = token_sequence[iter.get_right_child_pos()];
             if (op_type == operator_info::operator_type::concatenation) {
-                calculate_follow_pos_for_cat_node(left_child, right_child, follow_pos);
+                calculate_follow_pos_for_concatenation(left_child, right_child, follow_pos);
             }
             if (op_type == operator_info::operator_type::repetition) {
-                calculate_follow_pos_for_star_node(iter, follow_pos);
+                calculate_follow_pos_for_repetition(iter, follow_pos);
             }
         }
     }
     return follow_pos;
 }
 
-void dfa_builder::calculate_follow_pos_for_cat_node(const token &left_child, const token &right_child,
+void dfa_builder::calculate_follow_pos_for_concatenation(const token &left_child, const token &right_child,
                                                     std::vector<std::vector<size_t>> &follow_pos) {
     for(auto pos: left_child.get_last_pos()){
         follow_pos[pos - 1].insert(follow_pos[pos - 1].end(), right_child.get_first_pos().begin(), right_child.get_first_pos().end());
     }
 }
 
-void dfa_builder::calculate_follow_pos_for_star_node(const token &star_node,
+void dfa_builder::calculate_follow_pos_for_repetition(const token &star_node,
                                                      std::vector<std::vector<size_t>> &follow_pos) {
     for(auto pos: star_node.get_last_pos()){
         follow_pos[pos - 1].insert(follow_pos[pos - 1].end(), star_node.get_first_pos().begin(), star_node.get_first_pos().end());
+    }
+}
+
+void dfa_builder::calculate_follow_pos_for_open_range(const token &node, std::vector<std::vector<size_t>> &follow_pos) {
+    for (auto pos: node.get_last_pos()) {
+        follow_pos[pos - 1].insert(follow_pos[pos - 1].end(), node.get_first_pos().begin(), node.get_first_pos().end());
+    }
+}
+
+void
+dfa_builder::calculate_follow_pos_for_closed_range(const token &node, std::vector<std::vector<size_t>> &follow_pos) {
+    for(auto pos: node.get_first_pos()){
+
     }
 }
 

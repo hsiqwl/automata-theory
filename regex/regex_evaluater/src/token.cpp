@@ -1,13 +1,9 @@
 #include "token.h"
 
-token::token(token::token_type type): type(type), nullability(false) {}
+token::token(token::token_type type): type(type) {}
 
 token::token_type token::get_type() const noexcept {
     return type;
-}
-
-void token::set_nullability(bool token_nullability) {
-    nullability = token_nullability;
 }
 
 void token::set_operator_info(const operator_info &info) {
@@ -24,52 +20,10 @@ void token::set_terminal_info(const terminal_info &info) {
         throw std::logic_error("Token type must be token::token_type::terminal");
 }
 
-const std::vector<size_t> &token::get_first_pos() const noexcept {
-    return first_pos;
-}
-
-const std::vector<size_t> &token::get_last_pos() const noexcept {
-    return last_pos;
-}
-
-bool token::is_nullable() const noexcept {
-    return nullability;
-}
-
 const operator_info &token::get_operator_info() const{
     return std::get<operator_info>(token_info);
 }
 
 const terminal_info &token::get_terminal_info() const{
     return std::get<terminal_info>(token_info);
-}
-
-void token::add_to_first_pos(size_t pos) {
-    first_pos.push_back(pos);
-}
-
-void token::add_to_last_pos(size_t pos) {
-    last_pos.push_back(pos);
-}
-
-size_t token::get_sub_expression_length() const noexcept {
-    size_t max_last_pos = *std::max_element(last_pos.begin(), last_pos.end());
-    size_t min_first_pos = *std::min_element(first_pos.begin(), first_pos.end());
-    return max_last_pos - min_first_pos + 1;
-}
-
-size_t token::get_left_child_pos() const noexcept {
-    return left_child_pos;
-}
-
-size_t token::get_right_child_pos() const noexcept {
-    return right_child_pos;
-}
-
-void token::set_right_child_pos(size_t pos) {
-    right_child_pos = pos;
-}
-
-void token::set_left_child_pos(size_t pos) {
-    left_child_pos = pos;
 }

@@ -15,6 +15,7 @@ private:
 
     std::string alphabet;
 
+private:
     size_t get_index_by_position(size_t pos);
 
     void calculate_nullability_and_positions(std::vector<token>& token_sequence);
@@ -47,13 +48,19 @@ private:
 
     std::vector<std::vector<size_t>> calculate_follow_pos(const std::vector<token>& token_sequence);
 
-    void calculate_follow_pos_for_cat_node(const token& left_child, const token& right_child, std::vector<std::vector<size_t>>& follow_pos);
+    void calculate_follow_pos_for_concatenation(const token& left_child, const token& right_child, std::vector<std::vector<size_t>>& follow_pos);
 
-    void calculate_follow_pos_for_star_node(const token& star_node, std::vector<std::vector<size_t>>& follow_pos);
+    void calculate_follow_pos_for_repetition(const token& node, std::vector<std::vector<size_t>>& follow_pos);
+
+    void calculate_follow_pos_for_open_range(const token& node, std::vector<std::vector<size_t>>& follow_pos);
+
+    void calculate_follow_pos_for_closed_range(const token& node, std::vector<std::vector<size_t>>& follow_pos);
+
+    void calculate_follow_pos_for_right_open_range(const token& node, std::vector<std::vector<size_t>>& follow_pos);
+
+    void calculate_follow_pos_for_left_open_range(const token& node, std::vector<std::vector<size_t>>& follow_pos);
 
     void add_character_to_alphabet(char c);
-
-    //TODO: either store children for operations in the token itself or make function to find them
 
 public:
     dfa_builder() = default;

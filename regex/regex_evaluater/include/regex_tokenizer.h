@@ -14,7 +14,7 @@ private:
     size_t mismatched_parenthesis = 0;
 
 public:
-    typedef std::vector<token>::iterator token_iterator;
+    typedef std::vector<token>::const_iterator token_iterator;
 
     regex_tokenizer(std::string expression);
 
@@ -52,10 +52,6 @@ private:
     static void handle_terminal(std::vector<token>& postfix_token_sequence,const token& terminal_token);
 
     void infix_to_postfix(std::pair<token_iterator, token_iterator>&& iterators);
-
-    void assign_children();
-
-    size_t find_left_child_pos(size_t starting_position);
 };
 
 #endif

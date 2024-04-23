@@ -4,9 +4,8 @@ project(regex)
 set(CMAKE_CXX_STANDARD 23)
 
 add_subdirectory(regex_evaluater)
-add_subdirectory(state)
-add_subdirectory(dfa)
-add_subdirectory(dfa_builder)
+add_subdirectory(ast)
+add_subdirectory(ast_builder)
 
 add_executable(main main.cpp)
-target_link_libraries(main dfa_builder)
+target_link_libraries(main ast_builder)

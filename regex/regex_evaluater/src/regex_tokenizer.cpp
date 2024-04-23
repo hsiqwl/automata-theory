@@ -246,7 +246,6 @@ regex_tokenizer::regex_tokenizer(std::string expression) {
     turn_into_token_sequence(expression);
     assert_expression();
     infix_to_postfix({token_sequence.begin(), token_sequence.end()});
-    assign_children();
 }
 
 const std::vector<token> &regex_tokenizer::get_token_sequence() const noexcept {
@@ -311,21 +310,4 @@ void regex_tokenizer::handle_right_parenthesis(std::stack<token> &operator_stack
     operator_stack.pop();
 }
 
-void regex_tokenizer::assign_children() {
-    for (auto iter = token_sequence.begin(); iter != token_sequence.end(); ++iter) {
-        if (iter->get_type() == token::token_type::op) {
-            iter->set_right_child_pos(std::distance(token_sequence.begin(), iter - 1));
-            if(iter->get_operator_info().get_op_type() != operator_info::operator_type::repetition)
-                iter->set_left_child_pos(find_left_child_pos(std::distance(token_sequence.begin(),iter - 2)));
-        }
-    }
-}
-
-size_t regex_tokenizer::find_left_child_pos(size_t starting_position) {
-    for (auto iter = token_sequence.begin() + starting_position; iter != token_sequence.begin(); --iter) {
-        if (iter->get_type() == token::token_type::op)
-            return std::distance( token_sequence.begin(), iter);
-    }
-    return 0;
-}
 

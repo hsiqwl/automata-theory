@@ -1,0 +1,6 @@
+#ifndef REGEX_AST_ITERATOR_H
+#define REGEX_AST_ITERATOR_H
+
+
+
+#endif //REGEX_AST_ITERATOR_H
