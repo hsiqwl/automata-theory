@@ -81,18 +81,19 @@ void character_class_to_ast(const terminal_info& info, std::stack<std::shared_pt
     subtree.push(tree);
 }
 
-void repetition_to_ast(const operator_info& info, std::stack<std::shared_ptr<ast>>& subtree){
+void repetition_to_ast(const operator_info& info, std::stack<std::shared_ptr<ast>>& subtree) {
     size_t min = info.get_min_num_of_repetitions();
     size_t max = info.get_max_num_of_repetitions();
-    if(max == operator_info::get_max_possible_num_of_repetitions()){
-        left_open_range_to_ast(min, subtree);
+    if (max == operator_info::get_max_possible_num_of_repetitions() && min == 0) {
+        star_to_ast(subtree);
+    } else if (min == 0) {
+        left_open_range_to_ast(max, subtree);
         return;
+    } else if (max == operator_info::get_max_possible_num_of_repetitions()) {
+        right_open_range_to_ast(min, subtree);
+    } else {
+        closed_range_to_ast(min, max, subtree);
     }
-    if(min == 0){
-        right_open_range_to_ast(max, subtree);
-        return;
-    }
-    closed_range_to_ast(min, max, subtree);
 }
 
 void closed_range_to_ast(size_t lower_bound, size_t upper_bound, std::stack<std::shared_ptr<ast>>& subtree) {
@@ -110,7 +111,7 @@ void closed_range_to_ast(size_t lower_bound, size_t upper_bound, std::stack<std:
     subtree.emplace(accumulated);
 }
 
-void left_open_range_to_ast(size_t lower_bound, std::stack<std::shared_ptr<ast>>& subtree) {
+void right_open_range_to_ast(size_t lower_bound, std::stack<std::shared_ptr<ast>>& subtree) {
     std::shared_ptr<ast> copy = std::make_shared<ast>(subtree.top()->get_deep_copy());
     closed_range_to_ast(lower_bound, lower_bound, subtree);
     copy = std::make_shared<ast>(node::node_type::star, *copy);
@@ -119,7 +120,7 @@ void left_open_range_to_ast(size_t lower_bound, std::stack<std::shared_ptr<ast>>
     subtree.emplace(std::make_shared<ast>(node::node_type::concat, *top, *copy));
 }
 
-void right_open_range_to_ast(size_t upper_bound, std::stack<std::shared_ptr<ast>>& subtree){
+void left_open_range_to_ast(size_t upper_bound, std::stack<std::shared_ptr<ast>>& subtree){
     closed_range_to_ast(1, upper_bound, subtree);
     std::shared_ptr<ast> top = subtree.top();
     subtree.pop();
