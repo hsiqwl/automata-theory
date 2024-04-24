@@ -82,3 +82,7 @@ ast::const_iterator ast::end() const noexcept {
 ast::const_iterator ast::cend() const noexcept {
     return {root->next.get()};
 }
+
+const node &ast::get_root() const noexcept {
+    return *root;
+}

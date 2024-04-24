@@ -6,6 +6,8 @@
 
 class dfa{
 public:
+    dfa() = default;
+
     void add_state(const std::shared_ptr<state>& new_state);
 
     void make_state_accepting(state& state);

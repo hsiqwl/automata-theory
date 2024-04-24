@@ -5,7 +5,9 @@ void dfa_builder::calc_first_pos(node_ptr tree_node) {
     switch (tree_node->get_node_type()) {
         case node::node_type::leaf: {
             first_pos_table.emplace(tree_node, std::unordered_set<size_t>{leaf_counter});
-            alphabet.insert(tree_node->get_label());
+            if(tree_node->get_label() != '#') {
+                alphabet.insert(tree_node->get_label());
+            }
             char_to_pos_table[tree_node->get_label()].insert(leaf_counter);
             return;
         }
@@ -99,8 +101,12 @@ void dfa_builder::calc_follow_pos(node_ptr tree_node) {
 }
 
 
-dfa_builder::dfa_builder(const ast &tree) {
+dfa_builder::dfa_builder(const ast &tree): root(tree.get_root()) {
     leaf_counter = 1;
+    pre_build(tree);
+}
+
+void dfa_builder::pre_build(const ast &tree) {
     for (auto &tree_node: tree) {
         calc_first_pos(const_cast<node_ptr>(&tree_node));
         calc_last_pos(const_cast<node_ptr>(&tree_node));
@@ -109,16 +115,71 @@ dfa_builder::dfa_builder(const ast &tree) {
     for(auto &tree_node: tree){
         calc_follow_pos(const_cast<node_ptr>(&tree_node));
     }
-    for (auto &tree_node: tree) {
-        std::cout << "{";
-        for (auto i: first_pos_table[const_cast<node_ptr>(&tree_node)])
-            std::cout << i << ',';
-        std::cout << "} ";
-        std::cout << tree_node.get_label() << "{";
-        for (auto i: last_pos_table[const_cast<node_ptr>(&tree_node)])
-            std::cout << i << ',';
-        std::cout << "}\n";
+    size_t i = 1;
+    for(auto& set: follow_positions){
+        std::cout << "position: " << i << "  follow positions:";
+        for(auto pos: set){
+            std::cout << pos << ' ';
+        }
+        std::cout<<'\n';
+        ++i;
     }
 }
 
+dfa dfa_builder::build() {
+    dfa automaton;
 
+    std::unordered_map<std::set<size_t>, std::shared_ptr<state>> used_combinations;
+    std::unordered_map<std::shared_ptr<state>, std::set<size_t>> state_to_combination;
+    std::vector<std::shared_ptr<state>> unmarked_states;
+
+    std::shared_ptr<state> initial_state = std::make_shared<state>();
+    unmarked_states.emplace_back(initial_state);
+    automaton.add_state(initial_state);
+    automaton.set_initial_state(initial_state);
+    std::set<size_t> initial_positions{first_pos_table[const_cast<node_ptr>(&root)].begin(), first_pos_table[const_cast<node_ptr>(&root)].end()};
+    used_combinations.emplace(initial_positions, initial_state);
+    state_to_combination.emplace(initial_state, initial_positions);
+
+    while (!unmarked_states.empty()) {
+        std::shared_ptr<state> curr_state = unmarked_states[0];
+        unmarked_states.erase(unmarked_states.begin());
+        for (char c: alphabet) {
+            auto combination = get_positions_for_input_char(c, state_to_combination[curr_state]);
+            if (!combination.empty()) {
+                if (!is_contained_in(used_combinations, combination)) {
+                    std::shared_ptr<state> new_state = std::make_shared<state>();
+                    used_combinations.emplace(combination, new_state);
+                    state_to_combination.emplace(new_state, combination);
+                    unmarked_states.emplace_back(new_state);
+                    automaton.add_state(new_state);
+                    if(combination.contains(*char_to_pos_table['#'].begin())){
+                        automaton.make_state_accepting(*new_state);
+                    }
+                }
+                automaton.add_transition(c, curr_state, used_combinations[combination]);
+            }
+        }
+    }
+    return automaton;
+}
+
+
+std::set<size_t> dfa_builder::get_positions_for_input_char(char c, const std::set<size_t>& set) {
+    std::set<size_t> result;
+    for(auto pos: char_to_pos_table[c]) {
+        if (set.contains(pos)) {
+            result.insert(follow_positions[pos - 1].begin(), follow_positions[pos - 1].end());
+        }
+    }
+    return result;
+}
+
+bool dfa_builder::is_contained_in(const std::unordered_map<std::set<size_t>, std::shared_ptr<state>>& used_combinations,
+                                  const std::set<size_t> &set) {
+    for(auto& elem: used_combinations){
+        if(elem.first == set)
+            return true;
+    }
+    return false;
+}

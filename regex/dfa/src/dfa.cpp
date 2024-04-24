@@ -6,6 +6,7 @@ void dfa::add_transition(char c, std::shared_ptr<state> &from, const std::shared
 
 void dfa::make_state_accepting(state& state) {
     state.set_acceptance(true);
+    accepting_states.emplace_back(&state);
 }
 
 void dfa::set_initial_state(const std::shared_ptr<state> &initial) {

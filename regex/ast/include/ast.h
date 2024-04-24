@@ -19,6 +19,8 @@ public:
 
     typedef ast_iterator<true> const_iterator;
 
+    const node& get_root() const noexcept;
+
     iterator begin() noexcept;
 
     const_iterator begin() const noexcept;

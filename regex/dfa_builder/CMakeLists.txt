@@ -6,4 +6,4 @@ add_compile_options(-g)
 
 add_library(dfa_builder STATIC src/dfa_builder.cpp)
 target_include_directories(dfa_builder PUBLIC include)
-target_link_libraries(dfa_builder ast)
+target_link_libraries(dfa_builder ast dfa)

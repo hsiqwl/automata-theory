@@ -12,8 +12,8 @@ void state::add_transition(char c, const std::shared_ptr<state> &to_state) {
     transitions[static_cast<unsigned short>(c)] = to_state;
 }
 
-const state &state::get_following_state(char c) {
-    return *transitions[static_cast<unsigned short>(c)];
+const std::shared_ptr<state> &state::get_following_state(char c) {
+    return transitions[static_cast<unsigned short>(c)];
 }
 
 bool state::is_accepting() const noexcept {
