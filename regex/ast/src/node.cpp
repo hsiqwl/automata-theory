@@ -48,6 +48,6 @@ char node::get_label() const noexcept {
     return label;
 }
 
-node::node(const node &other) {
-
+const std::shared_ptr<node>& node::get_next() const noexcept {
+    return next;
 }

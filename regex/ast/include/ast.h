@@ -3,6 +3,7 @@
 #include "node.h"
 #include <stack>
 #include <functional>
+#include <ast_iterator.h>
 
 class ast{
 public:
@@ -14,7 +15,21 @@ public:
 
     [[nodiscard]] ast get_deep_copy() const;
 
-    void traverse(const std::function<void (const node&)>&);
+    typedef ast_iterator<false> iterator;
+
+    typedef ast_iterator<true> const_iterator;
+
+    iterator begin() noexcept;
+
+    const_iterator begin() const noexcept;
+
+    iterator end() noexcept;
+
+    const_iterator end() const noexcept;
+
+    const_iterator cbegin() const noexcept;
+
+    const_iterator cend() const noexcept;
 
 private:
     std::shared_ptr<node> root;

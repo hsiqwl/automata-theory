@@ -36,15 +36,15 @@ public:
 
     node(node_type type, const std::shared_ptr<node>& child);
 
-    node(const node& other);
+    [[nodiscard]] const std::shared_ptr<node>& get_next() const noexcept;
 
     [[nodiscard]] node_type get_node_type() const noexcept;
 
-    const node& get_right_child() const noexcept;
+    [[nodiscard]] const node& get_right_child() const noexcept;
 
-    const node& get_left_child() const noexcept;
+    [[nodiscard]] const node& get_left_child() const noexcept;
 
-    char get_label() const noexcept;
+    [[nodiscard]] char get_label() const noexcept;
 };
 
 

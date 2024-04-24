@@ -19,14 +19,6 @@ ast::ast(node::node_type root_type, ast &left, ast &right) {
     right.root->next = root;
 }
 
-void ast::traverse(const std::function<void(const node &)> &visitor) {
-    std::shared_ptr<node> visiting_node = find_most_left();
-    while (visiting_node != nullptr) {
-        visitor(*visiting_node);
-        visiting_node = visiting_node->next;
-    }
-}
-
 std::shared_ptr<node> ast::find_most_left() const noexcept {
     std::shared_ptr<node> most_left = root;
     while(most_left->left_child != nullptr){
@@ -37,11 +29,11 @@ std::shared_ptr<node> ast::find_most_left() const noexcept {
 
 ast ast::get_deep_copy() const{
     std::stack<std::shared_ptr<ast>> subtree;
-    std::shared_ptr<node> curr_node = find_most_left();
-    while(curr_node != nullptr) {
-        auto type = curr_node->type;
+    auto iter = begin();
+    while(iter != end()) {
+        auto type = iter->type;
         if (type == node::node_type::leaf) {
-            subtree.emplace(std::make_shared<ast>(std::make_shared<node>(curr_node->label)));
+            subtree.emplace(std::make_shared<ast>(std::make_shared<node>(iter->label)));
         }
         if (type == node::node_type::concat) {
             std::shared_ptr<ast> right = subtree.top();
@@ -62,7 +54,31 @@ ast ast::get_deep_copy() const{
             subtree.pop();
             subtree.emplace(std::make_shared<ast>(type, *sub_tree));
         }
-        curr_node = curr_node->next;
+        ++iter;
     }
     return *subtree.top();
+}
+
+ast::iterator ast::begin() noexcept {
+    return {find_most_left().get()};
+}
+
+ast::const_iterator ast::cbegin() const noexcept {
+    return {find_most_left().get()};
+}
+
+ast::const_iterator ast::begin() const noexcept {
+    return {find_most_left().get()};
+}
+
+ast::iterator ast::end() noexcept {
+    return {root->next.get()};
+}
+
+ast::const_iterator ast::end() const noexcept {
+    return {root->next.get()};
+}
+
+ast::const_iterator ast::cend() const noexcept {
+    return {root->next.get()};
 }
