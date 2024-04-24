@@ -36,12 +36,12 @@ node::node_type node::get_node_type() const noexcept {
     return type;
 }
 
-const node& node::get_right_child() const noexcept {
-    return *right_child;
+const std::shared_ptr<node>& node::get_right_child() const noexcept {
+    return right_child;
 }
 
-const node& node::get_left_child() const noexcept {
-    return *left_child;
+const std::shared_ptr<node>& node::get_left_child() const noexcept {
+    return left_child;
 }
 
 char node::get_label() const noexcept {
@@ -50,4 +50,8 @@ char node::get_label() const noexcept {
 
 const std::shared_ptr<node>& node::get_next() const noexcept {
     return next;
+}
+
+bool node::is_nullable() const noexcept {
+    return nullable;
 }

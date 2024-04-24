@@ -40,11 +40,13 @@ public:
 
     [[nodiscard]] node_type get_node_type() const noexcept;
 
-    [[nodiscard]] const node& get_right_child() const noexcept;
+    [[nodiscard]] const std::shared_ptr<node>& get_right_child() const noexcept;
 
-    [[nodiscard]] const node& get_left_child() const noexcept;
+    [[nodiscard]] const std::shared_ptr<node>& get_left_child() const noexcept;
 
     [[nodiscard]] char get_label() const noexcept;
+
+    bool is_nullable() const noexcept;
 };
 
 
