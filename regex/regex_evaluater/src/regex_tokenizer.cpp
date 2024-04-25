@@ -165,6 +165,12 @@ void regex_tokenizer::assert_expression() {
     mismatched_parenthesis = 0;
     assert_first_token(token_sequence.front());
     assert_last_token(token_sequence.back());
+    if(token_sequence.front().get_type() == token::token_type::left_parenthesis) {
+        mismatched_parenthesis++;
+    }
+    if(token_sequence.back().get_type() == token::token_type::right_parenthesis) {
+        mismatched_parenthesis--;
+    }
     for (auto iter = token_sequence.begin() + 1; iter < token_sequence.end() - 1; ++iter) {
         if (iter->get_type() == token::token_type::op) {
             switch (iter->get_operator_info().get_op_type()) {
@@ -199,8 +205,6 @@ void regex_tokenizer::assert_expression() {
 void regex_tokenizer::assert_first_token(const token &first_token) {
     if (first_token.get_type() == token::token_type::op || first_token.get_type() == token::token_type::right_parenthesis)
         throw std::exception();
-    if (first_token.get_type() == token::token_type::left_parenthesis)
-        mismatched_parenthesis++;
 }
 
 void regex_tokenizer::assert_last_token(const token &last_token) {
@@ -212,8 +216,6 @@ void regex_tokenizer::assert_last_token(const token &last_token) {
     }
     if (last_token.get_type() == token::token_type::left_parenthesis)
         throw std::invalid_argument("Last symbol can't be left parenthesis");
-    if (last_token.get_type() == token::token_type::right_parenthesis)
-        mismatched_parenthesis--;
 }
 
 void regex_tokenizer::assert_star_operation(const token &left_hand_token) {
