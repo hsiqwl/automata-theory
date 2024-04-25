@@ -4,11 +4,11 @@
 #include <memory>
 #include <set>
 #include <unordered_set>
-#include <unordered_map>
 #include <functional>
 #include <algorithm>
 #include "dfa.h"
 #include "ast.h"
+#include <boost/bimap.hpp>
 
 
 namespace std {

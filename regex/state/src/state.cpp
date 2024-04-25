@@ -9,11 +9,15 @@ void state::set_acceptance(bool acceptance) {
 }
 
 void state::add_transition(char c, const std::shared_ptr<state> &to_state) {
-    transitions[static_cast<unsigned short>(c)] = to_state;
+    auto sym = static_cast<unsigned char>(c);
+    auto index = static_cast<unsigned short>(sym);
+    transitions[index] = to_state;
 }
 
 const std::shared_ptr<state> &state::get_following_state(char c) {
-    return transitions[static_cast<unsigned short>(c)];
+    auto sym = static_cast<unsigned char>(c);
+    auto index = static_cast<unsigned short>(sym);
+    return transitions[index];
 }
 
 bool state::is_accepting() const noexcept {

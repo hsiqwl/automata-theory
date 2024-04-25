@@ -4,21 +4,23 @@
 #include <vector>
 #include <algorithm>
 
-class dfa{
+class dfa {
 public:
     dfa() = default;
 
-    void add_state(const std::shared_ptr<state>& new_state);
+    void add_state(const std::shared_ptr<state> &new_state);
 
-    void make_state_accepting(state& state);
+    void make_state_accepting(std::shared_ptr<state> &state);
 
-    [[nodiscard]] const std::vector<std::shared_ptr<state>>& get_states() const noexcept;
+    [[nodiscard]] const std::vector<std::shared_ptr<state>> &get_states() const noexcept;
 
-    [[nodiscard]] const state& get_curr_state() const noexcept;
+    [[nodiscard]] const std::shared_ptr<state> &get_curr_state() const noexcept;
 
-    void set_initial_state(const std::shared_ptr<state>& initial);
+    void set_initial_state(const std::shared_ptr<state> &initial);
 
-    void add_transition(char c, std::shared_ptr<state>& from, const std::shared_ptr<state>& to);
+    void add_transition(char c, std::shared_ptr<state> &from, const std::shared_ptr<state> &to);
+
+    void reset();
 
 private:
     std::vector<std::shared_ptr<state>> states;

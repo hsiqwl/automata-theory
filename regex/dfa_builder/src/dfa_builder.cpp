@@ -1,5 +1,4 @@
 #include "dfa_builder.h"
-#include <iostream>
 
 void dfa_builder::calc_first_pos(node_ptr tree_node) {
     switch (tree_node->get_node_type()) {
@@ -115,22 +114,12 @@ void dfa_builder::pre_build(const ast &tree) {
     for(auto &tree_node: tree){
         calc_follow_pos(const_cast<node_ptr>(&tree_node));
     }
-    size_t i = 1;
-    for(auto& set: follow_positions){
-        std::cout << "position: " << i << "  follow positions:";
-        for(auto pos: set){
-            std::cout << pos << ' ';
-        }
-        std::cout<<'\n';
-        ++i;
-    }
 }
 
 dfa dfa_builder::build() {
     dfa automaton;
-
-    std::unordered_map<std::set<size_t>, std::shared_ptr<state>> used_combinations;
-    std::unordered_map<std::shared_ptr<state>, std::set<size_t>> state_to_combination;
+    typedef boost::bimap<std::set<size_t>, std::shared_ptr<state>> bm_type;
+    bm_type combination_to_states;
     std::vector<std::shared_ptr<state>> unmarked_states;
 
     std::shared_ptr<state> initial_state = std::make_shared<state>();
@@ -138,32 +127,29 @@ dfa dfa_builder::build() {
     automaton.add_state(initial_state);
     automaton.set_initial_state(initial_state);
     std::set<size_t> initial_positions{first_pos_table[const_cast<node_ptr>(&root)].begin(), first_pos_table[const_cast<node_ptr>(&root)].end()};
-    used_combinations.emplace(initial_positions, initial_state);
-    state_to_combination.emplace(initial_state, initial_positions);
 
+    combination_to_states.insert(bm_type::value_type(initial_positions, initial_state));
     while (!unmarked_states.empty()) {
         std::shared_ptr<state> curr_state = unmarked_states[0];
         unmarked_states.erase(unmarked_states.begin());
         for (char c: alphabet) {
-            auto combination = get_positions_for_input_char(c, state_to_combination[curr_state]);
+            auto combination = get_positions_for_input_char(c, combination_to_states.right.find(curr_state)->second);
             if (!combination.empty()) {
-                if (!is_contained_in(used_combinations, combination)) {
+                if (combination_to_states.left.find(combination) == combination_to_states.left.end()) {
                     std::shared_ptr<state> new_state = std::make_shared<state>();
-                    used_combinations.emplace(combination, new_state);
-                    state_to_combination.emplace(new_state, combination);
+                    combination_to_states.insert(bm_type::value_type(combination, new_state));
                     unmarked_states.emplace_back(new_state);
                     automaton.add_state(new_state);
                     if(combination.contains(*char_to_pos_table['#'].begin())){
-                        automaton.make_state_accepting(*new_state);
+                        automaton.make_state_accepting(new_state);
                     }
                 }
-                automaton.add_transition(c, curr_state, used_combinations[combination]);
+                automaton.add_transition(c, curr_state, combination_to_states.left.find(combination)->second);
             }
         }
     }
     return automaton;
 }
-
 
 std::set<size_t> dfa_builder::get_positions_for_input_char(char c, const std::set<size_t>& set) {
     std::set<size_t> result;

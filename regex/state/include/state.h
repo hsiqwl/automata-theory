@@ -7,15 +7,13 @@ class state{
 public:
     state();
 
-    bool is_accepting() const noexcept;
+    [[nodiscard]] bool is_accepting() const noexcept;
 
     void add_transition(char c, const std::shared_ptr<state>& to_state);
 
     const std::shared_ptr<state>& get_following_state(char c);
 
     void set_acceptance(bool acceptance);
-
-
 
 private:
     std::array<std::shared_ptr<state>, 256> transitions;
