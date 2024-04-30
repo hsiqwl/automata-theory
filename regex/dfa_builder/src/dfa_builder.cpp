@@ -126,9 +126,15 @@ dfa dfa_builder::build() {
     unmarked_states.emplace_back(initial_state);
     automaton.add_state(initial_state);
     automaton.set_initial_state(initial_state);
-    std::set<size_t> initial_positions{first_pos_table[const_cast<node_ptr>(&root)].begin(), first_pos_table[const_cast<node_ptr>(&root)].end()};
+    std::set<size_t> initial_positions{first_pos_table[const_cast<node_ptr>(&root)].begin(),
+                                       first_pos_table[const_cast<node_ptr>(&root)].end()};
 
     combination_to_states.insert(bm_type::value_type(initial_positions, initial_state));
+
+    if (initial_positions.contains(*char_to_pos_table['#'].begin())) {
+        automaton.make_state_accepting(initial_state);
+    }
+
     while (!unmarked_states.empty()) {
         std::shared_ptr<state> curr_state = unmarked_states[0];
         unmarked_states.erase(unmarked_states.begin());
@@ -140,7 +146,7 @@ dfa dfa_builder::build() {
                     combination_to_states.insert(bm_type::value_type(combination, new_state));
                     unmarked_states.emplace_back(new_state);
                     automaton.add_state(new_state);
-                    if(combination.contains(*char_to_pos_table['#'].begin())){
+                    if (combination.contains(*char_to_pos_table['#'].begin())) {
                         automaton.make_state_accepting(new_state);
                     }
                 }
@@ -159,13 +165,4 @@ std::set<size_t> dfa_builder::get_positions_for_input_char(char c, const std::se
         }
     }
     return result;
-}
-
-bool dfa_builder::is_contained_in(const std::unordered_map<std::set<size_t>, std::shared_ptr<state>>& used_combinations,
-                                  const std::set<size_t> &set) {
-    for(auto& elem: used_combinations){
-        if(elem.first == set)
-            return true;
-    }
-    return false;
 }

@@ -8,13 +8,15 @@ regex::regex(std::string_view expression) {
     engine = builder.build();
 }
 
+regex::regex(const regex &other): engine(other.engine) {}
+
 bool regex::match(std::string_view string) {
     std::shared_ptr<state> curr_state = engine.get_curr_state();
     if (curr_state == nullptr) {
         throw std::logic_error("Fatal error, empty automaton");
     }
     for (char c: string) {
-        curr_state = curr_state->get_following_state(c);
+        curr_state = curr_state->get_following_state(c).lock();
         if (curr_state == nullptr) {
             engine.reset();
             return false;
@@ -24,4 +26,12 @@ bool regex::match(std::string_view string) {
         engine.reset();
         return true;
     }
+    engine.reset();
+    return false;
+}
+
+regex regex::get_complemented_language() const {
+    regex result(*this);
+    make_complementation(result.engine);
+    return result;
 }

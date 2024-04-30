@@ -9,6 +9,7 @@ add_subdirectory(ast_builder)
 add_subdirectory(state)
 add_subdirectory(dfa)
 add_subdirectory(dfa_builder)
+add_subdirectory(dfa_operations)
 add_subdirectory(regex_engine)
 
 add_executable(main main.cpp)

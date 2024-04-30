@@ -2,15 +2,20 @@
 #define REGEX_DFA_H
 #include "state.h"
 #include <vector>
+#include <unordered_map>
 #include <algorithm>
 
 class dfa {
 public:
     dfa() = default;
 
+    dfa(const dfa& other);
+
     void add_state(const std::shared_ptr<state> &new_state);
 
     void make_state_accepting(std::shared_ptr<state> &state);
+
+    void make_state_non_accepting(std::shared_ptr<state>& state);
 
     [[nodiscard]] const std::vector<std::shared_ptr<state>> &get_states() const noexcept;
 

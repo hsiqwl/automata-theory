@@ -3,6 +3,7 @@
 #include "regex_tokenizer.h"
 #include "ast_builder.h"
 #include "dfa_builder.h"
+#include "dfa_operations.h"
 
 class regex{
 public:
@@ -10,9 +11,14 @@ public:
 
     bool match(std::string_view string);
 
+    //regex get_reverse_language() const;
+
+    [[nodiscard]] regex get_complemented_language() const;
 
 private:
     dfa engine;
+
+    regex(const regex& other);
 };
 
 #endif //REGEX_REGEX_H

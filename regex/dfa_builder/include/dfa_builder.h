@@ -10,7 +10,6 @@
 #include "ast.h"
 #include <boost/bimap.hpp>
 
-
 namespace std {
     template<>
     struct hash<std::set<unsigned long>> {
@@ -24,7 +23,6 @@ namespace std {
         }
     };
 }
-
 
 class dfa_builder{
 public:
@@ -72,8 +70,6 @@ private:
     void calc_last_pos_for_star(node_ptr tree_node);
 
     std::set<size_t> get_positions_for_input_char(char c, const std::set<size_t>& set);
-
-    bool is_contained_in(const std::unordered_map<std::set<size_t>, std::shared_ptr<state>>& used_combinations,const std::set<size_t>& set);
 };
 
 #endif //REGEX_DFA_BUILDER_H
