@@ -11,27 +11,19 @@ regex::regex(std::string_view expression) {
 regex::regex(const regex &other): engine(other.engine) {}
 
 bool regex::match(std::string_view string) {
-    std::shared_ptr<state> curr_state = engine.get_curr_state();
-    if (curr_state == nullptr) {
-        throw std::logic_error("Fatal error, empty automaton");
-    }
     for (char c: string) {
-        curr_state = curr_state->get_following_state(c).lock();
-        if (curr_state == nullptr) {
+        engine.consume_input(c);
+        if (engine.is_in_error_state()) {
             engine.reset();
-            return false;
+            return is_complemented;
         }
     }
-    if (curr_state->is_accepting()) {
-        engine.reset();
-        return true;
-    }
     engine.reset();
-    return false;
+    return engine.is_in_accepting_state() ^ is_complemented;
 }
 
 regex regex::get_complemented_language() const {
     regex result(*this);
-    make_complementation(result.engine);
+    result.is_complemented = true;
     return result;
 }

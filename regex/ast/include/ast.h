@@ -13,7 +13,7 @@ public:
 
     ast(node::node_type root_type, ast& sub_tree);
 
-    [[nodiscard]] ast get_deep_copy() const;
+    [[nodiscard]] ast get_deep_copy() const; //copy constructor
 
     typedef ast_iterator<false> iterator;
 

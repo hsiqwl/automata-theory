@@ -1,29 +1,26 @@
 #ifndef REGEX_DFA_H
 #define REGEX_DFA_H
 #include "state.h"
+#include <functional>
 #include <vector>
 #include <unordered_map>
 #include <algorithm>
 
+class dfa_builder;
+
 class dfa {
 public:
+    friend class dfa_builder;
+
     dfa() = default;
 
     dfa(const dfa& other);
 
-    void add_state(const std::shared_ptr<state> &new_state);
+    void consume_input(char c) noexcept;
 
-    void make_state_accepting(std::shared_ptr<state> &state);
+    [[nodiscard]] bool is_in_error_state() const noexcept;
 
-    void make_state_non_accepting(std::shared_ptr<state>& state);
-
-    [[nodiscard]] const std::vector<std::shared_ptr<state>> &get_states() const noexcept;
-
-    [[nodiscard]] const std::shared_ptr<state> &get_curr_state() const noexcept;
-
-    void set_initial_state(const std::shared_ptr<state> &initial);
-
-    void add_transition(char c, std::shared_ptr<state> &from, const std::shared_ptr<state> &to);
+    [[nodiscard]] bool is_in_accepting_state() const noexcept;
 
     void reset();
 

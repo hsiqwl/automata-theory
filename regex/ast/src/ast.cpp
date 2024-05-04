@@ -27,22 +27,15 @@ std::shared_ptr<node> ast::find_most_left() const noexcept {
     return most_left;
 }
 
-ast ast::get_deep_copy() const{
+ast ast::get_deep_copy() const {
     std::stack<std::shared_ptr<ast>> subtree;
     auto iter = begin();
-    while(iter != end()) {
+    while (iter != end()) {
         auto type = iter->type;
         if (type == node::node_type::leaf) {
             subtree.emplace(std::make_shared<ast>(std::make_shared<node>(iter->label)));
         }
-        if (type == node::node_type::concat) {
-            std::shared_ptr<ast> right = subtree.top();
-            subtree.pop();
-            std::shared_ptr<ast> left = subtree.top();
-            subtree.pop();
-            subtree.emplace(std::make_shared<ast>(type, *left, *right));
-        }
-        if (type == node::node_type::alternation) {
+        if (type == node::node_type::concat || type == node::node_type::alternation) {
             std::shared_ptr<ast> right = subtree.top();
             subtree.pop();
             std::shared_ptr<ast> left = subtree.top();

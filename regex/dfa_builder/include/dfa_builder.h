@@ -6,6 +6,7 @@
 #include <unordered_set>
 #include <functional>
 #include <algorithm>
+#include <ranges>
 #include "dfa.h"
 #include "ast.h"
 #include <boost/bimap.hpp>
@@ -19,7 +20,7 @@ namespace std {
                 resulting_hash += elem;
                 resulting_hash *= elem;
             }
-            return resulting_hash << 17;
+            return resulting_hash;
         }
     };
 }
@@ -31,14 +32,18 @@ public:
     dfa build();
 
 private:
+    const char end_symbol = '#';
+
     size_t leaf_counter;
 
     typedef node* node_ptr;
 
     typedef std::unordered_set<size_t> position_set;
 
-    const node& root;
+    typedef boost::bimap<std::set<size_t>, std::shared_ptr<state>> bm_type;
 
+    const node& root;
+    
     std::unordered_map<node_ptr, position_set> first_pos_table;
 
     std::unordered_map<node_ptr, position_set> last_pos_table;
@@ -70,6 +75,14 @@ private:
     void calc_last_pos_for_star(node_ptr tree_node);
 
     std::set<size_t> get_positions_for_input_char(char c, const std::set<size_t>& set);
+
+    std::vector<std::shared_ptr<state>> construct_states(std::vector<std::shared_ptr<state>>& unmarked_states, bm_type& combination_to_states, const std::shared_ptr<state>& state);
+
+    dfa construct_dfa_from_states(std::vector<std::shared_ptr<state>>&& states);
+
+    static std::shared_ptr<state> make_error_state();
+
+    static void initialize_state(std::shared_ptr<state>& st, const std::shared_ptr<state>& error_state);
 };
 
 #endif //REGEX_DFA_BUILDER_H

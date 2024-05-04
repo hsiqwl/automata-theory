@@ -117,44 +117,56 @@ void dfa_builder::pre_build(const ast &tree) {
 }
 
 dfa dfa_builder::build() {
-    dfa automaton;
-    typedef boost::bimap<std::set<size_t>, std::shared_ptr<state>> bm_type;
     bm_type combination_to_states;
     std::vector<std::shared_ptr<state>> unmarked_states;
-
-    std::shared_ptr<state> initial_state = std::make_shared<state>();
-    unmarked_states.emplace_back(initial_state);
-    automaton.add_state(initial_state);
-    automaton.set_initial_state(initial_state);
+    std::shared_ptr<state> error_state = make_error_state();
     std::set<size_t> initial_positions{first_pos_table[const_cast<node_ptr>(&root)].begin(),
                                        first_pos_table[const_cast<node_ptr>(&root)].end()};
-
+    bool acceptance = initial_positions.contains(*char_to_pos_table[end_symbol].begin());
+    std::shared_ptr<state> initial_state = std::make_shared<state>(acceptance);
+    initialize_state(initial_state, error_state);
+    unmarked_states.emplace_back(initial_state);
     combination_to_states.insert(bm_type::value_type(initial_positions, initial_state));
+    auto states = construct_states(unmarked_states, combination_to_states, error_state);
+    states.emplace_back(error_state);
+    return construct_dfa_from_states(std::move(states));
+}
 
-    if (initial_positions.contains(*char_to_pos_table['#'].begin())) {
-        automaton.make_state_accepting(initial_state);
+dfa dfa_builder::construct_dfa_from_states(std::vector<std::shared_ptr<state>> &&states) {
+    dfa automaton;
+    automaton.initial_state = states[0];
+    automaton.curr_state = states[0];
+    automaton.states = std::move(states);
+    for (auto &state: automaton.states) {
+        if (state->is_accepting()) {
+            automaton.accepting_states.emplace_back(state);
+        }
     }
+    return automaton;
+}
 
+std::vector<std::shared_ptr<state>> dfa_builder::construct_states(std::vector<std::shared_ptr<state>> &unmarked_states,
+                                   dfa_builder::bm_type &combination_to_states, const std::shared_ptr<state>& error_state) {
+    std::vector<std::shared_ptr<state>> states;
     while (!unmarked_states.empty()) {
         std::shared_ptr<state> curr_state = unmarked_states[0];
         unmarked_states.erase(unmarked_states.begin());
+        states.emplace_back(curr_state);
         for (char c: alphabet) {
             auto combination = get_positions_for_input_char(c, combination_to_states.right.find(curr_state)->second);
             if (!combination.empty()) {
                 if (combination_to_states.left.find(combination) == combination_to_states.left.end()) {
-                    std::shared_ptr<state> new_state = std::make_shared<state>();
+                    bool acceptance = combination.contains(*char_to_pos_table[end_symbol].begin());
+                    std::shared_ptr<state> new_state = std::make_shared<state>(acceptance);
+                    initialize_state(new_state, error_state);
                     combination_to_states.insert(bm_type::value_type(combination, new_state));
                     unmarked_states.emplace_back(new_state);
-                    automaton.add_state(new_state);
-                    if (combination.contains(*char_to_pos_table['#'].begin())) {
-                        automaton.make_state_accepting(new_state);
-                    }
                 }
-                automaton.add_transition(c, curr_state, combination_to_states.left.find(combination)->second);
+                curr_state->add_transition(c, combination_to_states.left.find(combination)->second);
             }
         }
     }
-    return automaton;
+    return states;
 }
 
 std::set<size_t> dfa_builder::get_positions_for_input_char(char c, const std::set<size_t>& set) {
@@ -166,3 +178,18 @@ std::set<size_t> dfa_builder::get_positions_for_input_char(char c, const std::se
     }
     return result;
 }
+
+std::shared_ptr<state> dfa_builder::make_error_state() {
+    std::shared_ptr<state> error_state = std::make_shared<state>(false);
+    error_state->declare_as_error_state();
+    for(auto i = 0; i < 256; ++i){
+        error_state->add_transition(i, error_state);
+    }
+    return error_state;
+}
+
+void dfa_builder::initialize_state(std::shared_ptr<state> &st, const std::shared_ptr<state>& error_state) {
+    for(auto i = 0; i < 256; ++i)
+        st->add_transition(i, error_state);
+}
+

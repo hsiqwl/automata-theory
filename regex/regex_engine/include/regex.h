@@ -3,7 +3,6 @@
 #include "regex_tokenizer.h"
 #include "ast_builder.h"
 #include "dfa_builder.h"
-#include "dfa_operations.h"
 
 class regex{
 public:
@@ -17,6 +16,8 @@ public:
 
 private:
     dfa engine;
+
+    bool is_complemented = false;
 
     regex(const regex& other);
 };
