@@ -116,6 +116,13 @@ void dfa_builder::pre_build(const ast &tree) {
     }
 }
 
+nfa_simulator dfa_builder::get_nfa_simulator() {
+    std::unordered_set<size_t> initial_pos = {first_pos_table[const_cast<node_ptr>(&root)].begin(),
+                                              first_pos_table[const_cast<node_ptr>(&root)].end()};
+    std::unordered_set<size_t> last_pos{char_to_pos_table[end_symbol].begin(), char_to_pos_table[end_symbol].end()};
+    return {std::move(follow_positions), std::move(char_to_pos_table), std::move(initial_pos), std::move(last_pos)};
+}
+
 dfa dfa_builder::build() {
     bm_type combination_to_states;
     std::vector<std::shared_ptr<state>> unmarked_states;

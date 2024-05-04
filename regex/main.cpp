@@ -3,12 +3,7 @@
 #include "regex.h"
 
 int main() {
-    regex regexpr("a*");
-    bool result = regexpr.match("aaaaa");
+    regex regexpr("a|b");
+    bool result = regexpr.match_with_nfa("b");
     std::cout << std::boolalpha << std::format("string matches? -- {}\n", result);
-    {
-        regex copy = regexpr.get_complemented_language();
-        result = copy.match("b");
-        std::cout << std::boolalpha << std::format("string matches? -- {}\n", result);
-    }
 }

@@ -5,6 +5,7 @@
 #include <functional>
 #include <ast_iterator.h>
 
+
 class ast{
 public:
     ast(const std::shared_ptr<node>& new_root);
@@ -20,6 +21,8 @@ public:
     typedef ast_iterator<true> const_iterator;
 
     const node& get_root() const noexcept;
+
+    node& get_root();
 
     iterator begin() noexcept;
 

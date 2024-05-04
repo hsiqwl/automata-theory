@@ -6,6 +6,7 @@
 #include <memory>
 #include "terminal_info.h"
 #include "operator_info.h"
+#include "group_info.h"
 
 class token{
 public:
@@ -24,12 +25,18 @@ public:
 
     void set_terminal_info(const terminal_info& info);
 
+    void add_group_to_tracked_groups(size_t group_number);
+
     [[nodiscard]] const terminal_info& get_terminal_info() const;
 
     [[nodiscard]] const operator_info& get_operator_info() const;
 
+    [[nodiscard]] const group_info& get_group_info() const;
+
 private:
     token_type type;
+
+    group_info tracked_groups;
 
     std::variant<terminal_info, operator_info> token_info;
 };

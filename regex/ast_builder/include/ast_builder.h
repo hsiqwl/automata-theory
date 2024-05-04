@@ -8,6 +8,8 @@ public:
     static ast tokens_to_ast(const std::pair<regex_tokenizer::token_iterator, regex_tokenizer::token_iterator>& iterators);
 
 private:
+    inline static char end_symbol = '#';
+
     static void operation_to_ast(const operator_info& info, std::stack<std::shared_ptr<ast>>& subtree);
 
     static void concat_to_ast(std::stack<std::shared_ptr<ast>>& subtree);

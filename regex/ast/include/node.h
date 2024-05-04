@@ -1,6 +1,7 @@
 #ifndef REGEX_NODE_H
 #define REGEX_NODE_H
 #include <memory>
+#include "group_info.h"
 
 class ast;
 
@@ -29,12 +30,18 @@ private:
 
     char label;
 
+    group_info tracked_groups;
+
 public:
     node(char label);
 
     node(node_type type, const std::shared_ptr<node>& left, const std::shared_ptr<node>& right);
 
     node(node_type type, const std::shared_ptr<node>& child);
+
+    void set_group_info(const group_info& info);
+
+    const group_info& get_group_info() const noexcept;
 
     [[nodiscard]] const std::shared_ptr<node>& get_next() const noexcept;
 

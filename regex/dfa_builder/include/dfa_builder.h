@@ -10,6 +10,7 @@
 #include "dfa.h"
 #include "ast.h"
 #include <boost/bimap.hpp>
+#include "nfa_simulator.h"
 
 namespace std {
     template<>
@@ -31,6 +32,8 @@ public:
 
     dfa build();
 
+    nfa_simulator get_nfa_simulator();
+
 private:
     const char end_symbol = '#';
 
@@ -43,7 +46,7 @@ private:
     typedef boost::bimap<std::set<size_t>, std::shared_ptr<state>> bm_type;
 
     const node& root;
-    
+
     std::unordered_map<node_ptr, position_set> first_pos_table;
 
     std::unordered_map<node_ptr, position_set> last_pos_table;

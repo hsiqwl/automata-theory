@@ -1,13 +1,19 @@
 #include "ast_builder.h"
 
-ast ast_builder::tokens_to_ast(const std::pair<regex_tokenizer::token_iterator, regex_tokenizer::token_iterator>& iterators){
+ast ast_builder::tokens_to_ast(const std::pair<regex_tokenizer::token_iterator, regex_tokenizer::token_iterator>& iterators) {
     std::stack<std::shared_ptr<ast>> subtree;
-    for(auto iter = iterators.first; iter < iterators.second; ++iter){
-        if(iter->get_type() == token::token_type::terminal)
+    for (auto iter = iterators.first; iter < iterators.second; ++iter) {
+        if (iter->get_type() == token::token_type::terminal)
             terminal_to_ast(iter->get_terminal_info(), subtree);
         else
             operation_to_ast(iter->get_operator_info(), subtree);
+        subtree.top()->get_root().set_group_info(iter->get_group_info());
     }
+    std::shared_ptr<ast> left = subtree.top();
+    subtree.pop();
+    std::shared_ptr<node> node_ptr = std::make_shared<node>(end_symbol);
+    std::shared_ptr<ast> right = std::make_shared<ast>(node_ptr);
+    subtree.emplace(std::make_shared<ast>(node::node_type::concat, *left, *right));
     return *subtree.top();
 }
 

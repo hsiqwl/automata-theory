@@ -55,3 +55,12 @@ const std::shared_ptr<node>& node::get_next() const noexcept {
 bool node::is_nullable() const noexcept {
     return nullable;
 }
+
+void node::set_group_info(const group_info &info) {
+    tracked_groups = info;
+}
+
+const group_info &node::get_group_info() const noexcept {
+    return tracked_groups;
+}
+

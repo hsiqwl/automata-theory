@@ -6,7 +6,8 @@ add_compile_options(-g)
 
 add_library(token STATIC src/token.cpp
         src/terminal_info.cpp
-        src/operator_info.cpp)
+        src/operator_info.cpp
+        src/group_info.cpp)
 target_include_directories(token PUBLIC include)
 
 add_library(regex_tokenizer STATIC src/regex_tokenizer.cpp)

@@ -10,11 +10,15 @@ public:
 
     bool match(std::string_view string);
 
+    bool match_with_nfa(std::string_view string);
+
     //regex get_reverse_language() const;
 
     [[nodiscard]] regex get_complemented_language() const;
 
 private:
+    nfa_simulator nfa;
+
     dfa engine;
 
     bool is_complemented = false;

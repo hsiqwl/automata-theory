@@ -27,3 +27,11 @@ const operator_info &token::get_operator_info() const{
 const terminal_info &token::get_terminal_info() const{
     return std::get<terminal_info>(token_info);
 }
+
+const group_info &token::get_group_info() const {
+    return tracked_groups;
+}
+
+void token::add_group_to_tracked_groups(size_t group_number) {
+    tracked_groups.add_group(group_number);
+}

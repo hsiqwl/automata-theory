@@ -244,9 +244,6 @@ void regex_tokenizer::assert_concatenation_operation(const token &left_hand_toke
 
 regex_tokenizer::regex_tokenizer(std::string expression) {
     mismatched_parenthesis = 0;
-    expression.insert(expression.begin(), '(');
-    expression.push_back(')');
-    expression.push_back('#');
     turn_into_token_sequence(expression);
     assert_expression();
     infix_to_postfix({token_sequence.begin(), token_sequence.end()});
@@ -279,7 +276,6 @@ void regex_tokenizer::infix_to_postfix(std::pair<token_iterator, token_iterator>
         postfix_token_sequence.emplace_back(std::move(operator_stack.top()));
         operator_stack.pop();
     }
-
     token_sequence = postfix_token_sequence;
 }
 
@@ -311,6 +307,8 @@ void regex_tokenizer::handle_right_parenthesis(std::stack<token> &operator_stack
         postfix_token_sequence.emplace_back(std::move(operator_stack.top()));
         operator_stack.pop();
     }
+    size_t sequence_size = postfix_token_sequence.size();
+    postfix_token_sequence[sequence_size - 1].add_group_to_tracked_groups(++group_counter);
     operator_stack.pop();
 }
 

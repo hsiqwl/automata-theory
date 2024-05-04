@@ -79,3 +79,7 @@ ast::const_iterator ast::cend() const noexcept {
 const node &ast::get_root() const noexcept {
     return *root;
 }
+
+node &ast::get_root() {
+    return *root;
+}

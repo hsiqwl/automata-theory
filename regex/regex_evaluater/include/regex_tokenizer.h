@@ -11,7 +11,10 @@
 class regex_tokenizer{
 private:
     std::vector<token> token_sequence;
+
     size_t mismatched_parenthesis = 0;
+
+    size_t group_counter = 0;
 
 public:
     typedef std::vector<token>::const_iterator token_iterator;
@@ -43,13 +46,13 @@ private:
 
     void assert_expression();
 
-    static void handle_operator(std::stack<token>& operator_stack, std::vector<token>& postfix_token_sequence, const token& op_token);
+    void handle_operator(std::stack<token>& operator_stack, std::vector<token>& postfix_token_sequence, const token& op_token);
 
-    static void handle_left_parenthesis(std::stack<token>& operator_stack, const token& parenthesis_token);
+    void handle_left_parenthesis(std::stack<token>& operator_stack, const token& parenthesis_token);
 
-    static void handle_right_parenthesis(std::stack<token>& operator_stack, std::vector<token>& postfix_token_sequence);
+    void handle_right_parenthesis(std::stack<token>& operator_stack, std::vector<token>& postfix_token_sequence);
 
-    static void handle_terminal(std::vector<token>& postfix_token_sequence,const token& terminal_token);
+    void handle_terminal(std::vector<token>& postfix_token_sequence,const token& terminal_token);
 
     void infix_to_postfix(std::pair<token_iterator, token_iterator>&& iterators);
 };
