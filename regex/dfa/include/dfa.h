@@ -10,11 +10,15 @@ class dfa_builder;
 
 class dfa_to_regex;
 
+class dfa_minimizer;
+
 class dfa {
 public:
     friend class dfa_builder;
 
     friend class dfa_to_regex;
+
+    friend class dfa_minimizer;
 
     dfa() = default;
 

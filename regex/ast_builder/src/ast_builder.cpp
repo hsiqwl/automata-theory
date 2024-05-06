@@ -132,3 +132,29 @@ void ast_builder::left_open_range_to_ast(size_t upper_bound, std::stack<std::sha
     subtree.pop();
     subtree.emplace(std::make_shared<ast>(node::node_type::optional, *top));
 }
+
+
+ast ast_builder::get_reverse_ast(const ast &tree) {
+    std::stack<std::shared_ptr<ast>> subtree;
+    for (const auto &iter: tree) {
+        auto type = iter.get_node_type();
+        if (type == node::node_type::leaf) {
+            subtree.emplace(std::make_shared<ast>(std::make_shared<node>(iter.get_label())));
+        }
+        if (type == node::node_type::concat || type == node::node_type::alternation) {
+            std::shared_ptr<ast> right = subtree.top();
+            subtree.pop();
+            std::shared_ptr<ast> left = subtree.top();
+            subtree.pop();
+            if (type == node::node_type::concat && right->get_root().get_label() == end_symbol)
+                std::swap(right, left);
+            subtree.emplace(std::make_shared<ast>(type, *right, *left));
+        }
+        if (type == node::node_type::star || type == node::node_type::optional) {
+            std::shared_ptr<ast> sub_tree = subtree.top();
+            subtree.pop();
+            subtree.emplace(std::make_shared<ast>(type, *sub_tree));
+        }
+    }
+    return *subtree.top();
+}

@@ -14,6 +14,7 @@ add_subdirectory(group_tracker)
 add_subdirectory(dfa_operations)
 add_subdirectory(regex_engine)
 add_subdirectory(dfa_to_regex)
+add_subdirectory(dfa_minimizer)
 
 add_executable(main main.cpp)
 add_compile_options(-g -fsanitize=address)

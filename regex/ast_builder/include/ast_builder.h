@@ -7,6 +7,7 @@ class ast_builder{
 public:
     static ast tokens_to_ast(const std::pair<regex_tokenizer::token_iterator, regex_tokenizer::token_iterator>& iterators);
 
+    static ast get_reverse_ast(const ast& tree);
 private:
     inline static char end_symbol = '#';
 

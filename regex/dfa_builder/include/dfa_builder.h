@@ -11,6 +11,7 @@
 #include "ast.h"
 #include <boost/bimap.hpp>
 #include "nfa.h"
+#include "dfa_minimizer.h"
 
 namespace std {
     template<>
@@ -85,8 +86,6 @@ private:
     static std::shared_ptr<state> make_error_state();
 
     static void initialize_state(std::shared_ptr<state>& st, const std::shared_ptr<state>& error_state);
-
-    void minimize_dfa(dfa& automaton);
 };
 
 #endif //REGEX_DFA_BUILDER_H

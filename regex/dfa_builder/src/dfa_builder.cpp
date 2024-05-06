@@ -141,7 +141,9 @@ dfa dfa_builder::build() {
     combination_to_states.insert(bm_type::value_type(initial_positions, initial_state));
     auto states = construct_states(unmarked_states, combination_to_states, error_state);
     states.emplace_back(error_state);
-    return construct_dfa_from_states(std::move(states));
+    dfa automaton = construct_dfa_from_states(std::move(states));
+    dfa_minimizer::minimize(automaton);
+    return automaton;
 }
 
 dfa dfa_builder::construct_dfa_from_states(std::vector<std::shared_ptr<state>> &&states) {
@@ -204,4 +206,3 @@ void dfa_builder::initialize_state(std::shared_ptr<state> &st, const std::shared
     for(auto i = 0; i < 256; ++i)
         st->add_transition(i, error_state);
 }
-

@@ -42,3 +42,18 @@ regex regex::get_complemented_language() const {
 std::string regex::get_initial_regex() const noexcept {
     return dfa_to_regex::convert_dfa_to_regex(engine);
 }
+
+regex regex::get_reverse_language() const {
+    regex reverse;
+    std::string initial_regex = get_initial_regex();
+    regex_tokenizer tokenizer(initial_regex);
+    std::pair<regex_tokenizer::token_iterator, regex_tokenizer::token_iterator> iterators = std::make_pair(
+            tokenizer.get_token_sequence().begin(), tokenizer.get_token_sequence().end());
+    ast tree = ast_builder::tokens_to_ast(iterators);
+    tree = ast_builder::get_reverse_ast(tree);
+    dfa_builder builder(tree);
+    reverse.engine = builder.build();
+    reverse.nfa_engine = builder.get_nfa_simulator();
+    reverse.is_complemented = is_complemented;
+    return reverse;
+}
