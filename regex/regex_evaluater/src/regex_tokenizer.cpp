@@ -1,6 +1,6 @@
 #include "regex_tokenizer.h"
 #include <iostream>
-token regex_tokenizer::get_repetition_token_ptr(const char* &iter) {
+token regex_tokenizer::get_repetition_token_ptr(std::string::iterator& iter) {
     token repetition_token(token::token_type::op);
     operator_info info(operator_info::operator_type::repetition);
     switch (*iter) {
@@ -31,7 +31,7 @@ token regex_tokenizer::get_repetition_token_ptr(const char* &iter) {
     return repetition_token;
 }
 
-void regex_tokenizer::parse_repetition_operator(const char *&iter, size_t& min_rep, size_t& max_rep) {
+void regex_tokenizer::parse_repetition_operator(std::string::iterator& iter, size_t& min_rep, size_t& max_rep) {
     min_rep = 0;
     max_rep = 0;
     bool first_value = true;
@@ -55,7 +55,7 @@ void regex_tokenizer::parse_repetition_operator(const char *&iter, size_t& min_r
     }
 }
 
-void regex_tokenizer::parse_character_class_terminal(const char *&iter, std::string &singles, char &range_min,
+void regex_tokenizer::parse_character_class_terminal(std::string::iterator& iter, std::string &singles, char &range_min,
                                                      char &range_max) {
     bool single_range = true;
     singles.push_back(*iter);
@@ -85,7 +85,7 @@ void regex_tokenizer::parse_character_class_terminal(const char *&iter, std::str
     }
 }
 
-void regex_tokenizer::turn_into_token_sequence(std::string_view expression) {
+void regex_tokenizer::turn_into_token_sequence(std::string expression) {
     bool after_escape_character = false;
     for(auto it = expression.begin(); it != expression.end(); ++it){
         char c = *it;
@@ -244,7 +244,7 @@ void regex_tokenizer::assert_concatenation_operation(const token &left_hand_toke
 
 regex_tokenizer::regex_tokenizer(std::string expression) {
     mismatched_parenthesis = 0;
-    turn_into_token_sequence(expression);
+    turn_into_token_sequence(std::move(expression));
     assert_expression();
     infix_to_postfix({token_sequence.begin(), token_sequence.end()});
 }

@@ -8,9 +8,13 @@
 
 class dfa_builder;
 
+class dfa_to_regex;
+
 class dfa {
 public:
     friend class dfa_builder;
+
+    friend class dfa_to_regex;
 
     dfa() = default;
 

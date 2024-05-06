@@ -3,6 +3,7 @@
 #include "regex_tokenizer.h"
 #include "ast_builder.h"
 #include "dfa_builder.h"
+#include "dfa_to_regex.h"
 
 class regex{
 public:
@@ -16,8 +17,9 @@ public:
 
     [[nodiscard]] regex get_complemented_language() const;
 
+    std::string get_initial_regex() const noexcept;
 private:
-    nfa_simulator nfa;
+    nfa nfa_engine;
 
     dfa engine;
 

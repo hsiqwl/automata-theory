@@ -10,7 +10,7 @@
 #include "dfa.h"
 #include "ast.h"
 #include <boost/bimap.hpp>
-#include "nfa_simulator.h"
+#include "nfa.h"
 
 namespace std {
     template<>
@@ -18,8 +18,7 @@ namespace std {
         size_t operator()(const std::set<unsigned long> &set) const noexcept {
             size_t resulting_hash;
             for (auto elem: set) {
-                resulting_hash += elem;
-                resulting_hash *= elem;
+                resulting_hash += std::hash<unsigned long>()(elem);
             }
             return resulting_hash;
         }
@@ -32,7 +31,7 @@ public:
 
     dfa build();
 
-    nfa_simulator get_nfa_simulator();
+    nfa get_nfa_simulator();
 
 private:
     const char end_symbol = '#';
@@ -86,6 +85,8 @@ private:
     static std::shared_ptr<state> make_error_state();
 
     static void initialize_state(std::shared_ptr<state>& st, const std::shared_ptr<state>& error_state);
+
+    void minimize_dfa(dfa& automaton);
 };
 
 #endif //REGEX_DFA_BUILDER_H

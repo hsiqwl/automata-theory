@@ -1,7 +1,9 @@
 #include "node.h"
 
-node::node(char label): label(label) {
-    nullable = false;
+node::node(char label): label(label), nullable(false) {
+    if(label == '$'){
+        nullable = true;
+    }
     type = node_type::leaf;
 }
 

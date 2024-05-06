@@ -16,6 +16,10 @@ private:
 
     size_t group_counter = 0;
 
+    typedef std::string::iterator iterator;
+
+    typedef std::string::const_iterator const_iterator;
+
 public:
     typedef std::vector<token>::const_iterator token_iterator;
 
@@ -24,13 +28,13 @@ public:
     [[nodiscard]] const std::vector<token>& get_token_sequence() const noexcept;
 
 private:
-    token get_repetition_token_ptr(std::string_view::iterator& iter);
+    token get_repetition_token_ptr(std::string::iterator& iter);
 
-    void parse_repetition_operator(std::string_view::iterator& iter, size_t& min_rep, size_t& max_rep);
+    void parse_repetition_operator(std::string::iterator& iter, size_t& min_rep, size_t& max_rep);
 
-    void parse_character_class_terminal(std::string_view::iterator& iter, std::string& singles, char& range_min, char& range_max);
+    void parse_character_class_terminal(std::string::iterator& iter, std::string& singles, char& range_min, char& range_max);
 
-    void turn_into_token_sequence(std::string_view expression);
+    void turn_into_token_sequence(std::string expression);
 
     void add_concat_tokens();
 

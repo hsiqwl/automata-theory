@@ -3,11 +3,15 @@
 void dfa_builder::calc_first_pos(node_ptr tree_node) {
     switch (tree_node->get_node_type()) {
         case node::node_type::leaf: {
-            first_pos_table.emplace(tree_node, std::unordered_set<size_t>{leaf_counter});
-            if(tree_node->get_label() != '#') {
+            if (tree_node->get_label() != '$')
+                first_pos_table.emplace(tree_node, std::unordered_set<size_t>{leaf_counter});
+            else
+                first_pos_table.emplace(tree_node, std::unordered_set<size_t>{});
+            if (tree_node->get_label() != '#' && tree_node->get_label() != '$') {
                 alphabet.insert(tree_node->get_label());
             }
-            char_to_pos_table[tree_node->get_label()].insert(leaf_counter);
+            if (tree_node->get_label() != '$')
+                char_to_pos_table[tree_node->get_label()].insert(leaf_counter);
             return;
         }
         case node::node_type::concat: {
@@ -28,7 +32,8 @@ void dfa_builder::calc_first_pos(node_ptr tree_node) {
 void dfa_builder::calc_last_pos(node_ptr tree_node) {
     switch (tree_node->get_node_type()) {
         case node::node_type::leaf: {
-            last_pos_table.emplace(tree_node, std::unordered_set<size_t>{leaf_counter++});
+            if(tree_node->get_label() != '$')
+                last_pos_table.emplace(tree_node, std::unordered_set<size_t>{leaf_counter++});
             return;
         }
         case node::node_type::concat: {
@@ -116,7 +121,7 @@ void dfa_builder::pre_build(const ast &tree) {
     }
 }
 
-nfa_simulator dfa_builder::get_nfa_simulator() {
+nfa dfa_builder::get_nfa_simulator() {
     std::unordered_set<size_t> initial_pos = {first_pos_table[const_cast<node_ptr>(&root)].begin(),
                                               first_pos_table[const_cast<node_ptr>(&root)].end()};
     std::unordered_set<size_t> last_pos{char_to_pos_table[end_symbol].begin(), char_to_pos_table[end_symbol].end()};

@@ -1,9 +1,9 @@
-#include "nfa_simulator.h"
+#include "nfa.h"
 
-nfa_simulator::nfa_simulator(std::vector<std::unordered_set<size_t>> &&follow_positions,
-                             std::array<std::unordered_set<size_t>, 256> &&char_to_positions,
-                             std::unordered_set<size_t> &&initial_positions,
-                             std::unordered_set<size_t>&& last_positions){
+nfa::nfa(std::vector<std::unordered_set<size_t>> &&follow_positions,
+         std::array<std::unordered_set<size_t>, 256> &&char_to_positions,
+         std::unordered_set<size_t> &&initial_positions,
+         std::unordered_set<size_t>&& last_positions){
     follow_pos = std::move(follow_positions);
     char_to_pos = std::move(char_to_positions);
     initial_pos = std::move(initial_positions);
@@ -11,15 +11,15 @@ nfa_simulator::nfa_simulator(std::vector<std::unordered_set<size_t>> &&follow_po
     curr_pos = initial_pos;
 }
 
-void nfa_simulator::reset() noexcept {
+void nfa::reset() noexcept {
     curr_pos = initial_pos;
 }
 
-bool nfa_simulator::is_in_accepting_state() const noexcept {
+bool nfa::is_in_accepting_state() const noexcept {
     return std::find_first_of(curr_pos.begin(), curr_pos.end(), last_pos.begin(), last_pos.end()) != curr_pos.end();
 }
 
-void nfa_simulator::consume_input(char c) {
+void nfa::consume_input(char c) {
     if (!curr_pos.empty()) {
         std::unordered_set<size_t> new_curr_pos;
         for (auto pos_of_char: char_to_pos[c]) {

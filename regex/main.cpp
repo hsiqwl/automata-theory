@@ -3,7 +3,7 @@
 #include "regex.h"
 
 int main() {
-    regex regexpr("a|b");
-    bool result = regexpr.match_with_nfa("b");
-    std::cout << std::boolalpha << std::format("string matches? -- {}\n", result);
+    regex regexpr("a|bcded(ea)*");
+    std::string re = regexpr.get_initial_regex();
+    std::cout << re << "\n";
 }
