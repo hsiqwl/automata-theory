@@ -312,11 +312,11 @@ void regex_tokenizer::handle_right_parenthesis(std::stack<token> &operator_stack
     size_t sequence_size = postfix_token_sequence.size();
     auto &last_token = postfix_token_sequence[sequence_size - 1];
     last_token.add_group_to_tracked_groups(group_number_stack.top());
-    group_number_stack.pop();
     bool is_repetitive = last_token.get_type() == token::token_type::op
                          && last_token.get_operator_info().get_op_type() == operator_info::operator_type::repetition
                          && last_token.get_operator_info().get_max_num_of_repetitions() ==
-                            operator_info::get_max_possible_num_of_repetitions();
+                            operator_info::get_max_possible_num_of_repetitions() || group_number_stack.top() == 0;
+    group_number_stack.pop();
     if (is_repetitive) {
         last_token.set_group_repetitive();
     }

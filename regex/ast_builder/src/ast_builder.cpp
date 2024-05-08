@@ -103,17 +103,18 @@ void ast_builder::repetition_to_ast(const operator_info& info, std::stack<std::s
 }
 
 void ast_builder::closed_range_to_ast(size_t lower_bound, size_t upper_bound, std::stack<std::shared_ptr<ast>>& subtree) {
-    std::shared_ptr<ast> accumulated = std::make_shared<ast>(subtree.top()->get_deep_copy());
+    std::shared_ptr<ast> copied_ast = std::make_shared<ast>(subtree.top()->get_deep_copy());
+    std::shared_ptr<ast> accumulated = subtree.top();
+    subtree.pop();
     for (size_t i = 0; i + 1 < lower_bound; ++i) {
-        std::shared_ptr<ast> copy = std::make_shared<ast>(subtree.top()->get_deep_copy());
+        std::shared_ptr<ast> copy = std::make_shared<ast>(copied_ast->get_deep_copy());
         accumulated = std::make_shared<ast>(node::node_type::concat, *accumulated, *copy);
     }
     for (size_t i = lower_bound; i < upper_bound; ++i) {
-        std::shared_ptr<ast> copy = std::make_shared<ast>(subtree.top()->get_deep_copy());
+        std::shared_ptr<ast> copy = std::make_shared<ast>(copied_ast->get_deep_copy());
         copy = std::make_shared<ast>(node::node_type::optional, *copy);
         accumulated = std::make_shared<ast>(node::node_type::concat, *accumulated, *copy);
     }
-    subtree.pop();
     subtree.emplace(accumulated);
 }
 
