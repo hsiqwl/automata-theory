@@ -27,6 +27,8 @@ public:
 
     void add_group_to_tracked_groups(size_t group_number);
 
+    void set_group_repetitive();
+
     [[nodiscard]] const terminal_info& get_terminal_info() const;
 
     [[nodiscard]] const operator_info& get_operator_info() const;

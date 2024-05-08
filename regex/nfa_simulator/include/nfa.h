@@ -26,6 +26,8 @@ public:
 
     void consume_input(char c);
 
+    const std::unordered_set<size_t>& get_curr_positions() const noexcept;
+
     bool is_in_accepting_state() const noexcept;
 
     void reset() noexcept;

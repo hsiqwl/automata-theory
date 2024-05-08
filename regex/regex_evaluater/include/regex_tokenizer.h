@@ -10,16 +10,13 @@
 
 class regex_tokenizer{
 private:
+    std::stack<size_t> group_number_stack;
+
     std::vector<token> token_sequence;
 
     size_t mismatched_parenthesis = 0;
 
     size_t group_counter = 0;
-
-    typedef std::string::iterator iterator;
-
-    typedef std::string::const_iterator const_iterator;
-
 public:
     typedef std::vector<token>::const_iterator token_iterator;
 

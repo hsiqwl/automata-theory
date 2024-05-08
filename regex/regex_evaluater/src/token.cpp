@@ -35,3 +35,7 @@ const group_info &token::get_group_info() const {
 void token::add_group_to_tracked_groups(size_t group_number) {
     tracked_groups.add_group(group_number);
 }
+
+void token::set_group_repetitive() {
+    tracked_groups.set_repetitive();
+}

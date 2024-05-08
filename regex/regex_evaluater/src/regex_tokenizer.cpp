@@ -244,6 +244,7 @@ void regex_tokenizer::assert_concatenation_operation(const token &left_hand_toke
 
 regex_tokenizer::regex_tokenizer(std::string expression) {
     mismatched_parenthesis = 0;
+    expression = '(' + expression + ')';
     turn_into_token_sequence(std::move(expression));
     assert_expression();
     infix_to_postfix({token_sequence.begin(), token_sequence.end()});
@@ -284,6 +285,7 @@ void regex_tokenizer::handle_terminal(std::vector<token>& postfix_token_sequence
 }
 
 void regex_tokenizer::handle_left_parenthesis(std::stack<token> &operator_stack, const token& parenthesis_token) {
+    group_number_stack.push(group_counter++);
     operator_stack.push(parenthesis_token);
 }
 
@@ -308,7 +310,16 @@ void regex_tokenizer::handle_right_parenthesis(std::stack<token> &operator_stack
         operator_stack.pop();
     }
     size_t sequence_size = postfix_token_sequence.size();
-    postfix_token_sequence[sequence_size - 1].add_group_to_tracked_groups(++group_counter);
+    auto &last_token = postfix_token_sequence[sequence_size - 1];
+    last_token.add_group_to_tracked_groups(group_number_stack.top());
+    group_number_stack.pop();
+    bool is_repetitive = last_token.get_type() == token::token_type::op
+                         && last_token.get_operator_info().get_op_type() == operator_info::operator_type::repetition
+                         && last_token.get_operator_info().get_max_num_of_repetitions() ==
+                            operator_info::get_max_possible_num_of_repetitions();
+    if (is_repetitive) {
+        last_token.set_group_repetitive();
+    }
     operator_stack.pop();
 }
 

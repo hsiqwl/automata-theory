@@ -12,6 +12,7 @@
 #include <boost/bimap.hpp>
 #include "nfa.h"
 #include "dfa_minimizer.h"
+#include "group_manager.h"
 
 namespace std {
     template<>
@@ -32,7 +33,7 @@ public:
 
     dfa build();
 
-    nfa get_nfa_simulator();
+    group_manager get_group_manager() const noexcept;
 
 private:
     const char end_symbol = '#';
@@ -56,6 +57,12 @@ private:
     std::unordered_set<char> alphabet;
 
     std::array<position_set, 256> char_to_pos_table;
+
+    group_manager manager;
+
+    nfa get_nfa_simulator();
+
+    void build_group_manager(const ast& tree);
 
     void pre_build(const ast& tree);
 

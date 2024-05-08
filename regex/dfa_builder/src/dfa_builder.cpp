@@ -119,6 +119,7 @@ void dfa_builder::pre_build(const ast &tree) {
     for(auto &tree_node: tree){
         calc_follow_pos(const_cast<node_ptr>(&tree_node));
     }
+    build_group_manager(tree);
 }
 
 nfa dfa_builder::get_nfa_simulator() {
@@ -143,6 +144,7 @@ dfa dfa_builder::build() {
     states.emplace_back(error_state);
     dfa automaton = construct_dfa_from_states(std::move(states));
     dfa_minimizer::minimize(automaton);
+    manager.set_engine(get_nfa_simulator());
     return automaton;
 }
 
@@ -205,4 +207,23 @@ std::shared_ptr<state> dfa_builder::make_error_state() {
 void dfa_builder::initialize_state(std::shared_ptr<state> &st, const std::shared_ptr<state>& error_state) {
     for(auto i = 0; i < 256; ++i)
         st->add_transition(i, error_state);
+}
+
+void dfa_builder::build_group_manager(const ast &tree) {
+    for (auto &tree_node: tree) {
+        auto &group_info = tree_node.get_group_info();
+        auto first = group_info.get_tracked_groups().first;
+        auto last = group_info.get_tracked_groups().second;
+        while (first != last) {
+            std::unordered_set<size_t> &starting_positions(first_pos_table[const_cast<node_ptr>(&tree_node)]);
+            std::unordered_set<size_t> &ending_positions(last_pos_table[const_cast<node_ptr>(&tree_node)]);
+            group_tracker tracker(starting_positions, ending_positions, group_info.group_is_repetitive());
+            manager.manage_group(*first, std::move(tracker));
+            ++first;
+        }
+    }
+}
+
+group_manager dfa_builder::get_group_manager() const noexcept {
+    return manager;
 }

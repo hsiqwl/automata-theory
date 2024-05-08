@@ -31,3 +31,7 @@ void nfa::consume_input(char c) {
         curr_pos = new_curr_pos;
     }
 }
+
+const std::unordered_set<size_t> &nfa::get_curr_positions() const noexcept {
+    return curr_pos;
+}

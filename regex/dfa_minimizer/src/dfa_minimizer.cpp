@@ -9,13 +9,13 @@ void dfa_minimizer::minimize(dfa &automaton) {
     minimize_table(non_accepting_table, automaton);
     std::vector<std::shared_ptr<state>> new_states;
     for(auto& transitions: accepting_table){
-        new_states.emplace_back(automaton.states[transitions.first]);
+        new_states.emplace_back(std::move(automaton.states[transitions.first]));
     }
     automaton.accepting_states = new_states;
     for(auto& transitions: non_accepting_table){
-        new_states.emplace_back(automaton.states[transitions.first]);
+        new_states.emplace_back(std::move(automaton.states[transitions.first]));
     }
-    automaton.states = new_states;
+    automaton.states = std::move(new_states);
 }
 
 void dfa_minimizer::initialize_correspondence_table(const std::vector<std::shared_ptr<state>> &states) {

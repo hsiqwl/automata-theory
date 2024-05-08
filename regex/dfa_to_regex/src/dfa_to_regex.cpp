@@ -34,7 +34,7 @@ std::string dfa_to_regex::convert_dfa_to_regex(const dfa &automaton) {
                 find_paths(i + 1, j + 1, k);
             }
         }
-        paths = new_paths;
+        paths = std::move(new_paths);
     }
     size_t initial = 0;
     for(; initial < automaton.states.size() - 1; ++initial) {
