@@ -217,7 +217,8 @@ void dfa_builder::build_group_manager(const ast &tree) {
         while (first != last) {
             std::unordered_set<size_t> &starting_positions(first_pos_table[const_cast<node_ptr>(&tree_node)]);
             std::unordered_set<size_t> &ending_positions(last_pos_table[const_cast<node_ptr>(&tree_node)]);
-            group_tracker tracker(starting_positions, ending_positions, group_info.group_is_repetitive());
+            size_t pos_of_end = *char_to_pos_table[end_symbol].begin();
+            group_tracker tracker(starting_positions, ending_positions, group_info.group_is_repetitive(), pos_of_end);
             manager.manage_group(*first, std::move(tracker));
             ++first;
         }

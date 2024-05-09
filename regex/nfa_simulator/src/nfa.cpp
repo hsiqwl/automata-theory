@@ -3,7 +3,7 @@
 nfa::nfa(std::vector<std::unordered_set<size_t>> &&follow_positions,
          std::array<std::unordered_set<size_t>, 256> &&char_to_positions,
          std::unordered_set<size_t> &&initial_positions,
-         std::unordered_set<size_t>&& last_positions){
+         std::unordered_set<size_t>&& last_positions) {
     follow_pos = std::move(follow_positions);
     char_to_pos = std::move(char_to_positions);
     initial_pos = std::move(initial_positions);

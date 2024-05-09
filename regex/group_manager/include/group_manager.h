@@ -9,7 +9,6 @@ private:
     std::unordered_map<size_t, group_tracker> groups;
 
     nfa nfa_engine;
-
 public:
     group_manager() = default;
 
