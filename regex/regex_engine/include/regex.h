@@ -5,8 +5,12 @@
 #include "dfa_builder.h"
 #include "dfa_to_regex.h"
 
+class match_result;
+
 class regex{
 public:
+    friend match_result;
+
     regex(std::string_view expression);
 
     regex(const regex& other) = default;
@@ -18,8 +22,6 @@ public:
     [[nodiscard]] regex get_complemented_language() const;
 
     std::string get_initial_regex() const noexcept;
-
-    std::string get_capture_group(size_t number);
 
 private:
     regex() = default;

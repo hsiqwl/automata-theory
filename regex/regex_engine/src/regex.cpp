@@ -46,7 +46,3 @@ regex regex::get_reverse_language() const {
     reverse.is_complemented = is_complemented;
     return reverse;
 }
-
-std::string regex::get_capture_group(size_t number) {
-    return manager.get_group_substring(number);
-}

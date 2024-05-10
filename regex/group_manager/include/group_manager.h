@@ -4,12 +4,16 @@
 #include "nfa.h"
 #include <unordered_map>
 
+class match_result;
+
 class group_manager{
 private:
     std::unordered_map<size_t, group_tracker> groups;
 
     nfa nfa_engine;
 public:
+    friend class match_result;
+
     group_manager() = default;
 
     void set_engine(nfa&& engine);
