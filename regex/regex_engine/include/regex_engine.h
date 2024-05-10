@@ -1,5 +1,5 @@
-#ifndef REGEX_REGEX_H
-#define REGEX_REGEX_H
+#ifndef REGEX_REGEX_ENGINE_H
+#define REGEX_REGEX_ENGINE_H
 #include "regex_tokenizer.h"
 #include "ast_builder.h"
 #include "dfa_builder.h"
@@ -33,4 +33,4 @@ private:
     bool is_complemented = false;
 };
 
-#endif //REGEX_REGEX_H
+#endif //REGEX_REGEX_ENGINE_H

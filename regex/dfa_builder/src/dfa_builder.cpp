@@ -143,7 +143,8 @@ dfa dfa_builder::build() {
     auto states = construct_states(unmarked_states, combination_to_states, error_state);
     states.emplace_back(error_state);
     dfa automaton = construct_dfa_from_states(std::move(states));
-    dfa_minimizer::minimize(automaton);
+    dfa_minimizer minimizer;
+    minimizer.minimize(automaton);
     manager.set_engine(get_nfa_simulator());
     return automaton;
 }

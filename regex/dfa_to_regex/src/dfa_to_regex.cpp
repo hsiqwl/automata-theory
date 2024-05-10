@@ -96,19 +96,19 @@ std::string dfa_to_regex::repeat(const std::string &first) {
 }
 
 std::string dfa_to_regex::alternate(const std::string &first, const std::string &second) {
-    if(first.empty() && second.empty())
+    if (first.empty() && second.empty())
         return {};
-    if(first.empty())
+    if (first.empty())
         return second;
-    if(second.empty())
+    if (second.empty())
         return first;
-    if(is_epsilon_string(first) && is_epsilon_string(second))
+    if (is_epsilon_string(first) && is_epsilon_string(second))
         return first;
-    if(is_epsilon_string(first))
-        return append_operator(second,'?');
-    if(is_epsilon_string(second))
+    if (is_epsilon_string(first))
+        return append_operator(second, '?');
+    if (is_epsilon_string(second))
         return append_operator(first, '?');
-    if(first == second)
+    if (first == second)
         return first;
     std::string result;
     result = append_operator(first, '|');

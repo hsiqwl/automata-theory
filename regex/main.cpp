@@ -1,15 +1,8 @@
-#include <iostream>
-#include "regex.h"
-#include "match_results.h"
-
-int main() {
-    try {
-        regex re("a(bc)aspf(aksf)");
-        match_result submatches(re, "a");
-        for(auto& submatch: submatches){
-            std::cout << submatch << '\n';
-        }
-    }catch (std::exception& e){
-        std::cout << e.what()<<'\n';
-    }
+#include <gtest/gtest.h>
+#include "regex_engine.h"
+int main(int argc, char* argv[]) {
+    regex r1("a?aa+"); //for emails
+    std::cout << r1.get_initial_regex() << '\n';
+    //::testing::InitGoogleTest(&argc, argv);
+    //return RUN_ALL_TESTS();
 }
