@@ -10,6 +10,9 @@ std::string dfa_to_regex::get_labels_for_simple_transition(size_t from, size_t t
             size_t char_code = std::distance(begin, iter);
             char symbol = static_cast<char>(char_code);
             std::string label(1, symbol);
+            if(symbol == '.' || symbol == '*' || symbol == '+' || symbol == '?' || symbol == '{' || symbol == '[' || symbol == '}' || symbol == ']' || symbol == '|' || symbol == '%'){
+                label.insert(label.begin(), '%');
+            }
             labels = alternate(labels, label);
         }
     }
@@ -54,12 +57,12 @@ std::string dfa_to_regex::convert_dfa_to_regex(const dfa &automaton) {
 }
 
 /// Rijk = Rij(k-1) | Rik(k-1).(Rkk(k-1))*.Rkj(k-1)
-void dfa_to_regex::find_paths(size_t from, size_t to,size_t path_number) {
+void dfa_to_regex::find_paths(size_t from, size_t to, size_t path_number) {
     std::string &Rij_prev = paths[{from, to}];
     std::string &Rik_prev = paths[{from, path_number}];
     std::string &Rkk_prev = paths[{path_number, path_number}];
     std::string &Rkj_prev = paths[{path_number, to}];
-    std::string new_path = alternate(Rij_prev, concatenate(Rik_prev, concatenate(repeat(Rkk_prev), Rkj_prev)));
+    std::string new_path = alternate(Rij_prev, concatenate(concatenate(Rik_prev, repeat(Rkk_prev)), Rkj_prev));
     new_paths[{from, to}] = new_path;
 }
 
@@ -83,7 +86,7 @@ std::string dfa_to_regex::concatenate(const std::string &first, const std::strin
         return second;
     if (is_epsilon_string(second))
         return first;
-    return first + second;
+    return '(' + first + ")(" + second + ')';
 }
 
 std::string dfa_to_regex::repeat(const std::string &first) {
@@ -111,9 +114,7 @@ std::string dfa_to_regex::alternate(const std::string &first, const std::string 
     if (first == second)
         return first;
     std::string result;
-    result = append_operator(first, '|');
-    result += append_operator(second, '|');
-    result.pop_back();
+    result = '(' + first + ")|(" + second + ')';
     return result;
 }
 

@@ -176,4 +176,27 @@ TEST(regex_to_string, emails){
     regex r1("([a-z]|[A-Z]|[0-9])+@([a-z]|[A-Z]|[0-9])+%.(ru|com)"); //for emails
     regex r2(r1.get_initial_regex());
     ASSERT_EQ(r1.match("example@gmail.com"), r2.match("example@gmail.com"));
+    ASSERT_EQ(r1.match("example@yandex.ru"), r2.match("example@yandex.ru"));
+    ASSERT_EQ(r1.match("example@gmail.su"), r2.match("example@gmail.su"));
+    ASSERT_EQ(r1.match("exampleGgmail.com"), r2.match("exampleGgmail.com"));
 }
+
+TEST(regex_to_string, phone_numbers){
+    regex r1("(%+7|8)(-[0-9]{3,3}){2,2}(-[0-9]{2,2}){2,2}");
+    regex r2(r1.get_initial_regex());//for phone numbers
+    ASSERT_EQ(r1.match("8-996-217-48-53"), r2.match("8-996-217-48-53"));
+    ASSERT_EQ(r1.match("+7-893-392-13-64"), r2.match("+7-893-392-13-64"));
+    ASSERT_EQ(r1.match("8999-535-24-13"), r2.match("8999-535-24-13"));
+}
+
+TEST(regex_to_string, words_with_even_amount_of_letters){
+    regex r1("(([a-z]|[A-Z]){2,2})+");
+    regex r2(r1.get_initial_regex());
+    ASSERT_EQ(r1.match("aa"), r2.match("aa"));
+    ASSERT_EQ(r1.match("ldgk"), r2.match("ldgk"));
+    ASSERT_EQ(r1.match("skdgnojs"), r2.match("skdgnojs"));
+    ASSERT_EQ(r1.match("adskpdn"), r2.match("adskpdn"));
+    ASSERT_EQ(r1.match("a"), r2.match("a"));
+}
+
+
