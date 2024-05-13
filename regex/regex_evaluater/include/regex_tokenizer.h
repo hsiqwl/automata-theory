@@ -16,7 +16,7 @@ private:
 
     size_t mismatched_parenthesis = 0;
 
-    size_t group_counter = 0;
+    size_t group_counter = 1;
 public:
     typedef std::vector<token>::const_iterator token_iterator;
 

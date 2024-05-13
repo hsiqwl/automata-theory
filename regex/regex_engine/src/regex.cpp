@@ -11,7 +11,6 @@ regex::regex(std::string_view expression) {
 
 bool regex::match(std::string_view string) {
     for (char c: string) {
-        manager.consume_input(c);
         engine.consume_input(c);
         if (engine.is_in_error_state()) {
             engine.reset();

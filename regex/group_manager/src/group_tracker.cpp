@@ -2,44 +2,70 @@
 
 group_tracker::group_tracker(const std::unordered_set<size_t> &starting, const std::unordered_set<size_t> &ending,
                              bool is_repetitive, size_t pos_of_end): is_repetitive(is_repetitive) {
-    start_min = *std::min_element(starting.begin(), starting.end());
-    end_max = *std::max_element(ending.begin(), ending.end());
+    size_t start_min = *std::min_element(starting.begin(), starting.end());
+    size_t end_max = *std::max_element(ending.begin(), ending.end());
     for(auto i = start_min; i <= end_max; ++i){
         tracked_states.insert(i);
     }
     starting_states = starting;
-    position_of_end_symbol = pos_of_end;
+    ending_states = ending;
+}
+
+group_tracker::group_tracker(group_tracker &&first, group_tracker &&second) {
+    starting_states = std::move(first.starting_states);
+    starting_states.merge(std::move(second.starting_states));
+    ending_states = std::move(first.ending_states);
+    ending_states.merge(std::move(second.ending_states));
+    size_t start_min = *std::min_element(starting_states.begin(), starting_states.end());
+    size_t end_max = *std::max_element(ending_states.begin(), ending_states.end());
+    for (auto i = start_min; i <= end_max; ++i) {
+        tracked_states.insert(i);
+    }
+    is_repetitive = first.is_repetitive && second.is_repetitive;
 }
 
 std::string group_tracker::get_substring() const noexcept {
     return substring;
 }
 
-void group_tracker::transform_substring(const std::unordered_set<size_t> &curr_state, char input) {
-    if (within_subexpression_positions(curr_state)) {
-        std::unordered_set<size_t> intersection;
-        for (auto state: curr_state) {
-            if (tracked_states.contains(state)) {
-                intersection.insert(state);
+bool group_tracker::entering_capturing_state(size_t from, size_t to) {
+    bool first_predicate =  !tracked_states.contains(from);
+    bool second_predicate = ending_states.contains(from);
+    return (first_predicate || second_predicate) && starting_states.contains(to);
+}
+
+bool group_tracker::exiting_capturing_state(size_t from, size_t to) {
+    return ending_states.contains(from) && !tracked_states.contains(to);
+}
+
+bool group_tracker::transitioning_within_capturing_states(size_t from, size_t to) {
+    return tracked_states.contains(from) && tracked_states.contains(to);
+}
+
+std::string group_tracker::find_longest_substring(const std::vector<std::pair<size_t, char>> &path) {
+    std::string char_path;
+    for(auto iter = path.begin() + 1; iter != path.end(); ++iter) {
+        size_t from = (iter - 1)->first;
+        size_t to = iter->first;
+        if(transitioning_within_capturing_states(from, to) || exiting_capturing_state(from, to)){
+            if(starting_states.contains(from) && !is_repetitive){
+                char_path.clear();
             }
+            char_path.push_back((iter - 1)->second);
         }
-        if (!intersection.empty()) {
-            if (contains_starting_states(intersection)) {
-                if (!is_repetitive)
-                    substring.clear();
-            }
-            substring.push_back(input);
+    }
+    return char_path;
+}
+
+void group_tracker::set_substring(const std::vector<std::vector<std::pair<size_t, char>>>& paths) {
+    for (auto &path: paths) {
+        std::string char_path = find_longest_substring(path);
+        if (char_path.size() > substring.size()) {
+            substring = std::move(char_path);
         }
     }
 }
-bool group_tracker::contains_starting_states(const std::unordered_set<size_t> &set) const{
-    return std::any_of(starting_states.begin(), starting_states.end(),
-                       [&set](size_t state) { return set.contains(state); });
-}
 
-bool group_tracker::within_subexpression_positions(const std::unordered_set<size_t> &curr_positions) const{
-    std::unordered_set<size_t> curr_positions_without_end_pos = curr_positions;
-    curr_positions_without_end_pos.erase(position_of_end_symbol);
-    auto curr_max = std::max_element(curr_positions_without_end_pos.begin(), curr_positions_without_end_pos.end());
-    return curr_max != curr_positions_without_end_pos.end() && *curr_max <= end_max;
+void group_tracker::reset_substring() {
+    substring.clear();
 }

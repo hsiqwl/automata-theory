@@ -25,10 +25,19 @@ const std::string &match_result::operator [] (int index) const {
 }
 
 match_result::match_result(regex &executor, std::string_view string) {
-    if (executor.match(string)) {
+    for (char c: string) {
+        executor.manager.nfa_engine.consume_input(c);
+    }
+    if (executor.manager.nfa_engine.is_in_accepting_state()) {
+        executor.manager.set_substrings();
         submatch.resize(executor.manager.groups.size());
-        for (auto &iter: executor.manager.groups) {
-            submatch[iter.first] = iter.second.get_substring();
+        for (auto &group: executor.manager.groups) {
+            submatch[group.first] = group.second.get_substring();
         }
     }
+    executor.manager.reset();
+}
+
+size_t match_result::size() const noexcept {
+    return submatch.size();
 }

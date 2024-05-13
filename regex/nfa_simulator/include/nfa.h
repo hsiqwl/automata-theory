@@ -4,6 +4,8 @@
 #include <unordered_set>
 #include <array>
 #include <algorithm>
+#include <stack>
+#include "trie.h"
 
 class nfa{
 private:
@@ -17,6 +19,13 @@ private:
 
     std::unordered_set<size_t> last_pos;
 
+    std::vector<std::shared_ptr<trie_node>> leafs;
+
+    std::shared_ptr<trie_node> root;
+
+    char get_char_for_position(size_t pos);
+
+    void reset_trie();
 public:
     nfa() = default;
 
@@ -26,11 +35,11 @@ public:
 
     void consume_input(char c);
 
-    const std::unordered_set<size_t>& get_curr_positions() const noexcept;
-
     bool is_in_accepting_state() const noexcept;
 
     void reset() noexcept;
+
+    std::vector<std::vector<std::pair<size_t, char>>> get_paths_to_end_state() const noexcept;
 };
 
 #endif //REGEX_NFA_H

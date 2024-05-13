@@ -14,6 +14,9 @@ ast ast_builder::tokens_to_ast(const std::pair<regex_tokenizer::token_iterator, 
     std::shared_ptr<node> node_ptr = std::make_shared<node>(end_symbol);
     std::shared_ptr<ast> right = std::make_shared<ast>(node_ptr);
     subtree.emplace(std::make_shared<ast>(node::node_type::concat, *left, *right));
+    group_info root_info(true);
+    root_info.add_group(0);
+    subtree.top()->get_root().set_group_info(root_info);
     return *subtree.top();
 }
 
@@ -72,8 +75,8 @@ void ast_builder::single_character_to_ast(const terminal_info& info, std::stack<
 void ast_builder::character_class_to_ast(const terminal_info& info, std::stack<std::shared_ptr<ast>>& subtree) {
     std::shared_ptr<node> root = std::make_shared<node>(info.get_range_min());
     std::shared_ptr<ast> tree = std::make_shared<ast>(root);
-    size_t start = (size_t) info.get_range_min() + 1;
-    size_t end = (size_t) info.get_range_max();
+    size_t start = (size_t)info.get_range_min() + 1;
+    size_t end = (size_t)info.get_range_max();
     for (; start <= end; ++start) {
         root = std::make_shared<node>((char) start);
         std::shared_ptr<ast> tree_from_curr_root = std::make_shared<ast>(root);

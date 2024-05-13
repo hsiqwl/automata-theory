@@ -15,6 +15,7 @@ add_subdirectory(regex_engine)
 add_subdirectory(dfa_to_regex)
 add_subdirectory(dfa_minimizer)
 add_subdirectory(match_results)
+add_subdirectory(trie)
 
 add_executable(main main.cpp tests/tests.cpp)
 add_compile_options(-g -fsanitize=address)

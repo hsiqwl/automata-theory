@@ -199,4 +199,54 @@ TEST(regex_to_string, words_with_even_amount_of_letters){
     ASSERT_EQ(r1.match("a"), r2.match("a"));
 }
 
+TEST(capturing, simple_group){
+    regex r("a(bc)");
+    match_result result(r, "abc");
+    ASSERT_TRUE(result.size() == 2);
+    ASSERT_TRUE(result[0] == "abc");
+    ASSERT_TRUE(result[1] == "bc");
+    ASSERT_TRUE(*result.begin() == "abc");
+    ASSERT_TRUE(*(result.begin() + 1) == "bc");
+    ASSERT_TRUE(result.begin() + 2 == result.end());
+}
 
+TEST(capturing, multiple_groups){
+    regex r("a(bc)dgd(sdg)");
+    match_result result(r, "abcdgdsdg");
+    ASSERT_TRUE(result.size() == 3);
+    ASSERT_TRUE(result[0] == "abcdgdsdg");
+    ASSERT_TRUE(result[1] == "bc");
+    ASSERT_TRUE(result[2] == "sdg");
+    ASSERT_TRUE(*(result.begin()) == result[0]);
+    ASSERT_TRUE(*(result.begin() + 1) == result[1]);
+    ASSERT_TRUE(*(result.begin() + 2) == result[2]);
+    ASSERT_TRUE(result.begin() + 3 == result.end());
+}
+
+TEST(capturing, failed_match){
+    regex r("abdc");
+    match_result result(r, "abcd");
+    ASSERT_TRUE(result.size() == 0);
+    ASSERT_TRUE(result.begin() == result.end());
+}
+
+TEST(capturing, star){
+    regex r1("(a)*");
+    match_result result(r1, "aaaaa");
+    ASSERT_TRUE(result[0] == "aaaaa");
+    ASSERT_TRUE(result[1] == "a");
+
+    regex r2("(a|b)*");
+    match_result res(r2, "aaabbab");
+    ASSERT_TRUE(res[0] == "aaabbab");
+    ASSERT_TRUE(res[1] == "b");
+}
+
+TEST(capturing, emails){
+    regex r("([a-z]|[A-Z]|[0-9])+@([a-z]|[A-Z]|[0-9])+%.(ru|com)"); //for emails
+    match_result result(r, "absfls@gmail.com");
+    ASSERT_TRUE(result[0] == "absfls@gmail.com");
+    ASSERT_TRUE(result[1] == "s");
+    ASSERT_TRUE(result[2] == "l");
+    ASSERT_TRUE(result[3] == "com");
+}

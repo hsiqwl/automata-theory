@@ -47,6 +47,7 @@ ast ast::get_deep_copy() const {
             subtree.pop();
             subtree.emplace(std::make_shared<ast>(type, *sub_tree));
         }
+        subtree.top()->root->set_group_info(iter->tracked_groups);
         ++iter;
     }
     return *subtree.top();

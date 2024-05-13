@@ -23,6 +23,10 @@ public:
     std::string get_group_substring(size_t group_number);
 
     void manage_group(size_t group_number, group_tracker&& tracker);
+
+    void set_substrings();
+
+    void reset();
 };
 
 #endif //REGEX_GROUP_MANAGER_H

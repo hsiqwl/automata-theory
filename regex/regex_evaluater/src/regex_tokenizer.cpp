@@ -244,7 +244,6 @@ void regex_tokenizer::assert_concatenation_operation(const token &left_hand_toke
 
 regex_tokenizer::regex_tokenizer(std::string expression) {
     mismatched_parenthesis = 0;
-    expression = '(' + expression + ')';
     turn_into_token_sequence(std::move(expression));
     assert_expression();
     infix_to_postfix({token_sequence.begin(), token_sequence.end()});
@@ -315,7 +314,7 @@ void regex_tokenizer::handle_right_parenthesis(std::stack<token> &operator_stack
     bool is_repetitive = last_token.get_type() == token::token_type::op
                          && last_token.get_operator_info().get_op_type() == operator_info::operator_type::repetition
                          && last_token.get_operator_info().get_max_num_of_repetitions() ==
-                            operator_info::get_max_possible_num_of_repetitions() || group_number_stack.top() == 0;
+                            operator_info::get_max_possible_num_of_repetitions();
     group_number_stack.pop();
     if (is_repetitive) {
         last_token.set_group_repetitive();

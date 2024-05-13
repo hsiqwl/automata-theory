@@ -1,16 +1,15 @@
 #ifndef REGEX_MATCH_RESULTS_H
 #define REGEX_MATCH_RESULTS_H
 #include "regex_engine.h"
-#include "iterator.h"
 
 class match_result{
 private:
     std::vector<std::string> submatch;
 
 public:
-    typedef match_result_iterator<true> const_iterator;
+    typedef std::vector<std::string>::const_iterator const_iterator;
 
-    typedef match_result_iterator<false> iterator;
+    typedef std::vector<std::string>::iterator iterator;
 
     match_result(regex& executor, std::string_view string);
 
@@ -25,6 +24,8 @@ public:
     std::string& operator [] (int index);
 
     const std::string& operator [] (int index) const;
+
+    size_t size() const noexcept;
 };
 
 

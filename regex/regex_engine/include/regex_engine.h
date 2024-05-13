@@ -13,8 +13,6 @@ public:
 
     regex(std::string_view expression);
 
-    regex(const regex& other) = default;
-
     bool match(std::string_view string);
 
     regex get_reverse_language() const;
