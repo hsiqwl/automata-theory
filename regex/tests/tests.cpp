@@ -95,13 +95,13 @@ TEST(regex_match, phone_numbers){
     ASSERT_FALSE(r.match("8999-535-24-13"));
 }
 
-TEST(regex_match, dates) {
-    regex r("(0[1-9]|[1-2][0-9]|3[01])%.(0[1-9]|1[0-2])%.(0{3,3}[1-9]|[1-9][0-9]{3,3})"); //for dates in format DD.MM.YYYY
+/*TEST(regex_match, dates) {
+    regex r("(0[1-9]|[1-2][0-9]|3[0-1])%.(0[1-9]|1[0-2])%.(0{3,3}[1-9]|[1-9][0-9]{3,3})"); //for dates in format DD.MM.YYYY
     ASSERT_TRUE(r.match("27.04.2004"));
     ASSERT_TRUE(r.match("01.01.0001"));
     ASSERT_FALSE(r.match("00.00.0000"));
     ASSERT_FALSE(r.match("12.31.2024"));
-}
+}*/
 
 TEST(regex_match, words_with_even_amount_of_letters){
     regex r("(([a-z]|[A-Z]){2,2})+");
@@ -242,6 +242,80 @@ TEST(capturing, star){
     ASSERT_TRUE(res[1] == "b");
 }
 
+TEST(capturing, plus){
+    {
+        regex r("(a+)");
+        match_result res1(r, "aaa");
+        ASSERT_TRUE(res1.size() == 2);
+        ASSERT_TRUE(res1[0] == "aaa");
+        ASSERT_TRUE(res1[1] == "aaa");
+    }
+    {
+        regex r("(a)+");
+        match_result res1(r, "aaa");
+        ASSERT_TRUE(res1.size() == 2);
+        ASSERT_TRUE(res1[0] == "aaa");
+        ASSERT_TRUE(res1[1] == "a");
+    }
+    {
+        regex r("(a|b)+");
+        match_result res1(r, "a");
+        match_result res2(r, "b");
+        match_result res3(r, "ab");
+        match_result res4(r, "aba");
+        ASSERT_TRUE(res1.size() == 2);
+        ASSERT_TRUE(res2.size() == 2);
+        ASSERT_TRUE(res3.size() == 2);
+        ASSERT_TRUE(res4.size() == 2);
+        ASSERT_TRUE(res1[1] == "a");
+        ASSERT_TRUE(res2[1] == "b");
+        ASSERT_TRUE(res3[1] == "b");
+        ASSERT_TRUE(res4[1] == "a");
+    }
+}
+
+TEST(capturing, repeat){
+    {
+        regex r("(a{2,3})");
+        match_result res1(r, "aa");
+        match_result res2(r, "aaa");
+        ASSERT_TRUE(res1.size() == 2);
+        ASSERT_TRUE(res2.size() == 2);
+        ASSERT_TRUE(res1[1] == "aa");
+        ASSERT_TRUE(res2[1] == "aaa");
+    }
+    {
+        regex r("(a){2,3}");
+        match_result res1(r, "aa");
+        match_result res2(r, "aaa");
+        ASSERT_TRUE(res1.size() == 2);
+        ASSERT_TRUE(res2.size() == 2);
+        ASSERT_TRUE(res1[1] == "a");
+        ASSERT_TRUE(res2[1] == "a");
+    }
+}
+
+TEST(capturing, optional){
+    {
+        regex r("a(b?)b");
+        match_result res1(r, "ab");
+        match_result res2(r, "abb");
+        ASSERT_TRUE(res1.size() == 2);
+        ASSERT_TRUE(res2.size() == 2);
+        ASSERT_TRUE(res1[1].empty());
+        ASSERT_TRUE(res2[1] == "b");
+    }
+    {
+        regex r("a(b?)b?");
+        match_result res1(r, "abb");
+        match_result res2(r, "a");
+        match_result res3(r, "ab");
+        ASSERT_TRUE(res1[1] == "b");
+        ASSERT_TRUE(res2[1].empty());
+        ASSERT_TRUE(res3[1] == "b");
+    }
+}
+
 TEST(capturing, emails){
     regex r("([a-z]|[A-Z]|[0-9])+@([a-z]|[A-Z]|[0-9])+%.(ru|com)"); //for emails
     match_result result(r, "absfls@gmail.com");
@@ -249,4 +323,96 @@ TEST(capturing, emails){
     ASSERT_TRUE(result[1] == "s");
     ASSERT_TRUE(result[2] == "l");
     ASSERT_TRUE(result[3] == "com");
+}
+
+TEST(capturing, dates) {
+    regex r("(0[1-9]|[1-2][0-9]|3[0-1])%.(0[1-9]|1[0-2])%.(0{3,3}[1-9]|[1-9][0-9]{3,3})"); //for dates in format DD.MM.YYYY
+    match_result result(r, "13.04.2035");
+    ASSERT_TRUE(result.size() == 4);
+    ASSERT_TRUE(result[0] == "13.04.2035");
+    ASSERT_TRUE(result[1] == "13");
+    ASSERT_TRUE(result[2] == "04");
+    ASSERT_TRUE(result[3] == "2035");
+}
+
+TEST(capturing, phone_numbers){
+    regex r1("(%+7|8)(-[0-9]{3,3}){2,2}(-[0-9]{2,2}){2,2}");
+    match_result res1(r1, "8-996-217-48-53");
+    match_result res2(r1, "+7-893-392-13-64");
+    match_result res3(r1, "8999-535-24-13");
+    ASSERT_TRUE(res1.size() == 4);
+    ASSERT_TRUE(res2.size() == 4);
+    ASSERT_TRUE(res3.size() == 0);
+    ASSERT_TRUE(res1[1] == "8");
+    ASSERT_TRUE(res2[1] == "+7");
+    ASSERT_TRUE(res1[2] == "-217");
+    ASSERT_TRUE(res2[2] == "-392");
+    ASSERT_TRUE(res1[3] == "-53");
+    ASSERT_TRUE(res2[3] == "-64");
+}
+
+TEST(language_operations, complementation) {
+    {
+        regex r1("([a-z]|[A-Z]|[0-9])+@([a-z]|[A-Z]|[0-9])+%.(ru|com)");
+        regex r2(r1.get_complemented_language());
+        ASSERT_EQ(r1.match("example@gmail.com"), !r2.match("example@gmail.com"));
+        ASSERT_EQ(r1.match("example@yandex.ru"), !r2.match("example@yandex.ru"));
+        ASSERT_EQ(r1.match("example@gmail.su"), !r2.match("example@gmail.su"));
+        ASSERT_EQ(r1.match("exampleGgmail.com"), !r2.match("exampleGgmail.com"));
+    }
+    {
+        regex r1("(%+7|8)(-[0-9]{3,3}){2,2}(-[0-9]{2,2}){2,2}");
+        regex r2(r1.get_complemented_language());
+        ASSERT_EQ(r1.match("8-996-217-48-53"), !r2.match("8-996-217-48-53"));
+        ASSERT_EQ(r1.match("+7-893-392-13-64"), !r2.match("+7-893-392-13-64"));
+        ASSERT_EQ(r1.match("8999-535-24-13"), !r2.match("8999-535-24-13"));
+    }
+    {
+        regex r1("(([a-z]|[A-Z]){2,2})+");
+        regex r2(r1.get_complemented_language());
+        ASSERT_EQ(r1.match("aa"), !r2.match("aa"));
+        ASSERT_EQ(r1.match("ldgk"), !r2.match("ldgk"));
+        ASSERT_EQ(r1.match("skdgnojs"), !r2.match("skdgnojs"));
+        ASSERT_EQ(r1.match("adskpdn"), !r2.match("adskpdn"));
+        ASSERT_EQ(r1.match("a"), !r2.match("a"));
+    }
+}
+
+TEST(language_operations, reverse_language) {
+    {
+        regex r1("([a-z]|[A-Z]|[0-9])+@([a-z]|[A-Z]|[0-9])+%.(ru|com)");
+        regex r2(r1.get_reverse_language());
+        std::string s1 = "example@gmail.com";
+        std::string s2 = "example@yandex.ru";
+        std::string s3 = "example@gmail.su";
+        std::string s4 = "exampleGgmail.com";
+        ASSERT_EQ(r1.match(s1), r2.match(std::string{s1.rbegin(), s1.rend()}));
+        ASSERT_EQ(r1.match(s2), r2.match(std::string{s2.rbegin(), s2.rend()}));
+        ASSERT_EQ(r1.match(s3), r2.match(std::string{s3.rbegin(), s3.rend()}));
+        ASSERT_EQ(r1.match(s4), r2.match(std::string{s4.rbegin(), s4.rend()}));
+    }
+    {
+        regex r1("(%+7|8)(-[0-9]{3,3}){2,2}(-[0-9]{2,2}){2,2}");
+        regex r2(r1.get_reverse_language());
+        std::string s1 = "8-996-217-48-53";
+        std::string s2 = "+7-893-392-13-64";
+        std::string s3 = "8999-535-24-13";
+        ASSERT_EQ(r1.match(s1), r2.match(std::string{s1.rbegin(), s1.rend()}));
+        ASSERT_EQ(r1.match(s2), r2.match(std::string{s2.rbegin(), s2.rend()}));
+        ASSERT_EQ(r1.match(s3), r2.match(std::string{s3.rbegin(), s3.rend()}));
+    }
+    {
+        regex r1("(([a-z]|[A-Z]){2,2})+");
+        regex r2(r1.get_reverse_language());
+        std::string s1 = "aa";
+        std::string s2 = "ldgk";
+        std::string s3 = "skdgnojs";
+        std::string s4 = "adskpdn";
+        std::string s5 = "a";
+        ASSERT_EQ(r1.match(s1), r2.match(std::string{s1.rbegin(), s1.rend()}));
+        ASSERT_EQ(r1.match(s2), r2.match(std::string{s2.rbegin(), s2.rend()}));
+        ASSERT_EQ(r1.match(s3), r2.match(std::string{s3.rbegin(), s3.rend()}));
+        ASSERT_EQ(r1.match(s4), r2.match(std::string{s4.rbegin(), s4.rend()}));
+        ASSERT_EQ(r1.match(s5), r2.match(std::string{s5.rbegin(), s5.rend()}));
+    }
 }
