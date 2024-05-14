@@ -229,27 +229,3 @@ void dfa_builder::build_group_manager(const ast &tree) {
 group_manager dfa_builder::get_group_manager() const noexcept {
     return manager;
 }
-
-void dfa_builder::print_dfa(std::fstream &stream, const dfa& automaton) {
-    stream << "graph{" << '\n';
-    std::unordered_map<std::shared_ptr<state>, size_t> table;
-    int i = 0;
-    for(auto& state: automaton.states){
-        if(!state->is_error_state()){
-            table[state] = i;
-        }
-        ++i;
-    }
-    for(auto& iter: table){
-        for(int j = 0; j < 256; ++j){
-            auto to_state = iter.first->get_following_state(j);
-            if(!to_state->is_error_state()){
-                char label = char(j);
-                size_t from = iter.second;
-                size_t to = table[to_state];
-                stream << from << "--" << to << "[label=" << label << "]\n";
-            }
-        }
-    }
-    stream << "}\n";
-}

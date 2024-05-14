@@ -94,8 +94,6 @@ private:
     static std::shared_ptr<state> make_error_state();
 
     static void initialize_state(std::shared_ptr<state>& st, const std::shared_ptr<state>& error_state);
-
-    void print_dfa(std::fstream& stream, const dfa& automaton);
 };
 
 #endif //REGEX_DFA_BUILDER_H

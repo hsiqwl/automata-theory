@@ -17,8 +17,6 @@ private:
 
     std::string substring;
 
-    bool entering_capturing_state(size_t from, size_t to);
-
     bool exiting_capturing_state(size_t from, size_t to);
 
     bool transitioning_within_capturing_states(size_t from, size_t to);

@@ -28,11 +28,11 @@ std::string group_tracker::get_substring() const noexcept {
     return substring;
 }
 
-bool group_tracker::entering_capturing_state(size_t from, size_t to) {
+/*bool group_tracker::entering_capturing_state(size_t from, size_t to) {
     bool first_predicate =  !tracked_states.contains(from);
     bool second_predicate = ending_states.contains(from);
     return (first_predicate || second_predicate) && starting_states.contains(to);
-}
+}*/
 
 bool group_tracker::exiting_capturing_state(size_t from, size_t to) {
     return ending_states.contains(from) && !tracked_states.contains(to);

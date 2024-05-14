@@ -32,6 +32,7 @@ TEST(regex_match, concatenation){
     ASSERT_FALSE(rgx.match("a"));
     ASSERT_FALSE(rgx.match("b"));
     ASSERT_FALSE(rgx.match("ba"));
+    ASSERT_FALSE(rgx.match("aba"));
 }
 
 TEST(regex_match, alternation){
@@ -80,8 +81,15 @@ TEST(regex_match, repeat){
     ASSERT_FALSE(r1.match("aaa"));
 }
 
+TEST(except, parenthesis){
+    ASSERT_ANY_THROW(regex r("(a"));
+    ASSERT_ANY_THROW(regex r("a{c,2}"));
+    ASSERT_ANY_THROW(regex r("+5"));
+    ASSERT_ANY_THROW(regex r("(a|)b"));
+}
+
 TEST(regex_match, emails){
-    regex r("([a-z]|[A-Z]|[0-9])+@([a-z]|[A-Z]|[0-9])+%.(ru|com)"); //for emails
+    regex r("([a-z]|[A-Z]|[_0-9])+@([a-z]|[A-Z]|[0-9])+%.(ru|com)"); //for emails
     ASSERT_TRUE(r.match("example@gmail.com"));
     ASSERT_TRUE(r.match("example@yandex.ru"));
     ASSERT_FALSE(r.match("example@yandex.su"));
@@ -95,13 +103,13 @@ TEST(regex_match, phone_numbers){
     ASSERT_FALSE(r.match("8999-535-24-13"));
 }
 
-/*TEST(regex_match, dates) {
+TEST(regex_match, dates) {
     regex r("(0[1-9]|[1-2][0-9]|3[0-1])%.(0[1-9]|1[0-2])%.(0{3,3}[1-9]|[1-9][0-9]{3,3})"); //for dates in format DD.MM.YYYY
     ASSERT_TRUE(r.match("27.04.2004"));
     ASSERT_TRUE(r.match("01.01.0001"));
     ASSERT_FALSE(r.match("00.00.0000"));
     ASSERT_FALSE(r.match("12.31.2024"));
-}*/
+}
 
 TEST(regex_match, words_with_even_amount_of_letters){
     regex r("(([a-z]|[A-Z]){2,2})+");
@@ -317,12 +325,13 @@ TEST(capturing, optional){
 }
 
 TEST(capturing, emails){
-    regex r("([a-z]|[A-Z]|[0-9])+@([a-z]|[A-Z]|[0-9])+%.(ru|com)"); //for emails
+    regex r("([a-z]|[A-Z]|[0-9])+@(([a-z]|[A-Z]|[0-9])+)%.(ru|com)"); //for emails
     match_result result(r, "absfls@gmail.com");
     ASSERT_TRUE(result[0] == "absfls@gmail.com");
     ASSERT_TRUE(result[1] == "s");
-    ASSERT_TRUE(result[2] == "l");
-    ASSERT_TRUE(result[3] == "com");
+    ASSERT_TRUE(result[2] == "gmail");
+    ASSERT_TRUE(result[3] == "l");
+    ASSERT_TRUE(result[4] == "com");
 }
 
 TEST(capturing, dates) {
@@ -349,6 +358,43 @@ TEST(capturing, phone_numbers){
     ASSERT_TRUE(res2[2] == "-392");
     ASSERT_TRUE(res1[3] == "-53");
     ASSERT_TRUE(res2[3] == "-64");
+}
+
+TEST(capturing, ambigious){
+    {
+        regex r("a|(a)");
+        match_result res(r, "a");
+        ASSERT_TRUE(res.size() == 2);
+        ASSERT_TRUE(res[0] == "a");
+        ASSERT_TRUE(res[1] == "a");
+    }
+    {
+        regex r("(a|aa)*");
+        match_result res(r, "aa");
+        ASSERT_TRUE(res.size() == 2);
+        ASSERT_TRUE(res[1] == "aa");
+        match_result res2(r, "aaa");
+        ASSERT_TRUE(res2.size() == 2);
+        ASSERT_TRUE(res2[1] == "aa");
+    }
+    {
+        regex r("(a|ab*)b*");
+        match_result res(r, "abb");
+        ASSERT_TRUE(res.size() == 2);
+        ASSERT_TRUE(res[1] == "abb");
+    }
+    {
+        regex r("(a|ab*)b*");
+        match_result res(r, "ab");
+        ASSERT_TRUE(res.size() == 2);
+        ASSERT_TRUE(res[1] == "ab");
+    }
+    {
+        regex r("(a|ab+)b+");
+        match_result res(r, "abb");
+        ASSERT_TRUE(res.size() == 2);
+        ASSERT_TRUE(res[1] == "ab");
+    }
 }
 
 TEST(language_operations, complementation) {
