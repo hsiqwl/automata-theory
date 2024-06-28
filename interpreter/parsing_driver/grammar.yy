@@ -8,12 +8,8 @@
 %define parse.assert
 
 %code requires{
-    #include "symbol_table.h"
-    #include "signed_variable.h"
-    #include "unsigned_variable.h"
-    #include "cell_variable.h"
-    #include "array_variable.h"
-
+    #include "parsing_driver.h"
+    #include "ast_builder.h"
     #include <string>
     #include <iostream>
     #include <stdexcept>
@@ -30,8 +26,7 @@
 %define parse.lac full
 
 %code{
-    #include "parsing_driver.h"
-    symbol_table sym_tab;
+    ast_builder builder;
 }
 
 %define api.token.prefix {TOK_}
@@ -66,9 +61,9 @@
 %token <int> SIGNED_NUM
 %token <unsigned int> UNSIGNED_NUM
 %token <std::string> SIMPLE_TYPE
-%nterm <int> arithmetic_operand arithmetic_expr
-%nterm <std::string> simple_matrix_type complex_matrix_type
-%nterm <std::string> var_type
+%nterm <> arithmetic_operand arithmetic_expr
+//%nterm <std::string> simple_matrix_type complex_matrix_type
+//%nterm <std::string> var_type
 
 %left PLUS MINUS
 %left LESS GREATER EQUAL
@@ -82,15 +77,8 @@ line:
     ;
 
 arithmetic_operand:
-    SIGNED_NUM
-    | UNSIGNED_NUM {$$ = static_cast<int>($1);}
-    | IDENTIFIER {
-        const std::string& var_name = $1;
-        if(sym_tab.var_declared(var_name)){
-            auto& var = sym_tab.get_var_by_name(var_name);
-
-        }
-    }
+    SIGNED_NUM {}
+    | UNSIGNED_NUM {}
     ;
 
 arithmetic_expr:
@@ -107,7 +95,8 @@ arithmetic_expr:
     | arithmetic_expr EQUAL arithmetic_expr {if($1 == $3) $$ = 1; else $$ = 0;}
     ;
 
-//for matrix declaration
+
+/*//for matrix declaration
 simple_matrix_type:
     MATRIX LESS SIMPLE_TYPE GREATER {$$ = "matrix<" + $3 + ">";}
     ;
@@ -127,7 +116,7 @@ declaration:
     | var_type IDENTIFIER {}
     | var_type IDENTIFIER ASSIGN arithmetic_expr {}
     ;
-
+*/
 %%
 
 void yy::parser::error (const location_type& l, const std::string& m){

@@ -1,7 +1,6 @@
 #ifndef INTERPRETER_SCOPED_SYMBOL_TABLE_H
 #define INTERPRETER_SCOPED_SYMBOL_TABLE_H
 #include "symbol.h"
-#include "var.h"
 #include <unordered_map>
 #include <memory>
 

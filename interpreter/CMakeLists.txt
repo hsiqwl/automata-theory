@@ -8,6 +8,8 @@ add_subdirectory(symbol)
 add_subdirectory(symbol_table)
 add_subdirectory(object_factory)
 add_subdirectory(value)
+add_subdirectory(ast)
+add_subdirectory(ast_builder)
 
 add_library(parsing_driver STATIC parsing_driver/grammar.tab.cc parsing_driver/parsing_driver.cpp parsing_driver/lex.yy.cc)
 target_include_directories(parsing_driver PUBLIC parsing_driver/symbol_table/include)
