@@ -39,19 +39,23 @@
 // C++ LALR(1) parser skeleton written by Akim Demaille.
 
 // DO NOT RELY ON FEATURES THAT ARE NOT DOCUMENTED in the manual,
-// especially those whose name start with YY_ or yy_.  They are
+// especially those whose name_ start with YY_ or yy_.  They are
 // private implementation details that can be changed or removed.
 
 #ifndef YY_YY_GRAMMAR_TAB_HH_INCLUDED
 # define YY_YY_GRAMMAR_TAB_HH_INCLUDED
 // "%code requires" blocks.
-#line 10 "parsing_driver.yy"
+#line 10 "grammar.yy"
 
+    #include "ast.h"
     #include <string>
+    #include <memory>
     #include <iostream>
+    #include <stdexcept>
+
     class driver;
 
-#line 55 "parsing_driver.tab.hh"
+#line 59 "grammar.tab.hh"
 
 # include <cassert>
 # include <cstdlib> // std::abort
@@ -191,7 +195,7 @@
 #endif
 
 namespace yy {
-#line 195 "parsing_driver.tab.hh"
+#line 199 "grammar.tab.hh"
 
 
 
@@ -202,7 +206,7 @@ namespace yy {
   public:
 #ifdef YYSTYPE
 # ifdef __GNUC__
-#  pragma GCC message "bison: do not #define YYSTYPE in C++, use %define api.value.variable"
+#  pragma GCC message "bison: do not #define YYSTYPE in C++, use %define api.value_.type_"
 # endif
     typedef YYSTYPE value_type;
 #else
@@ -320,7 +324,7 @@ namespace yy {
       return *yyas_<T> ();
     }
 
-    /// Swap the content with \a that, of same variable.
+    /// Swap the content with \a that, of same type_.
     ///
     /// Both variants must be built beforehand, because swapping the actual
     /// data requires reading it (with as()), and this is not possible on
@@ -407,22 +411,25 @@ namespace yy {
       return static_cast<const T*> (yyp);
      }
 
-    /// An auxiliary variable to compute the largest semantic variable.
+    /// An auxiliary type_ to compute the largest semantic type_.
     union union_type
     {
       // SIGNED_NUM
-      // arithmetic_operand
-      // arithmetic_expr
       char dummy1[sizeof (int)];
 
       // IDENTIFIER
+      // SIMPLE_TYPE
       char dummy2[sizeof (std::string)];
 
+      // arithmetic_operand
+      // arithmetic_expr
+      char dummy3[sizeof (std::unique_ptr<node>)];
+
       // UNSIGNED_NUM
-      char dummy3[sizeof (unsigned int)];
+      char dummy4[sizeof (unsigned int)];
     };
 
-    /// The size of the largest semantic variable.
+    /// The size of the largest semantic type_.
     enum { size = sizeof (union_type) };
 
     /// A buffer to store semantic values.
@@ -434,7 +441,7 @@ namespace yy {
       char yyraw_[size];
     };
 
-    /// Whether the content is built: if defined, the name of the stored variable.
+    /// Whether the content is built: if defined, the name_ of the stored type_.
     const std::type_info *yytypeid_;
   };
 
@@ -484,23 +491,22 @@ namespace yy {
     TOK_GREATER = 12,              // GREATER
     TOK_EQUAL = 13,                // EQUAL
     TOK_CONST = 14,                // CONST
-    TOK_SIGNED_TYPE = 15,          // SIGNED_TYPE
-    TOK_UNSIGNED_TYPE = 16,        // UNSIGNED_TYPE
-    TOK_NEW_LINE = 17,             // NEW_LINE
-    TOK_CELL = 18,                 // CELL
-    TOK_SEMICOLON = 19,            // SEMICOLON
-    TOK_PARAM_DELIMITER = 20,      // PARAM_DELIMITER
-    TOK_CALL = 21,                 // CALL
-    TOK_FUNC = 22,                 // FUNC
-    TOK_TESTREP = 23,              // TESTREP
-    TOK_TESTONCE = 24,             // TESTONCE
-    TOK_TOP = 25,                  // TOP
-    TOK_BOTTOM = 26,               // BOTTOM
-    TOK_LEFT = 27,                 // LEFT
-    TOK_RIGHT = 28,                // RIGHT
-    TOK_IDENTIFIER = 29,           // IDENTIFIER
-    TOK_SIGNED_NUM = 30,           // SIGNED_NUM
-    TOK_UNSIGNED_NUM = 31          // UNSIGNED_NUM
+    TOK_NEW_LINE = 15,             // NEW_LINE
+    TOK_SEMICOLON = 16,            // SEMICOLON
+    TOK_PARAM_DELIMITER = 17,      // PARAM_DELIMITER
+    TOK_CALL = 18,                 // CALL
+    TOK_FUNC = 19,                 // FUNC
+    TOK_TESTREP = 20,              // TESTREP
+    TOK_TESTONCE = 21,             // TESTONCE
+    TOK_TOP = 22,                  // TOP
+    TOK_BOTTOM = 23,               // BOTTOM
+    TOK_LEFT = 24,                 // LEFT
+    TOK_RIGHT = 25,                // RIGHT
+    TOK_MATRIX = 26,               // MATRIX
+    TOK_IDENTIFIER = 27,           // IDENTIFIER
+    TOK_SIGNED_NUM = 28,           // SIGNED_NUM
+    TOK_UNSIGNED_NUM = 29,         // UNSIGNED_NUM
+    TOK_SIMPLE_TYPE = 30           // SIMPLE_TYPE
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -517,7 +523,7 @@ namespace yy {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 32, ///< Number of tokens.
+        YYNTOKENS = 31, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // "end of file"
         S_YYerror = 1,                           // error
@@ -534,42 +540,41 @@ namespace yy {
         S_GREATER = 12,                          // GREATER
         S_EQUAL = 13,                            // EQUAL
         S_CONST = 14,                            // CONST
-        S_SIGNED_TYPE = 15,                      // SIGNED_TYPE
-        S_UNSIGNED_TYPE = 16,                    // UNSIGNED_TYPE
-        S_NEW_LINE = 17,                         // NEW_LINE
-        S_CELL = 18,                             // CELL
-        S_SEMICOLON = 19,                        // SEMICOLON
-        S_PARAM_DELIMITER = 20,                  // PARAM_DELIMITER
-        S_CALL = 21,                             // CALL
-        S_FUNC = 22,                             // FUNC
-        S_TESTREP = 23,                          // TESTREP
-        S_TESTONCE = 24,                         // TESTONCE
-        S_TOP = 25,                              // TOP
-        S_BOTTOM = 26,                           // BOTTOM
-        S_LEFT = 27,                             // LEFT
-        S_RIGHT = 28,                            // RIGHT
-        S_IDENTIFIER = 29,                       // IDENTIFIER
-        S_SIGNED_NUM = 30,                       // SIGNED_NUM
-        S_UNSIGNED_NUM = 31,                     // UNSIGNED_NUM
-        S_YYACCEPT = 32,                         // $accept
-        S_line = 33,                             // line
-        S_arithmetic_operand = 34,               // arithmetic_operand
-        S_arithmetic_expr = 35                   // arithmetic_expr
+        S_NEW_LINE = 15,                         // NEW_LINE
+        S_SEMICOLON = 16,                        // SEMICOLON
+        S_PARAM_DELIMITER = 17,                  // PARAM_DELIMITER
+        S_CALL = 18,                             // CALL
+        S_FUNC = 19,                             // FUNC
+        S_TESTREP = 20,                          // TESTREP
+        S_TESTONCE = 21,                         // TESTONCE
+        S_TOP = 22,                              // TOP
+        S_BOTTOM = 23,                           // BOTTOM
+        S_LEFT = 24,                             // LEFT
+        S_RIGHT = 25,                            // RIGHT
+        S_MATRIX = 26,                           // MATRIX
+        S_IDENTIFIER = 27,                       // IDENTIFIER
+        S_SIGNED_NUM = 28,                       // SIGNED_NUM
+        S_UNSIGNED_NUM = 29,                     // UNSIGNED_NUM
+        S_SIMPLE_TYPE = 30,                      // SIMPLE_TYPE
+        S_YYACCEPT = 31,                         // $accept
+        S_program = 32,                          // program
+        S_arithmetic_operand = 33,               // arithmetic_operand
+        S_arithmetic_expr = 34                   // arithmetic_expr
       };
     };
 
-    /// (Internal) symbol kind.
+    /// (Internal) Symbol kind.
     typedef symbol_kind::symbol_kind_type symbol_kind_type;
 
     /// The number of tokens.
     static const symbol_kind_type YYNTOKENS = symbol_kind::YYNTOKENS;
 
-    /// A complete symbol.
+    /// A complete Symbol.
     ///
-    /// Expects its Base variable to provide access to the symbol kind
+    /// Expects its Base type_ to provide access to the Symbol kind
     /// via kind ().
     ///
-    /// Provide access to semantic value and location.
+    /// Provide access to semantic value_ and location.
     template <typename Base>
     struct basic_symbol : Base
     {
@@ -592,17 +597,21 @@ namespace yy {
         switch (this->kind ())
     {
       case symbol_kind::S_SIGNED_NUM: // SIGNED_NUM
-      case symbol_kind::S_arithmetic_operand: // arithmetic_operand
-      case symbol_kind::S_arithmetic_expr: // arithmetic_expr
-        value.move< int > (std::move (that.value));
+        value.move< int > (std::move (that.value_));
         break;
 
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
-        value.move< std::string > (std::move (that.value));
+      case symbol_kind::S_SIMPLE_TYPE: // SIMPLE_TYPE
+        value.move< std::string > (std::move (that.value_));
+        break;
+
+      case symbol_kind::S_arithmetic_operand: // arithmetic_operand
+      case symbol_kind::S_arithmetic_expr: // arithmetic_expr
+        value.move< std::unique_ptr<node> > (std::move (that.value_));
         break;
 
       case symbol_kind::S_UNSIGNED_NUM: // UNSIGNED_NUM
-        value.move< unsigned int > (std::move (that.value));
+        value.move< unsigned int > (std::move (that.value_));
         break;
 
       default:
@@ -637,7 +646,7 @@ namespace yy {
 #else
       basic_symbol (typename Base::kind_type t, const int& v, const location_type& l)
         : Base (t)
-        , value (v)
+        , value_ (v)
         , location (l)
       {}
 #endif
@@ -651,7 +660,21 @@ namespace yy {
 #else
       basic_symbol (typename Base::kind_type t, const std::string& v, const location_type& l)
         : Base (t)
-        , value (v)
+        , value_ (v)
+        , location (l)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, std::unique_ptr<node>&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const std::unique_ptr<node>& v, const location_type& l)
+        : Base (t)
+        , value_ (v)
         , location (l)
       {}
 #endif
@@ -665,12 +688,12 @@ namespace yy {
 #else
       basic_symbol (typename Base::kind_type t, const unsigned int& v, const location_type& l)
         : Base (t)
-        , value (v)
+        , value_ (v)
         , location (l)
       {}
 #endif
 
-      /// Destroy the symbol.
+      /// Destroy the Symbol.
       ~basic_symbol ()
       {
         clear ();
@@ -691,17 +714,21 @@ namespace yy {
           break;
         }
 
-        // Value variable destructor.
+        // Value type_ destructor.
 switch (yykind)
     {
       case symbol_kind::S_SIGNED_NUM: // SIGNED_NUM
-      case symbol_kind::S_arithmetic_operand: // arithmetic_operand
-      case symbol_kind::S_arithmetic_expr: // arithmetic_expr
         value.template destroy< int > ();
         break;
 
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
+      case symbol_kind::S_SIMPLE_TYPE: // SIMPLE_TYPE
         value.template destroy< std::string > ();
+        break;
+
+      case symbol_kind::S_arithmetic_operand: // arithmetic_operand
+      case symbol_kind::S_arithmetic_expr: // arithmetic_expr
+        value.template destroy< std::unique_ptr<node> > ();
         break;
 
       case symbol_kind::S_UNSIGNED_NUM: // UNSIGNED_NUM
@@ -715,7 +742,7 @@ switch (yykind)
         Base::clear ();
       }
 
-      /// The user-facing name of this symbol.
+      /// The user-facing name_ of this Symbol.
       const char *name () const YY_NOEXCEPT
       {
         return parser::symbol_name (this->kind ());
@@ -730,7 +757,7 @@ switch (yykind)
       /// Destructive move, \a s is emptied into this.
       void move (basic_symbol& s);
 
-      /// The semantic value.
+      /// The semantic value_.
       value_type value;
 
       /// The location.
@@ -746,7 +773,7 @@ switch (yykind)
     /// Type access provider for token (enum) based symbols.
     struct by_kind
     {
-      /// The symbol kind as needed by the constructor.
+      /// The Symbol kind as needed by the constructor.
       typedef token_kind_type kind_type;
 
       /// Default constructor.
@@ -765,20 +792,20 @@ switch (yykind)
 
 
 
-      /// Record that this symbol is empty.
+      /// Record that this Symbol is empty.
       void clear () YY_NOEXCEPT;
 
-      /// Steal the symbol kind from \a that.
+      /// Steal the Symbol kind from \a that.
       void move (by_kind& that);
 
-      /// The (internal) variable number (corresponding to \a variable).
+      /// The (internal) type_ number (corresponding to \a type_).
       /// \a empty when empty.
       symbol_kind_type kind () const YY_NOEXCEPT;
 
       /// Backward compatibility (Bison 3.6).
       symbol_kind_type type_get () const YY_NOEXCEPT;
 
-      /// The symbol kind.
+      /// The Symbol kind.
       /// \a S_YYEMPTY when empty.
       symbol_kind_type kind_;
     };
@@ -792,10 +819,10 @@ switch (yykind)
       /// Superclass.
       typedef basic_symbol<by_kind> super_type;
 
-      /// Empty symbol.
+      /// Empty Symbol.
       symbol_type () YY_NOEXCEPT {}
 
-      /// Constructor for valueless symbols, and symbols from each variable.
+      /// Constructor for valueless symbols, and symbols from each type_.
 #if 201103L <= YY_CPLUSPLUS
       symbol_type (int tok, location_type l)
         : super_type (token_kind_type (tok), std::move (l))
@@ -806,7 +833,7 @@ switch (yykind)
       {
 #if !defined _MSC_VER || defined __clang__
         YY_ASSERT (tok == token::TOK_YYEOF
-                   || (token::TOK_YYerror <= tok && tok <= token::TOK_RIGHT));
+                   || (token::TOK_YYerror <= tok && tok <= token::TOK_MATRIX));
 #endif
       }
 #if 201103L <= YY_CPLUSPLUS
@@ -830,7 +857,8 @@ switch (yykind)
 #endif
       {
 #if !defined _MSC_VER || defined __clang__
-        YY_ASSERT (tok == token::TOK_IDENTIFIER);
+        YY_ASSERT (tok == token::TOK_IDENTIFIER
+                   || tok == token::TOK_SIMPLE_TYPE);
 #endif
       }
 #if 201103L <= YY_CPLUSPLUS
@@ -888,7 +916,7 @@ switch (yykind)
     /// Report a syntax error.
     void error (const syntax_error& err);
 
-    /// The user-facing name of the symbol whose (internal) number is
+    /// The user-facing name_ of the Symbol whose (internal) number is
     /// YYSYMBOL.  No bounds checking.
     static const char *symbol_name (symbol_kind_type yysymbol);
 
@@ -1121,36 +1149,6 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_SIGNED_TYPE (location_type l)
-      {
-        return symbol_type (token::TOK_SIGNED_TYPE, std::move (l));
-      }
-#else
-      static
-      symbol_type
-      make_SIGNED_TYPE (const location_type& l)
-      {
-        return symbol_type (token::TOK_SIGNED_TYPE, l);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_UNSIGNED_TYPE (location_type l)
-      {
-        return symbol_type (token::TOK_UNSIGNED_TYPE, std::move (l));
-      }
-#else
-      static
-      symbol_type
-      make_UNSIGNED_TYPE (const location_type& l)
-      {
-        return symbol_type (token::TOK_UNSIGNED_TYPE, l);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
       make_NEW_LINE (location_type l)
       {
         return symbol_type (token::TOK_NEW_LINE, std::move (l));
@@ -1161,21 +1159,6 @@ switch (yykind)
       make_NEW_LINE (const location_type& l)
       {
         return symbol_type (token::TOK_NEW_LINE, l);
-      }
-#endif
-#if 201103L <= YY_CPLUSPLUS
-      static
-      symbol_type
-      make_CELL (location_type l)
-      {
-        return symbol_type (token::TOK_CELL, std::move (l));
-      }
-#else
-      static
-      symbol_type
-      make_CELL (const location_type& l)
-      {
-        return symbol_type (token::TOK_CELL, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -1331,6 +1314,21 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
+      make_MATRIX (location_type l)
+      {
+        return symbol_type (token::TOK_MATRIX, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_MATRIX (const location_type& l)
+      {
+        return symbol_type (token::TOK_MATRIX, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
       make_IDENTIFIER (std::string v, location_type l)
       {
         return symbol_type (token::TOK_IDENTIFIER, std::move (v), std::move (l));
@@ -1371,6 +1369,21 @@ switch (yykind)
       make_UNSIGNED_NUM (const unsigned int& v, const location_type& l)
       {
         return symbol_type (token::TOK_UNSIGNED_NUM, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_SIMPLE_TYPE (std::string v, location_type l)
+      {
+        return symbol_type (token::TOK_SIMPLE_TYPE, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_SIMPLE_TYPE (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::TOK_SIMPLE_TYPE, v, l);
       }
 #endif
 
@@ -1427,18 +1440,18 @@ switch (yykind)
     /// \param yysym     the nonterminal to push on the stack
     static state_type yy_lr_goto_state_ (state_type yystate, int yysym);
 
-    /// Whether the given \c yypact_ value indicates a defaulted state.
-    /// \param yyvalue   the value to check
+    /// Whether the given \c yypact_ value_ indicates a defaulted state.
+    /// \param yyvalue   the value_ to check
     static bool yy_pact_value_is_default_ (int yyvalue) YY_NOEXCEPT;
 
-    /// Whether the given \c yytable_ value indicates a syntax error.
-    /// \param yyvalue   the value to check
+    /// Whether the given \c yytable_ value_ indicates a syntax error.
+    /// \param yyvalue   the value_ to check
     static bool yy_table_value_is_error_ (int yyvalue) YY_NOEXCEPT;
 
     static const signed char yypact_ninf_;
     static const signed char yytable_ninf_;
 
-    /// Convert a scanner token kind \a t to a symbol kind.
+    /// Convert a scanner token kind \a t to a Symbol kind.
     /// In theory \a t should be a token_kind_type, but character literals
     /// are valid, yet not members of the token_kind_type enum.
     static symbol_kind_type yytranslate_ (int t) YY_NOEXCEPT;
@@ -1468,7 +1481,7 @@ switch (yykind)
 
     static const signed char yycheck_[];
 
-    // YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
+    // YYSTOS[STATE-NUM] -- The Symbol kind of the accessing Symbol of
     // state STATE-NUM.
     static const signed char yystos_[];
 
@@ -1492,17 +1505,17 @@ switch (yykind)
     /// Debug stream.
     std::ostream* yycdebug_;
 
-    /// \brief Display a symbol kind, value and location.
+    /// \brief Display a Symbol kind, value_ and location.
     /// \param yyo    The output stream.
-    /// \param yysym  The symbol.
+    /// \param yysym  The Symbol.
     template <typename Base>
     void yy_print_ (std::ostream& yyo, const basic_symbol<Base>& yysym) const;
 #endif
 
-    /// \brief Reclaim the memory associated to a symbol.
+    /// \brief Reclaim the memory associated to a Symbol.
     /// \param yymsg     Why this token is reclaimed.
     ///                  If null, print nothing.
-    /// \param yysym     The symbol.
+    /// \param yysym     The Symbol.
     template <typename Base>
     void yy_destroy_ (const char* yymsg, basic_symbol<Base>& yysym) const;
 
@@ -1513,7 +1526,7 @@ switch (yykind)
       /// Default constructor.
       by_state () YY_NOEXCEPT;
 
-      /// The symbol kind as needed by the constructor.
+      /// The Symbol kind as needed by the constructor.
       typedef state_type kind_type;
 
       /// Constructor.
@@ -1522,18 +1535,18 @@ switch (yykind)
       /// Copy constructor.
       by_state (const by_state& that) YY_NOEXCEPT;
 
-      /// Record that this symbol is empty.
+      /// Record that this Symbol is empty.
       void clear () YY_NOEXCEPT;
 
-      /// Steal the symbol kind from \a that.
+      /// Steal the Symbol kind from \a that.
       void move (by_state& that);
 
-      /// The symbol kind (corresponding to \a state).
+      /// The Symbol kind (corresponding to \a state).
       /// \a symbol_kind::S_YYEMPTY when empty.
       symbol_kind_type kind () const YY_NOEXCEPT;
 
-      /// The state number used to denote an empty symbol.
-      /// We use the initial state, as it does not have a value.
+      /// The state number used to denote an empty Symbol.
+      /// We use the initial state, as it does not have a value_.
       enum { empty_state = 0 };
 
       /// The state.
@@ -1541,12 +1554,12 @@ switch (yykind)
       state_type state;
     };
 
-    /// "Internal" symbol: element of the stack.
+    /// "Internal" Symbol: element of the stack.
     struct stack_symbol_type : basic_symbol<by_state>
     {
       /// Superclass.
       typedef basic_symbol<by_state> super_type;
-      /// Construct an empty symbol.
+      /// Construct an empty Symbol.
       stack_symbol_type ();
       /// Move or copy construction.
       stack_symbol_type (YY_RVREF (stack_symbol_type) that);
@@ -1681,13 +1694,13 @@ switch (yykind)
     };
 
 
-    /// Stack variable.
+    /// Stack type_.
     typedef stack<stack_symbol_type> stack_type;
 
     /// The stack.
     stack_type yystack_;
     /// The stack for LAC.
-    /// Logically, the yy_lac_stack's lifetime is confined to the function
+    /// Logically, the yy_lac_stack's lifetime is confined to the FunctionSymbol
     /// yy_lac_check_. We just store it as a member of this class to hold
     /// on to the memory and to avoid frequent reallocations.
     /// Since yy_lac_check_ is const, this member must be mutable.
@@ -1699,16 +1712,16 @@ switch (yykind)
     /// Push a new state on the stack.
     /// \param m    a debug message to display
     ///             if null, no trace is output.
-    /// \param sym  the symbol
-    /// \warning the contents of \a s.value is stolen.
+    /// \param sym  the Symbol
+    /// \warning the contents of \a s.value_ is stolen.
     void yypush_ (const char* m, YY_MOVE_REF (stack_symbol_type) sym);
 
     /// Push a new look ahead token on the state on the stack.
     /// \param m    a debug message to display
     ///             if null, no trace is output.
     /// \param s    the state
-    /// \param sym  the symbol (for its value and location).
-    /// \warning the contents of \a sym.value is stolen.
+    /// \param sym  the Symbol (for its value_ and location).
+    /// \warning the contents of \a sym.value_ is stolen.
     void yypush_ (const char* m, state_type s, YY_MOVE_REF (symbol_type) sym);
 
     /// Pop \a n symbols from the stack.
@@ -1717,9 +1730,9 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 60,     ///< Last index in yytable_.
+      yylast_ = 49,     ///< Last index in yytable_.
       yynnts_ = 4,  ///< Number of nonterminal symbols.
-      yyfinal_ = 2 ///< Termination state number.
+      yyfinal_ = 10 ///< Termination state number.
     };
 
 
@@ -1745,17 +1758,21 @@ switch (yykind)
     switch (this->kind ())
     {
       case symbol_kind::S_SIGNED_NUM: // SIGNED_NUM
-      case symbol_kind::S_arithmetic_operand: // arithmetic_operand
-      case symbol_kind::S_arithmetic_expr: // arithmetic_expr
-        value.copy< int > (YY_MOVE (that.value));
+        value.copy< int > (YY_MOVE (that.value_));
         break;
 
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
-        value.copy< std::string > (YY_MOVE (that.value));
+      case symbol_kind::S_SIMPLE_TYPE: // SIMPLE_TYPE
+        value.copy< std::string > (YY_MOVE (that.value_));
+        break;
+
+      case symbol_kind::S_arithmetic_operand: // arithmetic_operand
+      case symbol_kind::S_arithmetic_expr: // arithmetic_expr
+        value.copy< std::unique_ptr<node> > (YY_MOVE (that.value_));
         break;
 
       case symbol_kind::S_UNSIGNED_NUM: // UNSIGNED_NUM
-        value.copy< unsigned int > (YY_MOVE (that.value));
+        value.copy< unsigned int > (YY_MOVE (that.value_));
         break;
 
       default:
@@ -1790,17 +1807,21 @@ switch (yykind)
     switch (this->kind ())
     {
       case symbol_kind::S_SIGNED_NUM: // SIGNED_NUM
-      case symbol_kind::S_arithmetic_operand: // arithmetic_operand
-      case symbol_kind::S_arithmetic_expr: // arithmetic_expr
-        value.move< int > (YY_MOVE (s.value));
+        value.move< int > (YY_MOVE (s.value_));
         break;
 
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
-        value.move< std::string > (YY_MOVE (s.value));
+      case symbol_kind::S_SIMPLE_TYPE: // SIMPLE_TYPE
+        value.move< std::string > (YY_MOVE (s.value_));
+        break;
+
+      case symbol_kind::S_arithmetic_operand: // arithmetic_operand
+      case symbol_kind::S_arithmetic_expr: // arithmetic_expr
+        value.move< std::unique_ptr<node> > (YY_MOVE (s.value_));
         break;
 
       case symbol_kind::S_UNSIGNED_NUM: // UNSIGNED_NUM
-        value.move< unsigned int > (YY_MOVE (s.value));
+        value.move< unsigned int > (YY_MOVE (s.value_));
         break;
 
       default:
@@ -1869,7 +1890,7 @@ switch (yykind)
 
 
 } // yy
-#line 1873 "parsing_driver.tab.hh"
+#line 1894 "grammar.tab.hh"
 
 
 

@@ -1,7 +1,7 @@
 #include "symbol.h"
 
-symbol::symbol(std::string_view name): name(name) {}
+Symbol::Symbol(std::string_view name): name_(name) {}
 
-const std::string &symbol::get_name() const {
-    return name;
+const std::string &Symbol::get_name() const {
+    return name_;
 }

@@ -1,21 +1,21 @@
 #include "var.h"
 
-var::var(std::string_view name, std::string_view type, bool is_const)
-    : symbol(name), type(type), const_q(is_const) {}
+VarSymbol::VarSymbol(std::string_view name, std::string_view type, bool is_const)
+    : Symbol(name), type_(type), is_const_(is_const) {}
 
-bool var::is_const() const {
-    return const_q;
+bool VarSymbol::is_const() const {
+    return is_const_;
 }
 
-const std::string &var::get_type() const {
-    return type;
+const std::string &VarSymbol::get_type() const {
+    return type_;
 }
 
-void var::print(std::ostream &stream) const {
+void VarSymbol::print(std::ostream &stream) const {
     stream << "====== SYMBOL ======\n";
-    stream << "symbol category: var\n";
-    stream << "name:" << name << '\n';
-    stream << "var type:" << type << '\n';
-    stream << std::boolalpha << "is const:" << const_q << '\n';
+    stream << "Symbol category: VarSymbol\n";
+    stream << "name_:" << name_ << '\n';
+    stream << "VarSymbol type_:" << type_ << '\n';
+    stream << std::boolalpha << "is const:" << is_const_ << '\n';
     stream << "====== SYMBOL ======\n";
 }

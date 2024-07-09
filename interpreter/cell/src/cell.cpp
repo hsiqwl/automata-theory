@@ -1,88 +1,88 @@
 #include "cell.h"
 
-cell::cell(bool top, bool down, bool right, bool left) {
-    top_exists = top;
-    down_exists = down;
-    right_exists = right;
-    left_exists = left;
+Cell::Cell(bool top, bool down, bool right, bool left) {
+    top_ = top;
+    down_ = down;
+    right_ = right;
+    left_ = left;
     top_changeable = true;
     down_changeable = true;
     left_changeable = true;
     right_changeable = true;
 }
 
-cell::cell(): cell(false, false, false, false) {}
+Cell::Cell(): Cell(false, false, false, false) {}
 
-bool cell::get_changeability(direction dir) const {
+bool Cell::GetChangeability(Direction dir) const {
     switch (dir) {
-        case direction::top:
+        case Direction::top:
             return top_changeable;
-        case direction::down:
+        case Direction::down:
             return down_changeable;
-        case direction::right:
+        case Direction::right:
             return right_changeable;
-        case direction::left:
+        case Direction::left:
             return left_changeable;
     }
 }
 
-void cell::set_changeability(direction dir, bool changeable) {
+void Cell::SetChangeability(Direction dir, bool changeable) {
     switch (dir) {
-        case direction::top:
+        case Direction::top:
             top_changeable = changeable;
             return;
-        case direction::down:
+        case Direction::down:
             down_changeable = changeable;
             return;
-        case direction::right:
+        case Direction::right:
             right_changeable = changeable;
             return;
-        case direction::left:
+        case Direction::left:
             left_changeable = changeable;
             return;
     }
 }
 
-bool cell::wall_exists(direction dir) const {
+bool Cell::WallExists(Direction dir) const {
     switch (dir) {
-        case direction::top:
-            return top_exists;
-        case direction::down:
-            return down_exists;
-        case direction::right:
-            return right_exists;
-        case direction::left:
-            return left_exists;
+        case Direction::top:
+            return top_;
+        case Direction::down:
+            return down_;
+        case Direction::right:
+            return right_;
+        case Direction::left:
+            return left_;
     }
 }
 
-cell cell::operator-(const cell &other) const {
-    bool new_top = top_exists ^ other.top_exists;
-    bool new_down = down_exists ^ other.down_exists;
-    bool new_right = right_exists ^ other.right_exists;
-    bool new_left = left_exists ^ other.left_exists;
+Cell Cell::operator-(const Cell &other) const {
+    bool new_top = top_ ^ other.top_;
+    bool new_down = down_ ^ other.down_;
+    bool new_right = right_ ^ other.right_;
+    bool new_left = left_ ^ other.left_;
     return {new_top, new_down, new_right, new_left};
 }
 
-cell cell::operator/(const cell &other) const {
-    bool new_top = top_exists | other.top_exists;
-    bool new_down = down_exists | other.down_exists;
-    bool new_right = right_exists | other.right_exists;
-    bool new_left = left_exists | other.left_exists;
+Cell Cell::operator/(const Cell &other) const {
+    bool new_top = top_ | other.top_;
+    bool new_down = down_ | other.down_;
+    bool new_right = right_ | other.right_;
+    bool new_left = left_ | other.left_;
     return {new_top, new_down, new_right, new_left};
 }
 
-cell cell::operator%(const cell &other) const {
-    bool new_top = top_exists & other.top_exists;
-    bool new_down = down_exists & other.down_exists;
-    bool new_right = right_exists & other.right_exists;
-    bool new_left = left_exists & other.left_exists;
+Cell Cell::operator%(const Cell &other) const {
+    bool new_top = top_ & other.top_;
+    bool new_down = down_ & other.down_;
+    bool new_right = right_ & other.right_;
+    bool new_left = left_ & other.left_;
     return {new_top, new_down, new_right, new_left};
 }
 
-bool cell::operator==(const cell &other) const {
-    return top_exists == other.top_exists &&
-           down_exists == other.down_exists &&
-           right_exists == other.down_exists &&
-           left_exists == other.left_exists;
+bool Cell::operator==(const Cell &other) const {
+    return top_ == other.top_ &&
+           down_ == other.down_ &&
+           right_ == other.down_ &&
+           left_ == other.left_;
 }

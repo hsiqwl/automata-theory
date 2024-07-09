@@ -1,17 +1,17 @@
 #include "scoped_symbol_table.h"
 
-scoped_symbol_table::scoped_symbol_table(std::string_view scope_name,
-                                         std::unique_ptr<scoped_symbol_table> &&enclosing_scope)
-                                         : scope_name(scope_name), enclosing_scope(std::move(enclosing_scope)){}
+ScopedSymTable::ScopedSymTable(std::string_view scope_name,
+                               ScopedSymTable* enclosing_scope)
+                                         : scope_name_(scope_name), enclosing_scope_(enclosing_scope){}
 
-bool scoped_symbol_table::symbol_declared(const std::string &name) {
-    return sym_tab.contains(name);
+bool ScopedSymTable::SymbolIsDeclared(const std::string &name) {
+    return sym_tab_.contains(name);
 }
 
-void scoped_symbol_table::insert_symbol(std::unique_ptr<symbol> &&new_symbol) {
-    sym_tab.emplace(new_symbol->get_name(), std::move(new_symbol));
+void ScopedSymTable::InsertSymbol(std::unique_ptr<Symbol> &&new_symbol) {
+    sym_tab_.emplace(new_symbol->get_name(), std::move(new_symbol));
 }
 
-symbol &scoped_symbol_table::lookup(const std::string &name) {
-    return *sym_tab[name];
+Symbol &ScopedSymTable::GetSymbol(const std::string &name) {
+    return *sym_tab_[name];
 }

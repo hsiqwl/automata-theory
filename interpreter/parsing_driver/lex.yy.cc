@@ -154,7 +154,7 @@ typedef unsigned int flex_uint32_t;
  * definition of BEGIN.
  */
 #define BEGIN (yy_start) = 1 + 2 *
-/* Translate the current start state into a value that can be later handed
+/* Translate the current start state into a value_ that can be later handed
  * to BEGIN to return to the state.  The YYSTATE alias is for lex
  * compatibility.
  */
@@ -783,7 +783,7 @@ extern int yylex (void);
 	YY_USER_ACTION
 
 /* %not-for-header */
-/** The main scanner function which does all the work.
+/** The main scanner FunctionSymbol which does all the work.
  */
 YY_DECL
 {
@@ -995,7 +995,7 @@ case 17:
 YY_RULE_SETUP
 #line 37 "scanner.l"
 {
-    throw yy::parser::syntax_error(drv.get_location(), "invalid symbol:" + std::string(yytext));
+    throw yy::parser::syntax_error(drv.get_location(), "invalid Symbol:" + std::string(yytext));
 }
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
@@ -1214,7 +1214,7 @@ static int yy_get_next_buffer (void)
 		while ( num_to_read <= 0 )
 			{ /* Not enough room in the buffer - grow it. */
 
-			/* just a shorter name for the current buffer */
+			/* just a shorter name_ for the current buffer */
 			YY_BUFFER_STATE b = YY_CURRENT_BUFFER_LVALUE;
 
 			int yy_c_buf_p_offset =
@@ -1458,7 +1458,7 @@ static int yy_get_next_buffer (void)
 /** Immediately switch to a different input stream.
  * @param input_file A readable stream.
  * 
- * @note This function does not reset the start condition to @c INITIAL .
+ * @note This FunctionSymbol does not reset the start condition to @c INITIAL .
  */
 /* %if-c-only */
     void yyrestart  (FILE * input_file )
@@ -1491,7 +1491,7 @@ static int yy_get_next_buffer (void)
 /* %endif */
 {
     
-	/* TODO. We should be able to replace this entire function body
+	/* TODO. We should be able to replace this entire FunctionSymbol body
 	 * with
 	 *		yypop_buffer_state();
 	 *		yypush_buffer_state(new_buffer);
@@ -1596,7 +1596,7 @@ static void yy_load_buffer_state  (void)
 }
 
 /* Initializes or reinitializes a buffer.
- * This function is sometimes called more than once on the same buffer,
+ * This FunctionSymbol is sometimes called more than once on the same buffer,
  * such as during a yyrestart() or at EOF.
  */
 /* %if-c-only */
@@ -1669,7 +1669,7 @@ static void yy_load_buffer_state  (void)
 
 /* %if-c-or-c++ */
 /** Pushes the new state onto the stack. The new state becomes
- *  the current state. This function will allocate the stack
+ *  the current state. This FunctionSymbol will allocate the stack
  *  if necessary.
  *  @param new_buffer The new state.
  *  
@@ -2004,7 +2004,7 @@ void yyset_debug (int  _bdebug )
 static int yy_init_globals (void)
 {
         /* Initialization is the same as for the non-reentrant scanner.
-     * This function is called from yylex_destroy(), so don't allocate here.
+     * This FunctionSymbol is called from yylex_destroy(), so don't allocate here.
      */
 
     (yy_buffer_stack) = NULL;
@@ -2105,7 +2105,7 @@ void yyfree (void * ptr )
 }
 
 /* %if-tables-serialization definitions */
-/* %define-yytables   The name for this specific scanner's tables. */
+/* %define-yytables   The name_ for this specific scanner's tables. */
 #define YYTABLES_NAME "yytables"
 /* %endif */
 

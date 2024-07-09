@@ -4,16 +4,16 @@
 #include <string_view>
 #include <fstream>
 
-class symbol{
+class Symbol{
 protected:
-    std::string name;
+    std::string name_;
 
 public:
-    symbol(std::string_view name);
+    Symbol(std::string_view name);
 
     const std::string& get_name() const;
 
-    virtual ~symbol() = default;
+    virtual ~Symbol() = default;
 
     virtual void print(std::ostream& stream) const = 0;
 };

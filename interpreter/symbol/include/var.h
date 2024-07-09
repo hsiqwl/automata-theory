@@ -3,14 +3,14 @@
 #include "symbol.h"
 
 
-class var: public symbol{
+class VarSymbol: public Symbol{
 private:
-    std::string type;
+    std::string type_;
 
-    bool const_q;
+    bool is_const_;
 
 public:
-    var(std::string_view name, std::string_view type, bool is_const = false);
+    VarSymbol(std::string_view name, std::string_view type, bool is_const = false);
 
     const std::string& get_type() const;
 

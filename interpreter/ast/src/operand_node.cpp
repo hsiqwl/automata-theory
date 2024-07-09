@@ -2,7 +2,7 @@
 
 operand_node::operand_node(std::string_view type)
     : node(node_type::operand), category(operand_category::immediate_value), type(type) {
-    label = "immediate value";
+    label = "immediate value_";
 }
 
 operand_node::operand_node(std::string_view type, std::string_view var_name)
@@ -12,4 +12,8 @@ operand_node::operand_node(std::string_view type, std::string_view var_name)
 
 void operand_node::print(std::ostream &stream) const {
     stream << "visiting operand, " << label << '\n';
+}
+
+void operand_node::accept(node_visitor &visitor) {
+    visito
 }

@@ -1,6 +1,7 @@
 #ifndef INTERPRETER_AST_H
 #define INTERPRETER_AST_H
-#include "node.h"
+#include "operand_node.h"
+#include "operation_node.h"
 #include <memory>
 
 class ast_builder;

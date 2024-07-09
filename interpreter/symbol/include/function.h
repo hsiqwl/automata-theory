@@ -3,22 +3,22 @@
 #include "var.h"
 #include <vector>
 
-class function: public symbol{
+class FunctionSymbol: public Symbol{
 private:
-    std::vector<var> params;
+    std::vector<VarSymbol> params_;
 
-    std::string return_type;
+    std::string return_type_;
 
 public:
-    function(std::string_view name, std::string_view return_type);
+    FunctionSymbol(std::string_view name, std::string_view return_type);
 
-    function(std::string_view name, std::string_view return_type, std::vector<var>&& params);
+    FunctionSymbol(std::string_view name, std::string_view return_type, std::vector<VarSymbol>&& params);
 
     size_t get_param_number() const;
 
     const std::string& get_return_type() const;
 
-    const var& operator [] (int index) const;
+    const VarSymbol& operator [] (int index) const;
 
     void print(std::ostream& stream) const override;
 };

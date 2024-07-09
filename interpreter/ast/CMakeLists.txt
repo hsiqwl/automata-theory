@@ -3,5 +3,5 @@ project(interpreter)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_library(ast STATIC src/operation_node.cpp src/operand_node.cpp)
+add_library(ast STATIC src/operation_node.cpp src/operand_node.cpp src/ast.cpp)
 target_include_directories(ast PUBLIC include)

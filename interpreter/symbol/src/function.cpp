@@ -1,30 +1,30 @@
 #include "function.h"
 
-function::function(std::string_view name, std::string_view return_type)
-    : symbol(name), return_type(return_type) {}
+FunctionSymbol::FunctionSymbol(std::string_view name, std::string_view return_type)
+    : Symbol(name), return_type_(return_type) {}
 
-function::function(std::string_view name, std::string_view return_type, std::vector<var> &&params)
-    : symbol(name), return_type(return_type), params(std::move(params)) {}
+FunctionSymbol::FunctionSymbol(std::string_view name, std::string_view return_type, std::vector<VarSymbol> &&params)
+    : Symbol(name), return_type_(return_type), params_(std::move(params)) {}
 
-const std::string &function::get_return_type() const {
-    return return_type;
+const std::string &FunctionSymbol::get_return_type() const {
+    return return_type_;
 }
 
-size_t function::get_param_number() const {
-    return params.size();
+size_t FunctionSymbol::get_param_number() const {
+    return params_.size();
 }
 
-const var &function::operator[](int index) const {
-    return params[index];
+const VarSymbol &FunctionSymbol::operator[](int index) const {
+    return params_[index];
 }
 
-void function::print(std::ostream &stream) const {
+void FunctionSymbol::print(std::ostream &stream) const {
     stream << "====== SYMBOL ======\n";
-    stream << "symbol category: func\n";
-    stream << "func name:" << name << '\n';
-    stream << "return type:" << return_type << '\n';
-    stream << "function params:\n";
-    for (auto &param: params) {
+    stream << "Symbol category: func\n";
+    stream << "func name_:" << name_ << '\n';
+    stream << "return type_:" << return_type_ << '\n';
+    stream << "FunctionSymbol params_:\n";
+    for (auto &param: params_) {
         param.print(stream);
     }
     stream << "====== SYMBOL ======\n";

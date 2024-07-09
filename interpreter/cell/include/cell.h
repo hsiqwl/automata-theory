@@ -1,22 +1,22 @@
 #ifndef INTERPRETER_CELL_H
 #define INTERPRETER_CELL_H
 
-enum class direction{
+enum class Direction{
     top,
     down,
     right,
     left
 };
 
-class cell{
+class Cell{
 private:
-    bool top_exists;
+    bool top_;
 
-    bool down_exists;
+    bool down_;
 
-    bool right_exists;
+    bool right_;
 
-    bool left_exists;
+    bool left_;
 
     bool top_changeable;
 
@@ -27,23 +27,23 @@ private:
     bool left_changeable;
 
 public:
-    cell();
+    Cell();
 
-    cell(bool top, bool down, bool right, bool left);
+    Cell(bool top, bool down, bool right, bool left);
 
-    void set_changeability(direction dir, bool changeable);
+    void SetChangeability(Direction dir, bool changeable);
 
-    [[nodiscard]] bool get_changeability(direction dir) const;
+    [[nodiscard]] bool GetChangeability(Direction dir) const;
 
-    [[nodiscard]] bool wall_exists(direction dir) const;
+    [[nodiscard]] bool WallExists(Direction dir) const;
 
-    cell operator - (const cell& other) const;
+    Cell operator - (const Cell& other) const;
 
-    cell operator / (const cell& other) const;
+    Cell operator / (const Cell& other) const;
 
-    cell operator % (const cell& other) const;
+    Cell operator % (const Cell& other) const;
 
-    bool operator == (const cell& other) const;
+    bool operator == (const Cell& other) const;
 };
 
 #endif //INTERPRETER_CELL_H

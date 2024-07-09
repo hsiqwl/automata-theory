@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 20)
 add_library(value_interface INTERFACE)
 target_include_directories(value_interface INTERFACE include)
 
-add_library(value_interface_implementation STATIC src/value_matrix.cpp src/value_signed.cpp src/value_unsigned.cpp src/value_cell.cpp)
+add_library(value_interface_implementation STATIC src/matrix_value.cpp src/signed_value.cpp src/unsigned_value.cpp src/cell_value.cpp)
 target_include_directories(value_interface_implementation PUBLIC include)
 target_link_libraries(value_interface_implementation INTERFACE value_interface)
 target_link_libraries(value_interface_implementation PUBLIC cell)

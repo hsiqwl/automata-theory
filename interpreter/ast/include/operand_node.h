@@ -11,6 +11,8 @@ public:
 
     void print(std::ostream& stream) const override;
 
+    void accept(node_visitor& visitor) override;
+
 private:
     operand_category category;
 

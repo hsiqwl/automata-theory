@@ -4,6 +4,7 @@
 #include <string>
 #include <cstddef>
 #include "grammar.tab.hh"
+#include "ast.h"
 
 #define YY_DECL yy::parser::symbol_type yylex (driver& drv)
 
@@ -27,6 +28,10 @@ public:
 
     void location_step();
 
+    void set_ast(ast&& result_tree);
+
+    ast tree;
+
 private:
     std::string file;
 
@@ -39,7 +44,5 @@ private:
     bool trace_scanning;
 
     yy::location location;
-
-
 };
 #endif //! INTERPRETER_PARSING_DRIVER_H

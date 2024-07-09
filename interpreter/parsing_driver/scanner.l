@@ -1,6 +1,5 @@
 %{
 #include <string>
-#include "enums.h"
 #include "parsing_driver.h"
 #include "grammar.tab.hh"
 %}
@@ -10,7 +9,7 @@
 id [a-zA-Z_][a-zA-Z_0-9]*
 signed_number [0-9]+
 unsigned_number [0-9]+u
-simple_type signed|unsigned|cell
+simple_type signed|unsigned|Cell
 ws [ \t]
 
 %{
@@ -37,13 +36,13 @@ ws [ \t]
 ">" return yy::parser::make_GREATER(loc);
 "=" return yy::parser::make_EQUAL(loc);
 "const" return yy::parser::make_CONST(loc);
-"matrix" return yy::parser::make_MATRIX(loc);
+"matrix_t" return yy::parser::make_MATRIX(loc);
 {simple_type} return yy::parser::make_SIMPLE_TYPE(std::string(yytext), loc);
 {id} return yy::parser::make_IDENTIFIER(yytext, loc);
 {signed_number} return yy::parser::make_SIGNED_NUM(std::stol(std::string(yytext)), loc);
 {unsigned_number} return yy::parser::make_UNSIGNED_NUM(std::stol(std::string(yytext)), loc);
 . {
-    throw yy::parser::syntax_error(loc, "invalid symbol:" + std::string(yytext));
+    throw yy::parser::syntax_error(loc, "invalid Symbol:" + std::string(yytext));
 }
 
 <<EOF>> return yy::parser::make_YYEOF(loc);
