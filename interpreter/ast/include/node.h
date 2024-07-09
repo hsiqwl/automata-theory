@@ -4,25 +4,22 @@
 #include <fstream>
 #include <string>
 
-class node_visitor;
 
-class node{
+class Node{
 protected:
-    std::string label; //for debugging and printing
+    std::string label_; //for debugging and printing
 
 private:
-    node_type type;
+    NodeKind kind_;
 
 public:
-    virtual void accept(node_visitor& visitor) = 0;
+    Node(NodeKind kind): kind_(kind) {}
 
-    node(node_type type): type(type) {}
+    NodeKind GetKind() const {return kind_;};
 
-    node_type get_type() const {return type;};
+    virtual void PrintOut(std::ostream& stream) const = 0;
 
-    virtual void print(std::ostream& stream) const = 0;
-
-    virtual ~node() = default;
+    virtual ~Node() = default;
 };
 
 #endif //INTERPRETER_NODE_H

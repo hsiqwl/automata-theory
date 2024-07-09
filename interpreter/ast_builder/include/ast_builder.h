@@ -9,9 +9,9 @@ private:
 public:
     ast_builder() = default;
 
-    void build_operand(std::unique_ptr<node>&& operand);
+    void build_operand(std::unique_ptr<Node>&& operand);
 
-    void build_operation(std::unique_ptr<node>&& operation);
+    void build_operation(std::unique_ptr<Node>&& operation);
 
     ast get_tree() const;
 };

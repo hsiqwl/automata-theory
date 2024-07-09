@@ -13,27 +13,27 @@ bool CellValue::operator==(const ValueInterface &other) const {
 }
 
 bool CellValue::operator>(const ValueInterface &other) const {
-    throw std::logic_error("Can't perform comparing operator '>' on type_ Cell");
+    throw std::logic_error("Can't perform comparing operator '>' on type_ cell");
 }
 
 bool CellValue::operator<(const ValueInterface &other) const {
-    throw std::logic_error("Can't perform comparing operator '<' on type_ Cell");
+    throw std::logic_error("Can't perform comparing operator '<' on type_ cell");
 }
 
 ValueInterface &CellValue::operator()(size_t i, size_t j) {
-    throw std::logic_error("Can't perform addressing operator '()' on type_ Cell");
+    throw std::logic_error("Can't perform addressing operator '()' on type_ cell");
 }
 
 const ValueInterface &CellValue::operator()(size_t i, size_t j) const {
-    throw std::logic_error("Can't perform addressing operator '()' on type_ Cell");
+    throw std::logic_error("Can't perform addressing operator '()' on type_ cell");
 }
 
 std::unique_ptr<ValueInterface> CellValue::operator*(const ValueInterface &other) const {
-    throw std::logic_error("Can't perform subtract operator '*' on type_ Cell");
+    throw std::logic_error("Can't perform subtract operator '*' on type_ cell");
 }
 
 std::unique_ptr<ValueInterface> CellValue::operator+(const ValueInterface &other) const {
-    throw std::logic_error("Can't perform summing operator '+' on type_ Cell");
+    throw std::logic_error("Can't perform summing operator '+' on type_ cell");
 }
 
 std::unique_ptr<ValueInterface> CellValue::operator-(const ValueInterface &other) const {
@@ -55,5 +55,5 @@ std::unique_ptr<ValueInterface> CellValue::operator%(const ValueInterface &other
 }
 
 std::unique_ptr<ValueInterface> CellValue::operator^(const ValueInterface &other) const {
-    throw std::logic_error("Can't perform operator '^' on type_ Cell");
+    throw std::logic_error("Can't perform operator '^' on type_ cell");
 }

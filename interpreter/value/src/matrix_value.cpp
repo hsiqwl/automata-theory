@@ -59,7 +59,7 @@ std::unique_ptr<ValueInterface> MatrixValue::operator^(const ValueInterface &oth
         new_value->SetValue(std::make_any<matrix_t>(std::move(new_matrix)));
         new_value->set_value_for_whole_matrix(std::make_any<int>(average));
     } else
-        throw std::logic_error("Can't perform '^' operator with non-numeric or non-Cell type_ values in matrix_t");
+        throw std::logic_error("Can't perform '^' operator with non-numeric or non-cell type_ values in matrix_t");
 }
 
 ValueInterface &MatrixValue::operator()(size_t i, size_t j) {

@@ -45,7 +45,7 @@
 #line 28 "grammar.yy"
 
     #include "parsing_driver.h"
-    std::unique_ptr<node> root;
+    std::unique_ptr<Node> root;
 
 #line 51 "grammar.tab.cc"
 
@@ -219,7 +219,7 @@ namespace yy {
 
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
-        value.YY_MOVE_OR_COPY< std::unique_ptr<node> > (YY_MOVE (that.value));
+        value.YY_MOVE_OR_COPY< std::unique_ptr<Node> > (YY_MOVE (that.value));
         break;
 
       case symbol_kind::S_UNSIGNED_NUM: // UNSIGNED_NUM
@@ -252,7 +252,7 @@ namespace yy {
 
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
-        value.move< std::unique_ptr<node> > (YY_MOVE (that.value));
+        value.move< std::unique_ptr<Node> > (YY_MOVE (that.value));
         break;
 
       case symbol_kind::S_UNSIGNED_NUM: // UNSIGNED_NUM
@@ -272,7 +272,7 @@ namespace yy {
   parser::stack_symbol_type::operator= (const stack_symbol_type& that)
   {
     state = that.state;
-    switch (that.kind ())
+    switch (that.kind_ ())
     {
       case symbol_kind::S_SIGNED_NUM: // SIGNED_NUM
         value_.copy< int > (that.value_);
@@ -285,7 +285,7 @@ namespace yy {
 
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
-        value_.copy< std::unique_ptr<node> > (that.value_);
+        value_.copy< std::unique_ptr<Node> > (that.value_);
         break;
 
       case symbol_kind::S_UNSIGNED_NUM: // UNSIGNED_NUM
@@ -304,7 +304,7 @@ namespace yy {
   parser::stack_symbol_type::operator= (stack_symbol_type& that)
   {
     state = that.state;
-    switch (that.kind ())
+    switch (that.kind_ ())
     {
       case symbol_kind::S_SIGNED_NUM: // SIGNED_NUM
         value_.move< int > (that.value_);
@@ -317,7 +317,7 @@ namespace yy {
 
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
-        value_.move< std::unique_ptr<node> > (that.value_);
+        value_.move< std::unique_ptr<Node> > (that.value_);
         break;
 
       case symbol_kind::S_UNSIGNED_NUM: // UNSIGNED_NUM
@@ -354,7 +354,7 @@ namespace yy {
       yyo << "empty Symbol";
     else
       {
-        symbol_kind_type yykind = yysym.kind ();
+        symbol_kind_type yykind = yysym.kind_ ();
         yyo << (yykind < YYNTOKENS ? "token" : "nterm")
             << ' ' << yysym.name_ () << " ("
             << yysym.location << ": ";
@@ -604,7 +604,7 @@ namespace yy {
 
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
-        yylhs.value.emplace< std::unique_ptr<node> > ();
+        yylhs.value.emplace< std::unique_ptr<Node> > ();
         break;
 
       case symbol_kind::S_UNSIGNED_NUM: // UNSIGNED_NUM
@@ -633,14 +633,14 @@ namespace yy {
             {
   case 2: // program: arithmetic_expr NEW_LINE $end
 #line 76 "grammar.yy"
-                                   {drv.set_ast(ast(std::move(yystack_[2].value.as < std::unique_ptr<node> > ())));}
+                                   {drv.set_ast(ast(std::move(yystack_[2].value.as < std::unique_ptr<Node> > ())));}
 #line 638 "grammar.tab.cc"
     break;
 
   case 3: // arithmetic_operand: SIGNED_NUM
 #line 79 "grammar.yy"
                {
-        yylhs.value.as < std::unique_ptr<node> > () = std::make_unique<operand_node>("signed");
+        yylhs.value.as < std::unique_ptr<Node> > () = std::make_unique<operand_node>("signed");
     }
 #line 646 "grammar.tab.cc"
     break;
@@ -648,74 +648,74 @@ namespace yy {
   case 4: // arithmetic_operand: UNSIGNED_NUM
 #line 82 "grammar.yy"
                    {
-        yylhs.value.as < std::unique_ptr<node> > () = std::make_unique<operand_node>("unsigned");
+        yylhs.value.as < std::unique_ptr<Node> > () = std::make_unique<operand_node>("unsigned");
     }
 #line 654 "grammar.tab.cc"
     break;
 
   case 5: // arithmetic_expr: arithmetic_operand
 #line 88 "grammar.yy"
-                       { yylhs.value.as < std::unique_ptr<node> > ()=std::move(yystack_[0].value.as < std::unique_ptr<node> > ()); root = std::move(yylhs.value.as < std::unique_ptr<node> > ());}
+                       { yylhs.value.as < std::unique_ptr<Node> > ()=std::move(yystack_[0].value.as < std::unique_ptr<Node> > ()); root = std::move(yylhs.value.as < std::unique_ptr<Node> > ());}
 #line 660 "grammar.tab.cc"
     break;
 
   case 6: // arithmetic_expr: arithmetic_expr PLUS arithmetic_expr
 #line 89 "grammar.yy"
-                                           {yylhs.value.as < std::unique_ptr<node> > () = std::make_unique<operation_node>(operation_type::plus, std::move(yystack_[2].value.as < std::unique_ptr<node> > ()), std::move(yystack_[0].value.as < std::unique_ptr<node> > ()));}
+                                           {yylhs.value.as < std::unique_ptr<Node> > () = std::make_unique<BinaryOpNode>(operation_type::plus, std::move(yystack_[2].value.as < std::unique_ptr<Node> > ()), std::move(yystack_[0].value.as < std::unique_ptr<Node> > ()));}
 #line 666 "grammar.tab.cc"
     break;
 
   case 7: // arithmetic_expr: arithmetic_expr MINUS arithmetic_expr
 #line 90 "grammar.yy"
-                                            {yylhs.value.as < std::unique_ptr<node> > () = std::make_unique<operation_node>(operation_type::minus, std::move(yystack_[2].value.as < std::unique_ptr<node> > ()), std::move(yystack_[0].value.as < std::unique_ptr<node> > ()));}
+                                            {yylhs.value.as < std::unique_ptr<Node> > () = std::make_unique<BinaryOpNode>(operation_type::minus, std::move(yystack_[2].value.as < std::unique_ptr<Node> > ()), std::move(yystack_[0].value.as < std::unique_ptr<Node> > ()));}
 #line 672 "grammar.tab.cc"
     break;
 
   case 8: // arithmetic_expr: arithmetic_expr STAR arithmetic_expr
 #line 91 "grammar.yy"
-                                           {yylhs.value.as < std::unique_ptr<node> > () = std::make_unique<operation_node>(operation_type::star, std::move(yystack_[2].value.as < std::unique_ptr<node> > ()), std::move(yystack_[0].value.as < std::unique_ptr<node> > ()));}
+                                           {yylhs.value.as < std::unique_ptr<Node> > () = std::make_unique<BinaryOpNode>(operation_type::star, std::move(yystack_[2].value.as < std::unique_ptr<Node> > ()), std::move(yystack_[0].value.as < std::unique_ptr<Node> > ()));}
 #line 678 "grammar.tab.cc"
     break;
 
   case 9: // arithmetic_expr: arithmetic_expr SLASH arithmetic_expr
 #line 92 "grammar.yy"
-                                            {yylhs.value.as < std::unique_ptr<node> > () = std::make_unique<operation_node>(operation_type::slash, std::move(yystack_[2].value.as < std::unique_ptr<node> > ()), std::move(yystack_[0].value.as < std::unique_ptr<node> > ()));}
+                                            {yylhs.value.as < std::unique_ptr<Node> > () = std::make_unique<BinaryOpNode>(operation_type::slash, std::move(yystack_[2].value.as < std::unique_ptr<Node> > ()), std::move(yystack_[0].value.as < std::unique_ptr<Node> > ()));}
 #line 684 "grammar.tab.cc"
     break;
 
   case 10: // arithmetic_expr: arithmetic_expr PERCENT arithmetic_expr
 #line 93 "grammar.yy"
-                                              {yylhs.value.as < std::unique_ptr<node> > () = std::make_unique<operation_node>(operation_type::percent, std::move(yystack_[2].value.as < std::unique_ptr<node> > ()), std::move(yystack_[0].value.as < std::unique_ptr<node> > ()));}
+                                              {yylhs.value.as < std::unique_ptr<Node> > () = std::make_unique<BinaryOpNode>(operation_type::percent, std::move(yystack_[2].value.as < std::unique_ptr<Node> > ()), std::move(yystack_[0].value.as < std::unique_ptr<Node> > ()));}
 #line 690 "grammar.tab.cc"
     break;
 
   case 11: // arithmetic_expr: MINUS arithmetic_expr
 #line 94 "grammar.yy"
-                            {yylhs.value.as < std::unique_ptr<node> > () = std::make_unique<operation_node>(operation_type::minus, std::move(yystack_[0].value.as < std::unique_ptr<node> > ()));}
+                            {yylhs.value.as < std::unique_ptr<Node> > () = std::make_unique<BinaryOpNode>(operation_type::minus, std::move(yystack_[0].value.as < std::unique_ptr<Node> > ()));}
 #line 696 "grammar.tab.cc"
     break;
 
   case 12: // arithmetic_expr: LPAREN arithmetic_expr RPAREN
 #line 95 "grammar.yy"
-                                    {yylhs.value.as < std::unique_ptr<node> > () = std::move(yystack_[1].value.as < std::unique_ptr<node> > ());}
+                                    {yylhs.value.as < std::unique_ptr<Node> > () = std::move(yystack_[1].value.as < std::unique_ptr<Node> > ());}
 #line 702 "grammar.tab.cc"
     break;
 
   case 13: // arithmetic_expr: arithmetic_expr LESS arithmetic_expr
 #line 96 "grammar.yy"
-                                           {yylhs.value.as < std::unique_ptr<node> > () = std::make_unique<operation_node>(operation_type::less, std::move(yystack_[2].value.as < std::unique_ptr<node> > ()), std::move(yystack_[0].value.as < std::unique_ptr<node> > ()));}
+                                           {yylhs.value.as < std::unique_ptr<Node> > () = std::make_unique<BinaryOpNode>(operation_type::less, std::move(yystack_[2].value.as < std::unique_ptr<Node> > ()), std::move(yystack_[0].value.as < std::unique_ptr<Node> > ()));}
 #line 708 "grammar.tab.cc"
     break;
 
   case 14: // arithmetic_expr: arithmetic_expr GREATER arithmetic_expr
 #line 97 "grammar.yy"
-                                              {yylhs.value.as < std::unique_ptr<node> > () = std::make_unique<operation_node>(operation_type::greater, std::move(yystack_[2].value.as < std::unique_ptr<node> > ()), std::move(yystack_[0].value.as < std::unique_ptr<node> > ()));}
+                                              {yylhs.value.as < std::unique_ptr<Node> > () = std::make_unique<BinaryOpNode>(operation_type::greater, std::move(yystack_[2].value.as < std::unique_ptr<Node> > ()), std::move(yystack_[0].value.as < std::unique_ptr<Node> > ()));}
 #line 714 "grammar.tab.cc"
     break;
 
   case 15: // arithmetic_expr: arithmetic_expr EQUAL arithmetic_expr
 #line 98 "grammar.yy"
-                                            {yylhs.value.as < std::unique_ptr<node> > () = std::make_unique<operation_node>(operation_type::equal, std::move(yystack_[2].value.as < std::unique_ptr<node> > ()), std::move(yystack_[0].value.as < std::unique_ptr<node> > ()));}
+                                            {yylhs.value.as < std::unique_ptr<Node> > () = std::make_unique<BinaryOpNode>(operation_type::equal, std::move(yystack_[2].value.as < std::unique_ptr<Node> > ()), std::move(yystack_[0].value.as < std::unique_ptr<Node> > ()));}
 #line 720 "grammar.tab.cc"
     break;
 
@@ -783,7 +783,7 @@ namespace yy {
   `---------------------------------------------------*/
   yyerrorlab:
     /* Pacify compilers when the user code never invokes YYERROR and
-       the label yyerrorlab therefore never appears in user code.  */
+       the label_ yyerrorlab therefore never appears in user code.  */
     if (false)
       YYERROR;
 

@@ -881,7 +881,7 @@ yy_find_action:
 
 /* %% [11.0] code for yylineno update goes here */
 
-do_action:	/* This label is used only to access EOF actions. */
+do_action:	/* This label_ is used only to access EOF actions. */
 
 /* %% [12.0] debug code goes here */
 		if ( yy_flex_debug )

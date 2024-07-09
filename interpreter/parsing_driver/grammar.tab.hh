@@ -423,7 +423,7 @@ namespace yy {
 
       // arithmetic_operand
       // arithmetic_expr
-      char dummy3[sizeof (std::unique_ptr<node>)];
+      char dummy3[sizeof (std::unique_ptr<Node>)];
 
       // UNSIGNED_NUM
       char dummy4[sizeof (unsigned int)];
@@ -512,7 +512,7 @@ namespace yy {
       typedef token_kind_type yytokentype;
     };
 
-    /// Token kind, as returned by yylex.
+    /// Token kind_, as returned by yylex.
     typedef token::token_kind_type token_kind_type;
 
     /// Backward compatibility alias (Bison 3.6).
@@ -563,7 +563,7 @@ namespace yy {
       };
     };
 
-    /// (Internal) Symbol kind.
+    /// (Internal) Symbol kind_.
     typedef symbol_kind::symbol_kind_type symbol_kind_type;
 
     /// The number of tokens.
@@ -571,8 +571,8 @@ namespace yy {
 
     /// A complete Symbol.
     ///
-    /// Expects its Base type_ to provide access to the Symbol kind
-    /// via kind ().
+    /// Expects its Base type_ to provide access to the Symbol kind_
+    /// via kind_ ().
     ///
     /// Provide access to semantic value_ and location.
     template <typename Base>
@@ -594,7 +594,7 @@ namespace yy {
         , value ()
         , location (std::move (that.location))
       {
-        switch (this->kind ())
+        switch (this->kind_ ())
     {
       case symbol_kind::S_SIGNED_NUM: // SIGNED_NUM
         value.move< int > (std::move (that.value_));
@@ -607,7 +607,7 @@ namespace yy {
 
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
-        value.move< std::unique_ptr<node> > (std::move (that.value_));
+        value.move< std::unique_ptr<Node> > (std::move (that.value_));
         break;
 
       case symbol_kind::S_UNSIGNED_NUM: // UNSIGNED_NUM
@@ -666,13 +666,13 @@ namespace yy {
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, std::unique_ptr<node>&& v, location_type&& l)
+      basic_symbol (typename Base::kind_type t, std::unique_ptr<Node>&& v, location_type&& l)
         : Base (t)
         , value (std::move (v))
         , location (std::move (l))
       {}
 #else
-      basic_symbol (typename Base::kind_type t, const std::unique_ptr<node>& v, const location_type& l)
+      basic_symbol (typename Base::kind_type t, const std::unique_ptr<Node>& v, const location_type& l)
         : Base (t)
         , value_ (v)
         , location (l)
@@ -705,7 +705,7 @@ namespace yy {
       void clear () YY_NOEXCEPT
       {
         // User destructor.
-        symbol_kind_type yykind = this->kind ();
+        symbol_kind_type yykind = this->kind_ ();
         basic_symbol<Base>& yysym = *this;
         (void) yysym;
         switch (yykind)
@@ -728,7 +728,7 @@ switch (yykind)
 
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
-        value.template destroy< std::unique_ptr<node> > ();
+        value.template destroy< std::unique_ptr<Node> > ();
         break;
 
       case symbol_kind::S_UNSIGNED_NUM: // UNSIGNED_NUM
@@ -745,7 +745,7 @@ switch (yykind)
       /// The user-facing name_ of this Symbol.
       const char *name () const YY_NOEXCEPT
       {
-        return parser::symbol_name (this->kind ());
+        return parser::symbol_name (this->kind_ ());
       }
 
       /// Backward compatibility (Bison 3.6).
@@ -773,7 +773,7 @@ switch (yykind)
     /// Type access provider for token (enum) based symbols.
     struct by_kind
     {
-      /// The Symbol kind as needed by the constructor.
+      /// The Symbol kind_ as needed by the constructor.
       typedef token_kind_type kind_type;
 
       /// Default constructor.
@@ -795,7 +795,7 @@ switch (yykind)
       /// Record that this Symbol is empty.
       void clear () YY_NOEXCEPT;
 
-      /// Steal the Symbol kind from \a that.
+      /// Steal the Symbol kind_ from \a that.
       void move (by_kind& that);
 
       /// The (internal) type_ number (corresponding to \a type_).
@@ -805,7 +805,7 @@ switch (yykind)
       /// Backward compatibility (Bison 3.6).
       symbol_kind_type type_get () const YY_NOEXCEPT;
 
-      /// The Symbol kind.
+      /// The Symbol kind_.
       /// \a S_YYEMPTY when empty.
       symbol_kind_type kind_;
     };
@@ -920,7 +920,7 @@ switch (yykind)
     /// YYSYMBOL.  No bounds checking.
     static const char *symbol_name (symbol_kind_type yysymbol);
 
-    // Implementation of make_symbol for each token kind.
+    // Implementation of make_symbol for each token kind_.
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
@@ -1451,7 +1451,7 @@ switch (yykind)
     static const signed char yypact_ninf_;
     static const signed char yytable_ninf_;
 
-    /// Convert a scanner token kind \a t to a Symbol kind.
+    /// Convert a scanner token kind_ \a t to a Symbol kind_.
     /// In theory \a t should be a token_kind_type, but character literals
     /// are valid, yet not members of the token_kind_type enum.
     static symbol_kind_type yytranslate_ (int t) YY_NOEXCEPT;
@@ -1481,11 +1481,11 @@ switch (yykind)
 
     static const signed char yycheck_[];
 
-    // YYSTOS[STATE-NUM] -- The Symbol kind of the accessing Symbol of
+    // YYSTOS[STATE-NUM] -- The Symbol kind_ of the accessing Symbol of
     // state STATE-NUM.
     static const signed char yystos_[];
 
-    // YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.
+    // YYR1[RULE-NUM] -- Symbol kind_ of the left-hand side of rule RULE-NUM.
     static const signed char yyr1_[];
 
     // YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.
@@ -1505,7 +1505,7 @@ switch (yykind)
     /// Debug stream.
     std::ostream* yycdebug_;
 
-    /// \brief Display a Symbol kind, value_ and location.
+    /// \brief Display a Symbol kind_, value_ and location.
     /// \param yyo    The output stream.
     /// \param yysym  The Symbol.
     template <typename Base>
@@ -1514,7 +1514,7 @@ switch (yykind)
 
     /// \brief Reclaim the memory associated to a Symbol.
     /// \param yymsg     Why this token is reclaimed.
-    ///                  If null, print nothing.
+    ///                  If null, PrintOut nothing.
     /// \param yysym     The Symbol.
     template <typename Base>
     void yy_destroy_ (const char* yymsg, basic_symbol<Base>& yysym) const;
@@ -1526,7 +1526,7 @@ switch (yykind)
       /// Default constructor.
       by_state () YY_NOEXCEPT;
 
-      /// The Symbol kind as needed by the constructor.
+      /// The Symbol kind_ as needed by the constructor.
       typedef state_type kind_type;
 
       /// Constructor.
@@ -1538,10 +1538,10 @@ switch (yykind)
       /// Record that this Symbol is empty.
       void clear () YY_NOEXCEPT;
 
-      /// Steal the Symbol kind from \a that.
+      /// Steal the Symbol kind_ from \a that.
       void move (by_state& that);
 
-      /// The Symbol kind (corresponding to \a state).
+      /// The Symbol kind_ (corresponding to \a state).
       /// \a symbol_kind::S_YYEMPTY when empty.
       symbol_kind_type kind () const YY_NOEXCEPT;
 
@@ -1755,7 +1755,7 @@ switch (yykind)
     , value ()
     , location (that.location)
   {
-    switch (this->kind ())
+    switch (this->kind_ ())
     {
       case symbol_kind::S_SIGNED_NUM: // SIGNED_NUM
         value.copy< int > (YY_MOVE (that.value_));
@@ -1768,7 +1768,7 @@ switch (yykind)
 
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
-        value.copy< std::unique_ptr<node> > (YY_MOVE (that.value_));
+        value.copy< std::unique_ptr<Node> > (YY_MOVE (that.value_));
         break;
 
       case symbol_kind::S_UNSIGNED_NUM: // UNSIGNED_NUM
@@ -1788,7 +1788,7 @@ switch (yykind)
   parser::symbol_kind_type
   parser::basic_symbol<Base>::type_get () const YY_NOEXCEPT
   {
-    return this->kind ();
+    return this->kind_ ();
   }
 
 
@@ -1796,7 +1796,7 @@ switch (yykind)
   bool
   parser::basic_symbol<Base>::empty () const YY_NOEXCEPT
   {
-    return this->kind () == symbol_kind::S_YYEMPTY;
+    return this->kind_ () == symbol_kind::S_YYEMPTY;
   }
 
   template <typename Base>
@@ -1804,7 +1804,7 @@ switch (yykind)
   parser::basic_symbol<Base>::move (basic_symbol& s)
   {
     super_type::move (s);
-    switch (this->kind ())
+    switch (this->kind_ ())
     {
       case symbol_kind::S_SIGNED_NUM: // SIGNED_NUM
         value.move< int > (YY_MOVE (s.value_));
@@ -1817,7 +1817,7 @@ switch (yykind)
 
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
-        value.move< std::unique_ptr<node> > (YY_MOVE (s.value_));
+        value.move< std::unique_ptr<Node> > (YY_MOVE (s.value_));
         break;
 
       case symbol_kind::S_UNSIGNED_NUM: // UNSIGNED_NUM

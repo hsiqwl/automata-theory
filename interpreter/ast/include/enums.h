@@ -1,24 +1,28 @@
 #ifndef INTERPRETER_ENUMS_H
 #define INTERPRETER_ENUMS_H
 
-enum class node_type{
-    operation,
-    operand
+enum class NodeKind{
+    BinaryOp,
+    UnaryOp,
+    Identifier,
+    NumericLiteral,
+    MAX_TOKEN_NAMES_ID
 };
 
-enum class operation_type{
-    plus,
-    minus,
-    star,
-    slash,
-    percent,
-    less,
-    greater,
-    equal
+enum class BinaryOpKind{
+    Plus,
+    Minus,
+    Star,
+    Slash,
+    Less,
+    Greater,
+    Equal,
+    Percent
 };
 
-enum class operand_category{
-    immediate_value,
-    variable
+enum class UnaryOpKind{
+    Plus,
+    Minus
 };
+
 #endif //INTERPRETER_ENUMS_H
