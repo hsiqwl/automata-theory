@@ -1,18 +1,18 @@
 #ifndef INTERPRETER_UNARY_OP_H
 #define INTERPRETER_UNARY_OP_H
-#include "node.h"
+#include "node_interface.h"
 #include <memory>
 
-class UnaryOpNode : public Node{
+class UnaryOpNode : public INode{
 public:
-    UnaryOpNode(UnaryOpKind op_kind, std::unique_ptr<Node>&& operand);
+    UnaryOpNode(UnaryOpKind op_kind, INode* operand);
 
     void PrintOut(std::ostream& stream) const override;
 
 private:
     UnaryOpKind op_kind_;
 
-    std::unique_ptr<Node> operand_;
+    INode* operand_;
 
     void SetLabel();
 };

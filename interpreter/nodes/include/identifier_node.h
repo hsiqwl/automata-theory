@@ -1,10 +1,10 @@
 #ifndef INTERPRETER_IDENTIFIER_NODE_H
 #define INTERPRETER_IDENTIFIER_NODE_H
-#include "node.h"
+#include "node_interface.h"
 
-class IdentifierNode: public Node{
+class IdentifierNode: public INode{
 public:
-    IdentifierNode(std::string id);
+    IdentifierNode(std::string_view id);
 
     void PrintOut(std::ostream& stream) const override;
 

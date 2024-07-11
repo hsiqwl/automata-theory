@@ -1,9 +1,9 @@
 #ifndef INTERPRETER_NUMERIC_LITERAL_H
 #define INTERPRETER_NUMERIC_LITERAL_H
-#include "node.h"
+#include "node_interface.h"
 #include <variant>
 
-class NumericLiteralNode: public Node{
+class NumericLiteralNode: public INode{
 public:
     explicit NumericLiteralNode(int value);
 

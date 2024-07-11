@@ -29,10 +29,8 @@ void BinaryOpNode::SetLabel() {
     }
 }
 
-BinaryOpNode::BinaryOpNode(BinaryOpKind op_kind, std::unique_ptr<Node> &&lhs, std::unique_ptr<Node> &&rhs)
-    : Node(NodeKind::BinaryOp), op_kind_(op_kind) {
-    lhs_ = std::move(lhs);
-    rhs_ = std::move(rhs);
+BinaryOpNode::BinaryOpNode(BinaryOpKind op_kind, INode* lhs, INode* rhs)
+    : INode(NodeKind::BinaryOp), op_kind_(op_kind), lhs_(lhs), rhs_(rhs) {
     SetLabel();
 }
 

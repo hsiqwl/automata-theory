@@ -285,7 +285,7 @@ namespace yy {
 
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
-        value_.copy< std::unique_ptr<Node> > (that.value_);
+        value_.copy< std::unique_ptr<INode> > (that.value_);
         break;
 
       case symbol_kind::S_UNSIGNED_NUM: // UNSIGNED_NUM
@@ -317,7 +317,7 @@ namespace yy {
 
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
-        value_.move< std::unique_ptr<Node> > (that.value_);
+        value_.move< std::unique_ptr<INode> > (that.value_);
         break;
 
       case symbol_kind::S_UNSIGNED_NUM: // UNSIGNED_NUM

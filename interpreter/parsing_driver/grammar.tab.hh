@@ -672,7 +672,7 @@ namespace yy {
         , location (std::move (l))
       {}
 #else
-      basic_symbol (typename Base::kind_type t, const std::unique_ptr<Node>& v, const location_type& l)
+      basic_symbol (typename Base::kind_type t, const std::unique_ptr<INode>& v, const location_type& l)
         : Base (t)
         , value_ (v)
         , location (l)

@@ -27,7 +27,7 @@
 
 %code{
     #include "parsing_driver.h"
-    std::unique_ptr<Node> root;
+    std::unique_ptr<INode> root;
 }
 
 %define api.token.prefix {TOK_}
@@ -62,7 +62,7 @@
 %token <int> SIGNED_NUM
 %token <unsigned int> UNSIGNED_NUM
 %token <std::string> SIMPLE_TYPE
-%nterm <std::unique_ptr<Node>> arithmetic_operand arithmetic_expr
+%nterm <std::unique_ptr<INode>> arithmetic_operand arithmetic_expr
 //%nterm <std::string> simple_matrix_type complex_matrix_type
 //%nterm <std::string> var_type
 

@@ -15,7 +15,7 @@ void UnaryOpNode::PrintOut(std::ostream &stream) const {
     stream << "UnaryOpNode : '" << label_ << "'\n";
 }
 
-UnaryOpNode::UnaryOpNode(UnaryOpKind op_kind, std::unique_ptr<Node> &&operand)
-    : Node(NodeKind::UnaryOp), operand_(std::move(operand)), op_kind_(op_kind) {
+UnaryOpNode::UnaryOpNode(UnaryOpKind op_kind, INode* operand)
+    : INode(NodeKind::UnaryOp), operand_(operand), op_kind_(op_kind) {
     SetLabel();
 }

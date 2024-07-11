@@ -1,6 +1,6 @@
 #include "identifier_node.h"
 
-IdentifierNode::IdentifierNode(std::string id): Node(NodeKind::Identifier), id_(std::move(id)) {
+IdentifierNode::IdentifierNode(std::string_view id): INode(NodeKind::Identifier), id_(id) {
     label_ = id_;
 }
 

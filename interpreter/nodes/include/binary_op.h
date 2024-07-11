@@ -1,22 +1,22 @@
 #ifndef INTERPRETER_BINARY_OP_H
 #define INTERPRETER_BINARY_OP_H
-#include "node.h"
+#include "node_interface.h"
 #include <optional>
 #include <memory>
 #include <string>
 
-class BinaryOpNode: public Node{
+class BinaryOpNode: public INode{
 public:
-    BinaryOpNode(BinaryOpKind op_kind, std::unique_ptr<Node>&& lhs, std::unique_ptr<Node>&& rhs);
+    BinaryOpNode(BinaryOpKind op_kind, INode* lhs, INode* rhs);
 
     void PrintOut(std::ostream& stream) const override;
 
 private:
     BinaryOpKind op_kind_;
 
-    std::unique_ptr<Node> lhs_;
+    INode* lhs_;
 
-    std::unique_ptr<Node> rhs_;
+    INode* rhs_;
 
     void SetLabel();
 };
