@@ -4,11 +4,15 @@
 
 %define api.token.raw
 %define api.token.constructor
-%define api.value_.type_ variant
+%define api.value.type variant
 %define parse.assert
 
 %code requires{
     #include "ast.h"
+    #include "ast_printer.h"
+    #include "binary_op.h"
+    #include "numeric_literal.h"
+    #include "unary_op.h"
     #include <string>
     #include <memory>
     #include <iostream>
@@ -27,7 +31,6 @@
 
 %code{
     #include "parsing_driver.h"
-    std::unique_ptr<INode> root;
 }
 
 %define api.token.prefix {TOK_}
@@ -62,7 +65,7 @@
 %token <int> SIGNED_NUM
 %token <unsigned int> UNSIGNED_NUM
 %token <std::string> SIMPLE_TYPE
-%nterm <std::unique_ptr<INode>> arithmetic_operand arithmetic_expr
+%nterm <Ast> arithmetic_operand arithmetic_expr
 //%nterm <std::string> simple_matrix_type complex_matrix_type
 //%nterm <std::string> var_type
 
@@ -73,29 +76,29 @@
 
 %%
 program:
-    arithmetic_expr NEW_LINE YYEOF {drv.set_ast(ast(std::move($1)));}
+    arithmetic_expr NEW_LINE YYEOF {AstPrinter::print($1);};
 
 arithmetic_operand:
     SIGNED_NUM {
-        $$ = std::make_unique<operand_node>("signed");
+        $$ = Ast{Node{NumericLiteralNode{$1}}};
     }
     | UNSIGNED_NUM {
-        $$ = std::make_unique<operand_node>("unsigned");
+        $$ = Ast{Node{NumericLiteralNode{$1}}};
     }
     ;
 
 arithmetic_expr:
-    arithmetic_operand { $$=std::move($1); root = std::move($$);}
-    | arithmetic_expr PLUS arithmetic_expr {$$ = std::make_unique<BinaryOpNode>(operation_type::plus, std::move($1), std::move($3));}
-    | arithmetic_expr MINUS arithmetic_expr {$$ = std::make_unique<BinaryOpNode>(operation_type::minus, std::move($1), std::move($3));}
-    | arithmetic_expr STAR arithmetic_expr {$$ = std::make_unique<BinaryOpNode>(operation_type::star, std::move($1), std::move($3));}
-    | arithmetic_expr SLASH arithmetic_expr {$$ = std::make_unique<BinaryOpNode>(operation_type::slash, std::move($1), std::move($3));}
-    | arithmetic_expr PERCENT arithmetic_expr {$$ = std::make_unique<BinaryOpNode>(operation_type::percent, std::move($1), std::move($3));}
-    | MINUS arithmetic_expr {$$ = std::make_unique<BinaryOpNode>(operation_type::minus, std::move($2));}
+    arithmetic_operand {$$ = std::move($1);}
+    | arithmetic_expr PLUS arithmetic_expr {$$ = Ast{BinaryOpKind::Plus, std::move($1), std::move($3)};}
+    | arithmetic_expr MINUS arithmetic_expr {$$ = Ast{BinaryOpKind::Minus, std::move($1), std::move($3)};}
+    | arithmetic_expr STAR arithmetic_expr {$$ = Ast{BinaryOpKind::Star, std::move($1), std::move($3)};}
+    | arithmetic_expr SLASH arithmetic_expr {$$ = Ast{BinaryOpKind::Slash, std::move($1), std::move($3)};}
+    | arithmetic_expr PERCENT arithmetic_expr {$$ = Ast{BinaryOpKind::Percent, std::move($1), std::move($3)};}
+    | MINUS arithmetic_expr {$$ = Ast{UnaryOpKind::Minus, std::move($2)};}
     | LPAREN arithmetic_expr RPAREN {$$ = std::move($2);}
-    | arithmetic_expr LESS arithmetic_expr {$$ = std::make_unique<BinaryOpNode>(operation_type::less, std::move($1), std::move($3));}
-    | arithmetic_expr GREATER arithmetic_expr {$$ = std::make_unique<BinaryOpNode>(operation_type::greater, std::move($1), std::move($3));}
-    | arithmetic_expr EQUAL arithmetic_expr {$$ = std::make_unique<BinaryOpNode>(operation_type::equal, std::move($1), std::move($3));}
+    | arithmetic_expr LESS arithmetic_expr {$$ = Ast{BinaryOpKind::Less, std::move($1), std::move($3)};}
+    | arithmetic_expr GREATER arithmetic_expr {$$ = Ast{BinaryOpKind::Greater, std::move($1), std::move($3)};}
+    | arithmetic_expr EQUAL arithmetic_expr {$$ = Ast{BinaryOpKind::Equal, std::move($1), std::move($3)};}
     ;
 
 

@@ -2114,11 +2114,11 @@ void yyfree (void * ptr )
 #line 42 "scanner.l"
 
 
-void driver::scan_begin(){
+void driver::scan_begin() {
     yy_flex_debug = trace_scanning;
-    if(file.empty() || file == "-"){
+    if (file.empty() || file == "-") {
         yyin = stdin;
-    }else if (!(yyin = fopen(file.c_str(), "r"))){
+    } else if (!(yyin = fopen(file.c_str(), "r"))) {
         std::cerr << "cannot open file" << '\n';
         exit(EXIT_FAILURE);
     }

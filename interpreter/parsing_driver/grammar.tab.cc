@@ -31,7 +31,7 @@
 // version 2.2 of Bison.
 
 // DO NOT RELY ON FEATURES THAT ARE NOT DOCUMENTED in the manual,
-// especially those whose name_ start with YY_ or yy_.  They are
+// especially those whose name start with YY_ or yy_.  They are
 // private implementation details that can be changed or removed.
 
 
@@ -42,12 +42,11 @@
 
 
 // Unqualified %code blocks.
-#line 28 "grammar.yy"
+#line 32 "grammar.yy"
 
     #include "parsing_driver.h"
-    std::unique_ptr<Node> root;
 
-#line 51 "grammar.tab.cc"
+#line 50 "grammar.tab.cc"
 
 
 #ifndef YY_
@@ -75,7 +74,7 @@
 #define YYRHSLOC(Rhs, K) ((Rhs)[K].location)
 /* YYLLOC_DEFAULT -- Set CURRENT to span from RHS[1] to RHS[N].
    If N is 0, then set CURRENT to the empty location which ends
-   the previous Symbol: RHS[0] (always defined).  */
+   the previous symbol: RHS[0] (always defined).  */
 
 # ifndef YYLLOC_DEFAULT
 #  define YYLLOC_DEFAULT(Current, Rhs, N)                               \
@@ -139,7 +138,7 @@
 #define YYRECOVERING()  (!!yyerrstatus_)
 
 namespace yy {
-#line 143 "grammar.tab.cc"
+#line 142 "grammar.tab.cc"
 
   /// Build a parser object.
   parser::parser (driver& drv_yyarg)
@@ -160,7 +159,7 @@ namespace yy {
   {}
 
   /*---------.
-  | Symbol.  |
+  | symbol.  |
   `---------*/
 
 
@@ -208,6 +207,11 @@ namespace yy {
   {
     switch (that.kind ())
     {
+      case symbol_kind::S_arithmetic_operand: // arithmetic_operand
+      case symbol_kind::S_arithmetic_expr: // arithmetic_expr
+        value.YY_MOVE_OR_COPY< Ast > (YY_MOVE (that.value));
+        break;
+
       case symbol_kind::S_SIGNED_NUM: // SIGNED_NUM
         value.YY_MOVE_OR_COPY< int > (YY_MOVE (that.value));
         break;
@@ -215,11 +219,6 @@ namespace yy {
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_SIMPLE_TYPE: // SIMPLE_TYPE
         value.YY_MOVE_OR_COPY< std::string > (YY_MOVE (that.value));
-        break;
-
-      case symbol_kind::S_arithmetic_operand: // arithmetic_operand
-      case symbol_kind::S_arithmetic_expr: // arithmetic_expr
-        value.YY_MOVE_OR_COPY< std::unique_ptr<Node> > (YY_MOVE (that.value));
         break;
 
       case symbol_kind::S_UNSIGNED_NUM: // UNSIGNED_NUM
@@ -241,6 +240,11 @@ namespace yy {
   {
     switch (that.kind ())
     {
+      case symbol_kind::S_arithmetic_operand: // arithmetic_operand
+      case symbol_kind::S_arithmetic_expr: // arithmetic_expr
+        value.move< Ast > (YY_MOVE (that.value));
+        break;
+
       case symbol_kind::S_SIGNED_NUM: // SIGNED_NUM
         value.move< int > (YY_MOVE (that.value));
         break;
@@ -248,11 +252,6 @@ namespace yy {
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_SIMPLE_TYPE: // SIMPLE_TYPE
         value.move< std::string > (YY_MOVE (that.value));
-        break;
-
-      case symbol_kind::S_arithmetic_operand: // arithmetic_operand
-      case symbol_kind::S_arithmetic_expr: // arithmetic_expr
-        value.move< std::unique_ptr<Node> > (YY_MOVE (that.value));
         break;
 
       case symbol_kind::S_UNSIGNED_NUM: // UNSIGNED_NUM
@@ -272,24 +271,24 @@ namespace yy {
   parser::stack_symbol_type::operator= (const stack_symbol_type& that)
   {
     state = that.state;
-    switch (that.kind_ ())
+    switch (that.kind ())
     {
+      case symbol_kind::S_arithmetic_operand: // arithmetic_operand
+      case symbol_kind::S_arithmetic_expr: // arithmetic_expr
+        value.copy< Ast > (that.value);
+        break;
+
       case symbol_kind::S_SIGNED_NUM: // SIGNED_NUM
-        value_.copy< int > (that.value_);
+        value.copy< int > (that.value);
         break;
 
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_SIMPLE_TYPE: // SIMPLE_TYPE
-        value_.copy< std::string > (that.value_);
-        break;
-
-      case symbol_kind::S_arithmetic_operand: // arithmetic_operand
-      case symbol_kind::S_arithmetic_expr: // arithmetic_expr
-        value_.copy< std::unique_ptr<INode> > (that.value_);
+        value.copy< std::string > (that.value);
         break;
 
       case symbol_kind::S_UNSIGNED_NUM: // UNSIGNED_NUM
-        value_.copy< unsigned int > (that.value_);
+        value.copy< unsigned int > (that.value);
         break;
 
       default:
@@ -304,24 +303,24 @@ namespace yy {
   parser::stack_symbol_type::operator= (stack_symbol_type& that)
   {
     state = that.state;
-    switch (that.kind_ ())
+    switch (that.kind ())
     {
+      case symbol_kind::S_arithmetic_operand: // arithmetic_operand
+      case symbol_kind::S_arithmetic_expr: // arithmetic_expr
+        value.move< Ast > (that.value);
+        break;
+
       case symbol_kind::S_SIGNED_NUM: // SIGNED_NUM
-        value_.move< int > (that.value_);
+        value.move< int > (that.value);
         break;
 
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_SIMPLE_TYPE: // SIMPLE_TYPE
-        value_.move< std::string > (that.value_);
-        break;
-
-      case symbol_kind::S_arithmetic_operand: // arithmetic_operand
-      case symbol_kind::S_arithmetic_expr: // arithmetic_expr
-        value_.move< std::unique_ptr<INode> > (that.value_);
+        value.move< std::string > (that.value);
         break;
 
       case symbol_kind::S_UNSIGNED_NUM: // UNSIGNED_NUM
-        value_.move< unsigned int > (that.value_);
+        value.move< unsigned int > (that.value);
         break;
 
       default:
@@ -351,12 +350,12 @@ namespace yy {
     std::ostream& yyoutput = yyo;
     YY_USE (yyoutput);
     if (yysym.empty ())
-      yyo << "empty Symbol";
+      yyo << "empty symbol";
     else
       {
-        symbol_kind_type yykind = yysym.kind_ ();
+        symbol_kind_type yykind = yysym.kind ();
         yyo << (yykind < YYNTOKENS ? "token" : "nterm")
-            << ' ' << yysym.name_ () << " ("
+            << ' ' << yysym.name () << " ("
             << yysym.location << ": ";
         YY_USE (yykind);
         yyo << ')';
@@ -455,13 +454,13 @@ namespace yy {
     int yynerrs_ = 0;
     int yyerrstatus_ = 0;
 
-    /// The lookahead Symbol.
+    /// The lookahead symbol.
     symbol_type yyla;
 
     /// The locations where the error started and ended.
     stack_symbol_type yyerror_range[3];
 
-    /// The return value_ of parse ().
+    /// The return value of parse ().
     int yyresult;
 
     // Discard the LAC context in case there still is one left from a
@@ -478,12 +477,12 @@ namespace yy {
     /* Initialize the stack.  The initial state will be set in
        yynewstate, since the latter expects the semantical and the
        location values to have been already stored, initialize these
-       stacks with a primary value_.  */
+       stacks with a primary value.  */
     yystack_.clear ();
     yypush_ (YY_NULLPTR, 0, YY_MOVE (yyla));
 
   /*-----------------------------------------------.
-  | yynewstate -- push a new Symbol on the stack.  |
+  | yynewstate -- push a new symbol on the stack.  |
   `-----------------------------------------------*/
   yynewstate:
     YYCDEBUG << "Entering state " << int (yystack_[0].state) << '\n';
@@ -589,10 +588,15 @@ namespace yy {
       stack_symbol_type yylhs;
       yylhs.state = yy_lr_goto_state_ (yystack_[yylen].state, yyr1_[yyn]);
       /* Variants are always initialized to an empty instance of the
-         correct type_. The default '$$ = $1' action is NOT applied
+         correct type. The default '$$ = $1' action is NOT applied
          when using variants.  */
       switch (yyr1_[yyn])
     {
+      case symbol_kind::S_arithmetic_operand: // arithmetic_operand
+      case symbol_kind::S_arithmetic_expr: // arithmetic_expr
+        yylhs.value.emplace< Ast > ();
+        break;
+
       case symbol_kind::S_SIGNED_NUM: // SIGNED_NUM
         yylhs.value.emplace< int > ();
         break;
@@ -600,11 +604,6 @@ namespace yy {
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_SIMPLE_TYPE: // SIMPLE_TYPE
         yylhs.value.emplace< std::string > ();
-        break;
-
-      case symbol_kind::S_arithmetic_operand: // arithmetic_operand
-      case symbol_kind::S_arithmetic_expr: // arithmetic_expr
-        yylhs.value.emplace< std::unique_ptr<Node> > ();
         break;
 
       case symbol_kind::S_UNSIGNED_NUM: // UNSIGNED_NUM
@@ -632,95 +631,95 @@ namespace yy {
           switch (yyn)
             {
   case 2: // program: arithmetic_expr NEW_LINE $end
-#line 76 "grammar.yy"
-                                   {drv.set_ast(ast(std::move(yystack_[2].value.as < std::unique_ptr<Node> > ())));}
-#line 638 "grammar.tab.cc"
+#line 79 "grammar.yy"
+                                   {AstPrinter::print(yystack_[2].value.as < Ast > ());}
+#line 637 "grammar.tab.cc"
     break;
 
   case 3: // arithmetic_operand: SIGNED_NUM
-#line 79 "grammar.yy"
+#line 82 "grammar.yy"
                {
-        yylhs.value.as < std::unique_ptr<Node> > () = std::make_unique<operand_node>("signed");
+        yylhs.value.as < Ast > () = Ast{Node{NumericLiteralNode{yystack_[0].value.as < int > ()}}};
     }
-#line 646 "grammar.tab.cc"
+#line 645 "grammar.tab.cc"
     break;
 
   case 4: // arithmetic_operand: UNSIGNED_NUM
-#line 82 "grammar.yy"
+#line 85 "grammar.yy"
                    {
-        yylhs.value.as < std::unique_ptr<Node> > () = std::make_unique<operand_node>("unsigned");
+        yylhs.value.as < Ast > () = Ast{Node{NumericLiteralNode{yystack_[0].value.as < unsigned int > ()}}};
     }
-#line 654 "grammar.tab.cc"
+#line 653 "grammar.tab.cc"
     break;
 
   case 5: // arithmetic_expr: arithmetic_operand
-#line 88 "grammar.yy"
-                       { yylhs.value.as < std::unique_ptr<Node> > ()=std::move(yystack_[0].value.as < std::unique_ptr<Node> > ()); root = std::move(yylhs.value.as < std::unique_ptr<Node> > ());}
-#line 660 "grammar.tab.cc"
+#line 91 "grammar.yy"
+                       {yylhs.value.as < Ast > () = std::move(yystack_[0].value.as < Ast > ());}
+#line 659 "grammar.tab.cc"
     break;
 
   case 6: // arithmetic_expr: arithmetic_expr PLUS arithmetic_expr
-#line 89 "grammar.yy"
-                                           {yylhs.value.as < std::unique_ptr<Node> > () = std::make_unique<BinaryOpNode>(operation_type::plus, std::move(yystack_[2].value.as < std::unique_ptr<Node> > ()), std::move(yystack_[0].value.as < std::unique_ptr<Node> > ()));}
-#line 666 "grammar.tab.cc"
+#line 92 "grammar.yy"
+                                           {std::cout << "AAAAAAAAAAA\n"; yylhs.value.as < Ast > () = Ast{BinaryOpKind::Plus, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
+#line 665 "grammar.tab.cc"
     break;
 
   case 7: // arithmetic_expr: arithmetic_expr MINUS arithmetic_expr
-#line 90 "grammar.yy"
-                                            {yylhs.value.as < std::unique_ptr<Node> > () = std::make_unique<BinaryOpNode>(operation_type::minus, std::move(yystack_[2].value.as < std::unique_ptr<Node> > ()), std::move(yystack_[0].value.as < std::unique_ptr<Node> > ()));}
-#line 672 "grammar.tab.cc"
+#line 93 "grammar.yy"
+                                            {yylhs.value.as < Ast > () = Ast{BinaryOpKind::Minus, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
+#line 671 "grammar.tab.cc"
     break;
 
   case 8: // arithmetic_expr: arithmetic_expr STAR arithmetic_expr
-#line 91 "grammar.yy"
-                                           {yylhs.value.as < std::unique_ptr<Node> > () = std::make_unique<BinaryOpNode>(operation_type::star, std::move(yystack_[2].value.as < std::unique_ptr<Node> > ()), std::move(yystack_[0].value.as < std::unique_ptr<Node> > ()));}
-#line 678 "grammar.tab.cc"
+#line 94 "grammar.yy"
+                                           {yylhs.value.as < Ast > () = Ast{BinaryOpKind::Star, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
+#line 677 "grammar.tab.cc"
     break;
 
   case 9: // arithmetic_expr: arithmetic_expr SLASH arithmetic_expr
-#line 92 "grammar.yy"
-                                            {yylhs.value.as < std::unique_ptr<Node> > () = std::make_unique<BinaryOpNode>(operation_type::slash, std::move(yystack_[2].value.as < std::unique_ptr<Node> > ()), std::move(yystack_[0].value.as < std::unique_ptr<Node> > ()));}
-#line 684 "grammar.tab.cc"
+#line 95 "grammar.yy"
+                                            {yylhs.value.as < Ast > () = Ast{BinaryOpKind::Slash, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
+#line 683 "grammar.tab.cc"
     break;
 
   case 10: // arithmetic_expr: arithmetic_expr PERCENT arithmetic_expr
-#line 93 "grammar.yy"
-                                              {yylhs.value.as < std::unique_ptr<Node> > () = std::make_unique<BinaryOpNode>(operation_type::percent, std::move(yystack_[2].value.as < std::unique_ptr<Node> > ()), std::move(yystack_[0].value.as < std::unique_ptr<Node> > ()));}
-#line 690 "grammar.tab.cc"
+#line 96 "grammar.yy"
+                                              {yylhs.value.as < Ast > () = Ast{BinaryOpKind::Percent, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
+#line 689 "grammar.tab.cc"
     break;
 
   case 11: // arithmetic_expr: MINUS arithmetic_expr
-#line 94 "grammar.yy"
-                            {yylhs.value.as < std::unique_ptr<Node> > () = std::make_unique<BinaryOpNode>(operation_type::minus, std::move(yystack_[0].value.as < std::unique_ptr<Node> > ()));}
-#line 696 "grammar.tab.cc"
+#line 97 "grammar.yy"
+                            {yylhs.value.as < Ast > () = Ast{UnaryOpKind::Minus, std::move(yystack_[0].value.as < Ast > ())};}
+#line 695 "grammar.tab.cc"
     break;
 
   case 12: // arithmetic_expr: LPAREN arithmetic_expr RPAREN
-#line 95 "grammar.yy"
-                                    {yylhs.value.as < std::unique_ptr<Node> > () = std::move(yystack_[1].value.as < std::unique_ptr<Node> > ());}
-#line 702 "grammar.tab.cc"
+#line 98 "grammar.yy"
+                                    {yylhs.value.as < Ast > () = std::move(yystack_[1].value.as < Ast > ());}
+#line 701 "grammar.tab.cc"
     break;
 
   case 13: // arithmetic_expr: arithmetic_expr LESS arithmetic_expr
-#line 96 "grammar.yy"
-                                           {yylhs.value.as < std::unique_ptr<Node> > () = std::make_unique<BinaryOpNode>(operation_type::less, std::move(yystack_[2].value.as < std::unique_ptr<Node> > ()), std::move(yystack_[0].value.as < std::unique_ptr<Node> > ()));}
-#line 708 "grammar.tab.cc"
+#line 99 "grammar.yy"
+                                           {yylhs.value.as < Ast > () = Ast{BinaryOpKind::Less, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
+#line 707 "grammar.tab.cc"
     break;
 
   case 14: // arithmetic_expr: arithmetic_expr GREATER arithmetic_expr
-#line 97 "grammar.yy"
-                                              {yylhs.value.as < std::unique_ptr<Node> > () = std::make_unique<BinaryOpNode>(operation_type::greater, std::move(yystack_[2].value.as < std::unique_ptr<Node> > ()), std::move(yystack_[0].value.as < std::unique_ptr<Node> > ()));}
-#line 714 "grammar.tab.cc"
+#line 100 "grammar.yy"
+                                              {yylhs.value.as < Ast > () = Ast{BinaryOpKind::Greater, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
+#line 713 "grammar.tab.cc"
     break;
 
   case 15: // arithmetic_expr: arithmetic_expr EQUAL arithmetic_expr
-#line 98 "grammar.yy"
-                                            {yylhs.value.as < std::unique_ptr<Node> > () = std::make_unique<BinaryOpNode>(operation_type::equal, std::move(yystack_[2].value.as < std::unique_ptr<Node> > ()), std::move(yystack_[0].value.as < std::unique_ptr<Node> > ()));}
-#line 720 "grammar.tab.cc"
+#line 101 "grammar.yy"
+                                            {yylhs.value.as < Ast > () = Ast{BinaryOpKind::Equal, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
+#line 719 "grammar.tab.cc"
     break;
 
 
-#line 724 "grammar.tab.cc"
+#line 723 "grammar.tab.cc"
 
             default:
               break;
@@ -783,7 +782,7 @@ namespace yy {
   `---------------------------------------------------*/
   yyerrorlab:
     /* Pacify compilers when the user code never invokes YYERROR and
-       the label_ yyerrorlab therefore never appears in user code.  */
+       the label yyerrorlab therefore never appears in user code.  */
     if (false)
       YYERROR;
 
@@ -961,7 +960,7 @@ namespace yy {
   bool
   parser::yy_lac_check_ (symbol_kind_type yytoken) const
   {
-    // Logically, the yylac_stack's lifetime is confined to this FunctionSymbol.
+    // Logically, the yylac_stack's lifetime is confined to this function.
     // Clear it, to get rid of potential left-overs from previous call.
     yylac_stack_.clear ();
     // Reduce until we encounter a shift and thereby accept the token.
@@ -1105,7 +1104,7 @@ namespace yy {
   {
     /* There are many possibilities here to consider:
        - If this state is a consistent state with a default action, then
-         the only way this FunctionSymbol was invoked is if the default action
+         the only way this function was invoked is if the default action
          is an error action.  In that case, don't check for expected
          tokens because there are none.
        - The only way there can be no lookahead present (in yyla) is
@@ -1259,8 +1258,8 @@ namespace yy {
   const signed char
   parser::yyrline_[] =
   {
-       0,    76,    76,    79,    82,    88,    89,    90,    91,    92,
-      93,    94,    95,    96,    97,    98
+       0,    79,    79,    82,    85,    91,    92,    93,    94,    95,
+      96,    97,    98,    99,   100,   101
   };
 
   void
@@ -1292,9 +1291,9 @@ namespace yy {
 
 
 } // yy
-#line 1296 "grammar.tab.cc"
+#line 1295 "grammar.tab.cc"
 
-#line 123 "grammar.yy"
+#line 126 "grammar.yy"
 
 
 void yy::parser::error (const location_type& l, const std::string& m){

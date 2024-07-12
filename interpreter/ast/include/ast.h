@@ -12,6 +12,8 @@ private:
     std::list<Node> tree_;
 
 public:
+    Ast() = default;
+
     Ast(Node&& node);
 
     Ast(BinaryOpKind bin_op_kind, Ast&& lhs, Ast&& rhs);

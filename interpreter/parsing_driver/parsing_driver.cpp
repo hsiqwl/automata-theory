@@ -4,10 +4,6 @@
 driver::driver()
     : trace_parsing(false), trace_scanning(false) {}
 
-void driver::set_ast(ast &&result_tree) {
-    tree = std::move(result_tree);
-}
-
 int driver::parse(const std::string &filename) {
     file = filename;
     location.initialize(&filename);

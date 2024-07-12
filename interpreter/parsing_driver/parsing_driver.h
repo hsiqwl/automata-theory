@@ -28,10 +28,7 @@ public:
 
     void location_step();
 
-    void set_ast(ast&& result_tree);
-
-    ast tree;
-
+    Ast tree;
 private:
     std::string file;
 

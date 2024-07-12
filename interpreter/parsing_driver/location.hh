@@ -60,7 +60,7 @@ namespace yy {
   class position
   {
   public:
-    /// Type for file name_.
+    /// Type for file name.
     typedef const std::string filename_type;
     /// Type for line and column numbers.
     typedef int counter_type;
@@ -104,7 +104,7 @@ namespace yy {
     }
     /** \} */
 
-    /// File name_ to which this position refers.
+    /// File name to which this position refers.
     filename_type* filename;
     /// Current line number.
     counter_type line;
@@ -165,7 +165,7 @@ namespace yy {
   class location
   {
   public:
-    /// Type for file name_.
+    /// Type for file name.
     typedef position::filename_type filename_type;
     /// Type for line and column numbers.
     typedef position::counter_type counter_type;
