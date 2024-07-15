@@ -1,4 +1,6 @@
 #include "binary_op.h"
+#include "node_visitor.h"
+
 
 void BinaryOpNode::SetLabel() {
     switch (op_kind_) {
@@ -36,4 +38,10 @@ BinaryOpNode::BinaryOpNode(BinaryOpKind op_kind, INode* lhs, INode* rhs)
 
 void BinaryOpNode::PrintOut(std::ostream &stream) const {
     stream << "BinaryOp : '" << label_ << "'\n";
+}
+
+void BinaryOpNode::Accept(NodeVisitor &visitor) {
+   lhs_->Accept(visitor);
+   rhs_->Accept(visitor);
+   visitor.Visit(*this);
 }

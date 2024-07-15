@@ -9,7 +9,6 @@
 
 %code requires{
     #include "ast.h"
-    #include "ast_printer.h"
     #include "binary_op.h"
     #include "numeric_literal.h"
     #include "unary_op.h"
@@ -76,7 +75,7 @@
 
 %%
 program:
-    arithmetic_expr NEW_LINE YYEOF {AstPrinter::print($1);};
+    arithmetic_expr NEW_LINE YYEOF {drv.tree_ = std::make_unique<Ast>(std::move($1));};
 
 arithmetic_operand:
     SIGNED_NUM {

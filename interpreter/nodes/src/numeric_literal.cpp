@@ -1,4 +1,5 @@
 #include "numeric_literal.h"
+#include "node_visitor.h"
 
 NumericLiteralNode::NumericLiteralNode(int value): INode(NodeKind::NumericLiteral), is_signed_(true) {
     value_.emplace<int>(value);
@@ -12,4 +13,8 @@ NumericLiteralNode::NumericLiteralNode(unsigned int value): INode(NodeKind::Nume
 
 void NumericLiteralNode::PrintOut(std::ostream &stream) const {
     stream << "NumericLiteralNode :'" << label_ << "'\n";
+}
+
+void NumericLiteralNode::Accept(NodeVisitor &visitor) {
+    visitor.Visit(*this);
 }

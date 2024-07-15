@@ -28,7 +28,8 @@ public:
 
     void location_step();
 
-    Ast tree;
+    std::unique_ptr<Ast> tree_;
+
 private:
     std::string file;
 

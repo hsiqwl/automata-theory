@@ -11,6 +11,8 @@ public:
 
     void PrintOut(std::ostream& stream) const override;
 
+    void Accept(NodeVisitor& visitor) override;
+
 private:
     bool is_signed_;
 

@@ -1,6 +1,6 @@
 #include <iostream>
 #include "parsing_driver.h"
-#include "ast_printer.h"
+#include "printer.h"
 
 int main(int argc, char *argv[]) {
     driver drv;
@@ -12,6 +12,8 @@ int main(int argc, char *argv[]) {
         else if(!drv.parse(argv[i]))
             std::cout << "parsing ended\n";
     }
-    AstPrinter::print(drv.tree);
+    AstPrinter printer;
+    drv.tree_->AcceptVisitor(printer);
     return 0;
+
 }

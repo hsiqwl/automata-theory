@@ -1,15 +1,13 @@
 #ifndef INTERPRETER_AST_H
 #define INTERPRETER_AST_H
+#include "node_traits.h"
 #include "node.h"
-#include "binary_op.h"
-#include "unary_op.h"
-#include <memory>
-#include <list>
-#include "ast_iterator.h"
+
+class NodeVisitor;
 
 class Ast{
 private:
-    std::list<Node> tree_;
+    Node* root_ = nullptr;
 
 public:
     Ast() = default;
@@ -20,21 +18,7 @@ public:
 
     Ast(UnaryOpKind un_op_kind, Ast&& operand);
 
-    typedef AstIterator<true> const_iterator;
-
-    typedef AstIterator<false> iterator;
-
-    iterator begin() noexcept;
-
-    const_iterator begin() const noexcept;
-
-    const_iterator end() const noexcept;
-
-    iterator end() noexcept;
-
-    const_iterator cbegin() const noexcept;
-
-    const_iterator cend() const noexcept;
+    void AcceptVisitor(NodeVisitor& visitor);
 };
 
 #endif //INTERPRETER_AST_H

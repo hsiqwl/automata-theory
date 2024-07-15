@@ -8,3 +8,4 @@ target_include_directories(node_traits INTERFACE include)
 
 add_library(nodes STATIC src/binary_op.cpp src/unary_op.cpp src/identifier_node.cpp src/numeric_literal.cpp src/node.cpp)
 target_include_directories(nodes PUBLIC include)
+target_link_libraries(nodes visitor)

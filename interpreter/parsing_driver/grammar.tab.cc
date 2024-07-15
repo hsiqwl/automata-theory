@@ -42,7 +42,7 @@
 
 
 // Unqualified %code blocks.
-#line 32 "grammar.yy"
+#line 31 "grammar.yy"
 
     #include "parsing_driver.h"
 
@@ -631,13 +631,13 @@ namespace yy {
           switch (yyn)
             {
   case 2: // program: arithmetic_expr NEW_LINE $end
-#line 79 "grammar.yy"
-                                   {AstPrinter::print(yystack_[2].value.as < Ast > ());}
+#line 78 "grammar.yy"
+                                   {drv.tree_ = std::make_unique<Ast>(std::move(yystack_[2].value.as < Ast > ()));}
 #line 637 "grammar.tab.cc"
     break;
 
   case 3: // arithmetic_operand: SIGNED_NUM
-#line 82 "grammar.yy"
+#line 81 "grammar.yy"
                {
         yylhs.value.as < Ast > () = Ast{Node{NumericLiteralNode{yystack_[0].value.as < int > ()}}};
     }
@@ -645,7 +645,7 @@ namespace yy {
     break;
 
   case 4: // arithmetic_operand: UNSIGNED_NUM
-#line 85 "grammar.yy"
+#line 84 "grammar.yy"
                    {
         yylhs.value.as < Ast > () = Ast{Node{NumericLiteralNode{yystack_[0].value.as < unsigned int > ()}}};
     }
@@ -653,67 +653,67 @@ namespace yy {
     break;
 
   case 5: // arithmetic_expr: arithmetic_operand
-#line 91 "grammar.yy"
+#line 90 "grammar.yy"
                        {yylhs.value.as < Ast > () = std::move(yystack_[0].value.as < Ast > ());}
 #line 659 "grammar.tab.cc"
     break;
 
   case 6: // arithmetic_expr: arithmetic_expr PLUS arithmetic_expr
-#line 92 "grammar.yy"
-                                           {std::cout << "AAAAAAAAAAA\n"; yylhs.value.as < Ast > () = Ast{BinaryOpKind::Plus, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
+#line 91 "grammar.yy"
+                                           {yylhs.value.as < Ast > () = Ast{BinaryOpKind::Plus, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
 #line 665 "grammar.tab.cc"
     break;
 
   case 7: // arithmetic_expr: arithmetic_expr MINUS arithmetic_expr
-#line 93 "grammar.yy"
+#line 92 "grammar.yy"
                                             {yylhs.value.as < Ast > () = Ast{BinaryOpKind::Minus, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
 #line 671 "grammar.tab.cc"
     break;
 
   case 8: // arithmetic_expr: arithmetic_expr STAR arithmetic_expr
-#line 94 "grammar.yy"
+#line 93 "grammar.yy"
                                            {yylhs.value.as < Ast > () = Ast{BinaryOpKind::Star, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
 #line 677 "grammar.tab.cc"
     break;
 
   case 9: // arithmetic_expr: arithmetic_expr SLASH arithmetic_expr
-#line 95 "grammar.yy"
+#line 94 "grammar.yy"
                                             {yylhs.value.as < Ast > () = Ast{BinaryOpKind::Slash, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
 #line 683 "grammar.tab.cc"
     break;
 
   case 10: // arithmetic_expr: arithmetic_expr PERCENT arithmetic_expr
-#line 96 "grammar.yy"
+#line 95 "grammar.yy"
                                               {yylhs.value.as < Ast > () = Ast{BinaryOpKind::Percent, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
 #line 689 "grammar.tab.cc"
     break;
 
   case 11: // arithmetic_expr: MINUS arithmetic_expr
-#line 97 "grammar.yy"
+#line 96 "grammar.yy"
                             {yylhs.value.as < Ast > () = Ast{UnaryOpKind::Minus, std::move(yystack_[0].value.as < Ast > ())};}
 #line 695 "grammar.tab.cc"
     break;
 
   case 12: // arithmetic_expr: LPAREN arithmetic_expr RPAREN
-#line 98 "grammar.yy"
+#line 97 "grammar.yy"
                                     {yylhs.value.as < Ast > () = std::move(yystack_[1].value.as < Ast > ());}
 #line 701 "grammar.tab.cc"
     break;
 
   case 13: // arithmetic_expr: arithmetic_expr LESS arithmetic_expr
-#line 99 "grammar.yy"
+#line 98 "grammar.yy"
                                            {yylhs.value.as < Ast > () = Ast{BinaryOpKind::Less, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
 #line 707 "grammar.tab.cc"
     break;
 
   case 14: // arithmetic_expr: arithmetic_expr GREATER arithmetic_expr
-#line 100 "grammar.yy"
+#line 99 "grammar.yy"
                                               {yylhs.value.as < Ast > () = Ast{BinaryOpKind::Greater, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
 #line 713 "grammar.tab.cc"
     break;
 
   case 15: // arithmetic_expr: arithmetic_expr EQUAL arithmetic_expr
-#line 101 "grammar.yy"
+#line 100 "grammar.yy"
                                             {yylhs.value.as < Ast > () = Ast{BinaryOpKind::Equal, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
 #line 719 "grammar.tab.cc"
     break;
@@ -1258,8 +1258,8 @@ namespace yy {
   const signed char
   parser::yyrline_[] =
   {
-       0,    79,    79,    82,    85,    91,    92,    93,    94,    95,
-      96,    97,    98,    99,   100,   101
+       0,    78,    78,    81,    84,    90,    91,    92,    93,    94,
+      95,    96,    97,    98,    99,   100
   };
 
   void
@@ -1293,7 +1293,7 @@ namespace yy {
 } // yy
 #line 1295 "grammar.tab.cc"
 
-#line 126 "grammar.yy"
+#line 125 "grammar.yy"
 
 
 void yy::parser::error (const location_type& l, const std::string& m){

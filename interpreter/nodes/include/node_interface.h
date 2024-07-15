@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 
+class NodeVisitor;
 
 class INode {
 protected:
@@ -18,6 +19,8 @@ public:
     NodeKind GetKind() const { return kind_; };
 
     virtual void PrintOut(std::ostream &stream) const = 0;
+
+    virtual void Accept(NodeVisitor& visitor) = 0;
 
     virtual ~INode() = default;
 };
