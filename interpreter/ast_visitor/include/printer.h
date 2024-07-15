@@ -6,13 +6,13 @@
 
 class AstPrinter: public NodeVisitor{
 public:
-    void Visit(BinaryOpNode& node) override;
+    void Visit(const BinaryOpNode& node) override;
 
-    void Visit(UnaryOpNode& node) override;
+    void Visit(const UnaryOpNode& node) override;
 
-    void Visit(IdentifierNode& node) override;
+    void Visit(const IdentifierNode& node) override;
 
-    void Visit(NumericLiteralNode& node) override;
+    void Visit(const NumericLiteralNode& node) override;
 
     std::ostream* buf_ = &std::cout;
 };

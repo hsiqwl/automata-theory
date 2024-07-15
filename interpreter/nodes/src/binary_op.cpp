@@ -31,8 +31,8 @@ void BinaryOpNode::SetLabel() {
     }
 }
 
-BinaryOpNode::BinaryOpNode(BinaryOpKind op_kind, INode* lhs, INode* rhs)
-    : INode(NodeKind::BinaryOp), op_kind_(op_kind), lhs_(lhs), rhs_(rhs) {
+BinaryOpNode::BinaryOpNode(BinaryOpKind op_kind, std::unique_ptr<INode>&& lhs, std::unique_ptr<INode>&& rhs)
+    : INode(NodeKind::BinaryOp), op_kind_(op_kind), lhs_(std::move(lhs)), rhs_(std::move(rhs)) {
     SetLabel();
 }
 
@@ -40,8 +40,18 @@ void BinaryOpNode::PrintOut(std::ostream &stream) const {
     stream << "BinaryOp : '" << label_ << "'\n";
 }
 
-void BinaryOpNode::Accept(NodeVisitor &visitor) {
-   lhs_->Accept(visitor);
-   rhs_->Accept(visitor);
+void BinaryOpNode::Accept(NodeVisitor &visitor) const {
    visitor.Visit(*this);
+}
+
+const std::unique_ptr<INode>& BinaryOpNode::GetLeft() const noexcept {
+    return lhs_;
+}
+
+const std::unique_ptr<INode> &BinaryOpNode::GetRight() const noexcept {
+    return rhs_;
+}
+
+BinaryOpKind BinaryOpNode::GetOpKind() const noexcept {
+    return op_kind_;
 }

@@ -639,7 +639,7 @@ namespace yy {
   case 3: // arithmetic_operand: SIGNED_NUM
 #line 81 "grammar.yy"
                {
-        yylhs.value.as < Ast > () = Ast{Node{NumericLiteralNode{yystack_[0].value.as < int > ()}}};
+        yylhs.value.as < Ast > () = Ast{std::make_unique<NumericLiteralNode>(yystack_[0].value.as < int > ())};
     }
 #line 645 "grammar.tab.cc"
     break;
@@ -647,7 +647,7 @@ namespace yy {
   case 4: // arithmetic_operand: UNSIGNED_NUM
 #line 84 "grammar.yy"
                    {
-        yylhs.value.as < Ast > () = Ast{Node{NumericLiteralNode{yystack_[0].value.as < unsigned int > ()}}};
+        yylhs.value.as < Ast > () = Ast{std::make_unique<NumericLiteralNode>(yystack_[0].value.as < unsigned int > ())};
     }
 #line 653 "grammar.tab.cc"
     break;

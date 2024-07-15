@@ -8,7 +8,7 @@ public:
 
     void PrintOut(std::ostream& stream) const override;
 
-    void Accept(NodeVisitor& visitor) override;
+    void Accept(NodeVisitor& visitor) const override;
 
 private:
     std::string id_;

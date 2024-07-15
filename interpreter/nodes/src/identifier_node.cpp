@@ -9,6 +9,6 @@ void IdentifierNode::PrintOut(std::ostream &stream) const {
     stream << "IdentifierNode: '" << label_ << "'\n";
 }
 
-void IdentifierNode::Accept(NodeVisitor &visitor) {
+void IdentifierNode::Accept(NodeVisitor &visitor) const{
     visitor.Visit(*this);
 }

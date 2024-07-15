@@ -15,6 +15,14 @@ void NumericLiteralNode::PrintOut(std::ostream &stream) const {
     stream << "NumericLiteralNode :'" << label_ << "'\n";
 }
 
-void NumericLiteralNode::Accept(NodeVisitor &visitor) {
+void NumericLiteralNode::Accept(NodeVisitor &visitor) const {
     visitor.Visit(*this);
+}
+
+long NumericLiteralNode::GetValue() const {
+    if (value_.index() == 0) {
+        return std::get<int>(value_);
+    } else {
+        return std::get<unsigned int>(value_);
+    }
 }

@@ -3,6 +3,8 @@ project(interpreter)
 
 set(CMAKE_CXX_STANDARD 20)
 
+add_compile_options(-g)
+
 add_subdirectory(cell)
 add_subdirectory(symbol)
 add_subdirectory(symbol_table)
@@ -21,3 +23,4 @@ target_link_libraries(parse_driver ast)
 
 add_executable(main main.cpp)
 target_link_libraries(main parse_driver printer)
+

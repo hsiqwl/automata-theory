@@ -8,13 +8,13 @@ class NumericLiteralNode;
 
 class NodeVisitor{
 public:
-    virtual void Visit(BinaryOpNode& node) = 0;
+    virtual void Visit(const BinaryOpNode& node) = 0;
 
-    virtual void Visit(UnaryOpNode& node) = 0;
+    virtual void Visit(const UnaryOpNode& node) = 0;
 
-    virtual void Visit(IdentifierNode& node) = 0;
+    virtual void Visit(const IdentifierNode& node) = 0;
 
-    virtual void Visit(NumericLiteralNode& node) = 0;
+    virtual void Visit(const NumericLiteralNode& node) = 0;
 
     virtual ~NodeVisitor() = default;
 };

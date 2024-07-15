@@ -4,16 +4,20 @@
 
 class UnaryOpNode : public INode{
 public:
-    UnaryOpNode(UnaryOpKind op_kind, INode* operand);
+    UnaryOpNode(UnaryOpKind op_kind, std::unique_ptr<INode>&& operand);
 
     void PrintOut(std::ostream& stream) const override;
 
-    void Accept(NodeVisitor& visitor) override;
+    void Accept(NodeVisitor& visitor) const override;
+
+    [[nodiscard]] UnaryOpKind GetOpKind() const noexcept;
+
+    const std::unique_ptr<INode>& GetOperand() const noexcept;
 
 private:
     UnaryOpKind op_kind_;
 
-    INode* operand_;
+    std::unique_ptr<INode> operand_;
 
     void SetLabel();
 };

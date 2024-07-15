@@ -1,13 +1,21 @@
 #include "ast.h"
+#include "printer.h"
+#include "interpreter.h"
 
-Ast::Ast(Node &&node) : root_(new Node{std::move(node)}){}
+Ast::Ast(std::unique_ptr<INode> &&node) : root_(std::move(node)) {}
 
 Ast::Ast(BinaryOpKind bin_op_kind, Ast &&lhs, Ast &&rhs)
-    : root_(new Node{BinaryOpNode{bin_op_kind, &**lhs.root_, &**rhs.root_}}) {}
+    : root_(std::make_unique<BinaryOpNode>(bin_op_kind, std::move(lhs.root_), std::move(rhs.root_))) {}
 
 Ast::Ast(UnaryOpKind un_op_kind, Ast &&operand)
-    : root_(new Node{UnaryOpNode{un_op_kind, &**operand.root_}}) {}
+    : root_(std::make_unique<UnaryOpNode>(un_op_kind, std::move(operand.root_))) {}
 
-void Ast::AcceptVisitor(NodeVisitor &visitor) {
-    (*root_)->Accept(visitor);
+void Ast::PrintOut(std::ostream &stream) const {
+    AstPrinter printer;
+    printer.buf_ = &stream;
+    root_->Accept(printer);
+}
+
+long Ast::Evaluate() const {
+    return Interpreter::GetValue(root_);
 }

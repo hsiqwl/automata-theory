@@ -5,18 +5,24 @@
 
 class BinaryOpNode: public INode{
 public:
-    BinaryOpNode(BinaryOpKind op_kind, INode* lhs, INode* rhs);
+    BinaryOpNode(BinaryOpKind op_kind, std::unique_ptr<INode>&& lhs, std::unique_ptr<INode>&& rhs);
 
     void PrintOut(std::ostream& stream) const override;
 
-    void Accept(NodeVisitor& visitor) override;
+    void Accept(NodeVisitor& visitor) const override;
+
+    [[nodiscard]] const std::unique_ptr<INode>& GetLeft() const noexcept;
+
+    [[nodiscard]] const std::unique_ptr<INode>& GetRight() const noexcept;
+
+    [[nodiscard]] BinaryOpKind GetOpKind() const noexcept;
 
 private:
     BinaryOpKind op_kind_;
 
-    INode* lhs_;
+    std::unique_ptr<INode> lhs_;
 
-    INode* rhs_;
+    std::unique_ptr<INode> rhs_;
 
     void SetLabel();
 };

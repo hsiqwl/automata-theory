@@ -1,6 +1,7 @@
 #ifndef INTERPRETER_NODE_INTERFACE_H
 #define INTERPRETER_NODE_INTERFACE_H
 #include "enums.h"
+#include <memory>
 #include <fstream>
 #include <string>
 
@@ -20,7 +21,7 @@ public:
 
     virtual void PrintOut(std::ostream &stream) const = 0;
 
-    virtual void Accept(NodeVisitor& visitor) = 0;
+    virtual void Accept(NodeVisitor& visitor) const = 0;
 
     virtual ~INode() = default;
 };

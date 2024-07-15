@@ -79,10 +79,10 @@ program:
 
 arithmetic_operand:
     SIGNED_NUM {
-        $$ = Ast{Node{NumericLiteralNode{$1}}};
+        $$ = Ast{std::make_unique<NumericLiteralNode>($1)};
     }
     | UNSIGNED_NUM {
-        $$ = Ast{Node{NumericLiteralNode{$1}}};
+        $$ = Ast{std::make_unique<NumericLiteralNode>($1)};
     }
     ;
 
