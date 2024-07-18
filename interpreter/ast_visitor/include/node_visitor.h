@@ -3,8 +3,9 @@
 
 class BinaryOpNode;
 class UnaryOpNode;
-class IdentifierNode;
 class NumericLiteralNode;
+class VarDeclNode;
+class VarReferenceNode;
 
 class NodeVisitor{
 public:
@@ -12,9 +13,11 @@ public:
 
     virtual void Visit(const UnaryOpNode& node) = 0;
 
-    virtual void Visit(const IdentifierNode& node) = 0;
-
     virtual void Visit(const NumericLiteralNode& node) = 0;
+
+    virtual void Visit(const VarDeclNode& node) = 0;
+
+    virtual void Visit(const VarReferenceNode& node) = 0;
 
     virtual ~NodeVisitor() = default;
 };

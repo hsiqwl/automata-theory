@@ -9,8 +9,6 @@ public:
 
     explicit NumericLiteralNode(unsigned int value);
 
-    void PrintOut(std::ostream& stream) const override;
-
     void Accept(NodeVisitor& visitor) const override;
 
     long GetValue() const;

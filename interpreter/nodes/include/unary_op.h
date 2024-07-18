@@ -6,8 +6,6 @@ class UnaryOpNode : public INode{
 public:
     UnaryOpNode(UnaryOpKind op_kind, std::unique_ptr<INode>&& operand);
 
-    void PrintOut(std::ostream& stream) const override;
-
     void Accept(NodeVisitor& visitor) const override;
 
     [[nodiscard]] UnaryOpKind GetOpKind() const noexcept;

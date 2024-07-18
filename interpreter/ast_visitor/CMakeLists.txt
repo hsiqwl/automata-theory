@@ -13,6 +13,8 @@ add_library(printer STATIC src/printer.cpp)
 target_include_directories(printer PUBLIC include)
 target_link_libraries(printer visitor node_traits)
 
+if(FALSE)
 add_library(interpreter STATIC src/interpreter.cpp)
 target_include_directories(interpreter PUBLIC include)
 target_link_libraries(interpreter value_getter visitor node_traits)
+endif ()

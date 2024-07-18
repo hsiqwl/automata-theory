@@ -11,9 +11,6 @@ NumericLiteralNode::NumericLiteralNode(unsigned int value): INode(NodeKind::Nume
     label_ = std::to_string(value);
 }
 
-void NumericLiteralNode::PrintOut(std::ostream &stream) const {
-    stream << "NumericLiteralNode :'" << label_ << "'\n";
-}
 
 void NumericLiteralNode::Accept(NodeVisitor &visitor) const {
     visitor.Visit(*this);

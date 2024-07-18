@@ -36,7 +36,7 @@ ws [ \t]
 ">" return yy::parser::make_GREATER(loc);
 "=" return yy::parser::make_EQUAL(loc);
 "const" return yy::parser::make_CONST(loc);
-"matrix_t" return yy::parser::make_MATRIX(loc);
+"matrix" return yy::parser::make_MATRIX(loc);
 {simple_type} return yy::parser::make_SIMPLE_TYPE(std::string(yytext), loc);
 {id} return yy::parser::make_IDENTIFIER(yytext, loc);
 {signed_number} return yy::parser::make_SIGNED_NUM(std::stol(std::string(yytext)), loc);

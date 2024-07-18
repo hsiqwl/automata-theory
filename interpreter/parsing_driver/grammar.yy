@@ -9,9 +9,6 @@
 
 %code requires{
     #include "ast.h"
-    #include "binary_op.h"
-    #include "numeric_literal.h"
-    #include "unary_op.h"
     #include <string>
     #include <memory>
     #include <iostream>
@@ -64,9 +61,8 @@
 %token <int> SIGNED_NUM
 %token <unsigned int> UNSIGNED_NUM
 %token <std::string> SIMPLE_TYPE
-%nterm <Ast> arithmetic_operand arithmetic_expr
-//%nterm <std::string> simple_matrix_type complex_matrix_type
-//%nterm <std::string> var_type
+%nterm <Ast> arithmetic_operand arithmetic_expr var_decl assign statement
+%nterm <std::string> type_info
 
 %left PLUS MINUS
 %left LESS GREATER EQUAL
@@ -75,15 +71,24 @@
 
 %%
 program:
-    arithmetic_expr NEW_LINE YYEOF {drv.tree_ = std::make_unique<Ast>(std::move($1));};
+    statement NEW_LINE YYEOF {drv.tree_ = std::make_unique<Ast>(std::move($1));}
+    ;
+
+statement:
+    arithmetic_expr {$$ = std::move($1);}
+    | assign {$$ = std::move($1);}
+    | var_decl {$$ = std::move($1);}
+    ;
 
 arithmetic_operand:
-    SIGNED_NUM {
-        $$ = Ast{std::make_unique<NumericLiteralNode>($1)};
-    }
-    | UNSIGNED_NUM {
-        $$ = Ast{std::make_unique<NumericLiteralNode>($1)};
-    }
+    SIGNED_NUM {$$ = Ast{std::make_unique<NumericLiteralNode>($1)};}
+    | UNSIGNED_NUM {$$ = Ast{std::make_unique<NumericLiteralNode>($1)};}
+    | IDENTIFIER {$$ = Ast{std::make_unique<VarReferenceNode>($1)};}
+    ;
+
+assign:
+    IDENTIFIER ASSIGN arithmetic_expr { auto var_ref_ast = Ast{std::make_unique<VarReferenceNode>($1)};
+        $$ = Ast{BinaryOpKind::Assign, std::move(var_ref_ast), std::move($3)}; }
     ;
 
 arithmetic_expr:
@@ -101,27 +106,16 @@ arithmetic_expr:
     ;
 
 
-/*//for matrix_t declaration
-simple_matrix_type:
-    MATRIX LESS SIMPLE_TYPE GREATER {$$ = "matrix_t<" + $3 + ">";}
+type_info:
+    SIMPLE_TYPE {$$ = $1;}
+    | MATRIX LESS type_info GREATER {$$ = "matrix<" + $3 + ">";}
     ;
 
-complex_matrix_type:
-    simple_matrix_type
-    | MATRIX LESS complex_matrix_type GREATER {$$ = "matrix_t<" + $3 + ">";}
+var_decl:
+    type_info IDENTIFIER {$$ = Ast{std::make_unique<VarDeclNode>($2, $1)};}
+    | CONST type_info IDENTIFIER {$$ = Ast{std::make_unique<VarDeclNode>($3, $2, true)};}
     ;
 
-var_type:
-    SIMPLE_TYPE
-    | complex_matrix_type
-    ;
-
-declaration:
-    CONST var_type IDENTIFIER ASSIGN arithmetic_expr {}
-    | var_type IDENTIFIER {}
-    | var_type IDENTIFIER ASSIGN arithmetic_expr {}
-    ;
-*/
 %%
 
 void yy::parser::error (const location_type& l, const std::string& m){

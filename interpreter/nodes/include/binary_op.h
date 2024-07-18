@@ -7,8 +7,6 @@ class BinaryOpNode: public INode{
 public:
     BinaryOpNode(BinaryOpKind op_kind, std::unique_ptr<INode>&& lhs, std::unique_ptr<INode>&& rhs);
 
-    void PrintOut(std::ostream& stream) const override;
-
     void Accept(NodeVisitor& visitor) const override;
 
     [[nodiscard]] const std::unique_ptr<INode>& GetLeft() const noexcept;

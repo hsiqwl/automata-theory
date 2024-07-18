@@ -4,7 +4,8 @@
 #include "binary_op.h"
 #include "unary_op.h"
 #include "numeric_literal.h"
-#include "identifier_node.h"
+#include "var_ref.h"
+#include "var_decl.h"
 #include <type_traits>
 
 template<NodeKind Kind>
@@ -22,8 +23,9 @@ MAKE_NODE_TRAITS(UnaryOpNode, NodeKind::UnaryOp);
 
 MAKE_NODE_TRAITS(NumericLiteralNode, NodeKind::NumericLiteral);
 
-MAKE_NODE_TRAITS(IdentifierNode, NodeKind::Identifier);
+MAKE_NODE_TRAITS(VarReferenceNode, NodeKind::VarRef);
 
+MAKE_NODE_TRAITS(VarDeclNode, NodeKind::VarDecl);
 
 template<std::size_t Kind, typename = void>
 struct kind_has_type : public std::false_type {};

@@ -8,7 +8,7 @@ void MatrixValue::SetValue(std::any &&new_value) {
     value_ = std::move(std::any_cast<matrix_t>(std::move(new_value)));
 }
 
-bool MatrixValue::contains_numeric_values() const {
+bool MatrixValue::ContainsNumericValues() const {
     void *ptr = dynamic_cast<SignedValue *>(&(*value_[0][0]));
     if (ptr == nullptr) {
         ptr = dynamic_cast<UnsignedValue *>(&(*value_[0][0]));
@@ -19,14 +19,14 @@ bool MatrixValue::contains_numeric_values() const {
     return true;
 }
 
-bool MatrixValue::contains_cell_values() const {
+bool MatrixValue::ContainsCellValues() const {
     void *ptr = dynamic_cast<CellValue *>(&(*value_[0][0]));
     if (ptr == nullptr)
         return false;
     return true;
 }
 
-int MatrixValue::compute_average() const {
+int MatrixValue::ComputeAverage() const {
     int average = 0;
     for (auto &line: value_) {
         for (auto &column: line) {
@@ -36,7 +36,7 @@ int MatrixValue::compute_average() const {
     return average;
 }
 
-void MatrixValue::set_value_for_whole_matrix(std::any &&new_value) {
+void MatrixValue::SetValueForWholeMatrix(std::any &&new_value) {
     for (auto &line: value_) {
         for (auto &column: line) {
             column->SetValue(std::move(new_value));
@@ -52,12 +52,12 @@ bool MatrixValue::operator==(const ValueInterface &other) const {
 std::unique_ptr<ValueInterface> MatrixValue::operator^(const ValueInterface &other) const {
     std::unique_ptr<MatrixValue> new_value = std::make_unique<MatrixValue>();
     matrix_t new_matrix{value_.size(), {value_[0].size(), nullptr}};
-    if (contains_cell_values()) {
+    if (ContainsCellValues()) {
 
-    } else if (contains_numeric_values()) {
-        int average = compute_average();
+    } else if (ContainsNumericValues()) {
+        int average = ComputeAverage();
         new_value->SetValue(std::make_any<matrix_t>(std::move(new_matrix)));
-        new_value->set_value_for_whole_matrix(std::make_any<int>(average));
+        new_value->SetValueForWholeMatrix(std::make_any<int>(average));
     } else
         throw std::logic_error("Can't perform '^' operator with non-numeric or non-cell type_ values in matrix_t");
 }

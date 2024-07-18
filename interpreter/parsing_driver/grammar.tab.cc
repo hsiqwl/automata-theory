@@ -42,7 +42,7 @@
 
 
 // Unqualified %code blocks.
-#line 31 "grammar.yy"
+#line 28 "grammar.yy"
 
     #include "parsing_driver.h"
 
@@ -207,8 +207,11 @@ namespace yy {
   {
     switch (that.kind ())
     {
+      case symbol_kind::S_statement: // statement
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
+      case symbol_kind::S_assign: // assign
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
+      case symbol_kind::S_var_decl: // var_decl
         value.YY_MOVE_OR_COPY< Ast > (YY_MOVE (that.value));
         break;
 
@@ -218,6 +221,7 @@ namespace yy {
 
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_SIMPLE_TYPE: // SIMPLE_TYPE
+      case symbol_kind::S_type_info: // type_info
         value.YY_MOVE_OR_COPY< std::string > (YY_MOVE (that.value));
         break;
 
@@ -240,8 +244,11 @@ namespace yy {
   {
     switch (that.kind ())
     {
+      case symbol_kind::S_statement: // statement
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
+      case symbol_kind::S_assign: // assign
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
+      case symbol_kind::S_var_decl: // var_decl
         value.move< Ast > (YY_MOVE (that.value));
         break;
 
@@ -251,6 +258,7 @@ namespace yy {
 
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_SIMPLE_TYPE: // SIMPLE_TYPE
+      case symbol_kind::S_type_info: // type_info
         value.move< std::string > (YY_MOVE (that.value));
         break;
 
@@ -273,8 +281,11 @@ namespace yy {
     state = that.state;
     switch (that.kind ())
     {
+      case symbol_kind::S_statement: // statement
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
+      case symbol_kind::S_assign: // assign
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
+      case symbol_kind::S_var_decl: // var_decl
         value.copy< Ast > (that.value);
         break;
 
@@ -284,6 +295,7 @@ namespace yy {
 
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_SIMPLE_TYPE: // SIMPLE_TYPE
+      case symbol_kind::S_type_info: // type_info
         value.copy< std::string > (that.value);
         break;
 
@@ -305,8 +317,11 @@ namespace yy {
     state = that.state;
     switch (that.kind ())
     {
+      case symbol_kind::S_statement: // statement
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
+      case symbol_kind::S_assign: // assign
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
+      case symbol_kind::S_var_decl: // var_decl
         value.move< Ast > (that.value);
         break;
 
@@ -316,6 +331,7 @@ namespace yy {
 
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_SIMPLE_TYPE: // SIMPLE_TYPE
+      case symbol_kind::S_type_info: // type_info
         value.move< std::string > (that.value);
         break;
 
@@ -592,8 +608,11 @@ namespace yy {
          when using variants.  */
       switch (yyr1_[yyn])
     {
+      case symbol_kind::S_statement: // statement
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
+      case symbol_kind::S_assign: // assign
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
+      case symbol_kind::S_var_decl: // var_decl
         yylhs.value.emplace< Ast > ();
         break;
 
@@ -603,6 +622,7 @@ namespace yy {
 
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_SIMPLE_TYPE: // SIMPLE_TYPE
+      case symbol_kind::S_type_info: // type_info
         yylhs.value.emplace< std::string > ();
         break;
 
@@ -630,96 +650,147 @@ namespace yy {
         {
           switch (yyn)
             {
-  case 2: // program: arithmetic_expr NEW_LINE $end
+  case 2: // program: statement NEW_LINE $end
+#line 74 "grammar.yy"
+                             {drv.tree_ = std::make_unique<Ast>(std::move(yystack_[2].value.as < Ast > ()));}
+#line 657 "grammar.tab.cc"
+    break;
+
+  case 3: // statement: arithmetic_expr
 #line 78 "grammar.yy"
-                                   {drv.tree_ = std::make_unique<Ast>(std::move(yystack_[2].value.as < Ast > ()));}
-#line 637 "grammar.tab.cc"
+                    {yylhs.value.as < Ast > () = std::move(yystack_[0].value.as < Ast > ());}
+#line 663 "grammar.tab.cc"
     break;
 
-  case 3: // arithmetic_operand: SIGNED_NUM
-#line 81 "grammar.yy"
-               {
-        yylhs.value.as < Ast > () = Ast{std::make_unique<NumericLiteralNode>(yystack_[0].value.as < int > ())};
-    }
-#line 645 "grammar.tab.cc"
+  case 4: // statement: assign
+#line 79 "grammar.yy"
+             {yylhs.value.as < Ast > () = std::move(yystack_[0].value.as < Ast > ());}
+#line 669 "grammar.tab.cc"
     break;
 
-  case 4: // arithmetic_operand: UNSIGNED_NUM
+  case 5: // statement: var_decl
+#line 80 "grammar.yy"
+               {yylhs.value.as < Ast > () = std::move(yystack_[0].value.as < Ast > ());}
+#line 675 "grammar.tab.cc"
+    break;
+
+  case 6: // arithmetic_operand: SIGNED_NUM
 #line 84 "grammar.yy"
-                   {
-        yylhs.value.as < Ast > () = Ast{std::make_unique<NumericLiteralNode>(yystack_[0].value.as < unsigned int > ())};
-    }
-#line 653 "grammar.tab.cc"
+               {yylhs.value.as < Ast > () = Ast{std::make_unique<NumericLiteralNode>(yystack_[0].value.as < int > ())};}
+#line 681 "grammar.tab.cc"
     break;
 
-  case 5: // arithmetic_expr: arithmetic_operand
+  case 7: // arithmetic_operand: UNSIGNED_NUM
+#line 85 "grammar.yy"
+                   {yylhs.value.as < Ast > () = Ast{std::make_unique<NumericLiteralNode>(yystack_[0].value.as < unsigned int > ())};}
+#line 687 "grammar.tab.cc"
+    break;
+
+  case 8: // arithmetic_operand: IDENTIFIER
+#line 86 "grammar.yy"
+                 {yylhs.value.as < Ast > () = Ast{std::make_unique<VarReferenceNode>(yystack_[0].value.as < std::string > ())};}
+#line 693 "grammar.tab.cc"
+    break;
+
+  case 9: // assign: IDENTIFIER ASSIGN arithmetic_expr
 #line 90 "grammar.yy"
-                       {yylhs.value.as < Ast > () = std::move(yystack_[0].value.as < Ast > ());}
-#line 659 "grammar.tab.cc"
+                                      { auto var_ref_ast = Ast{std::make_unique<VarReferenceNode>(yystack_[2].value.as < std::string > ())};
+        yylhs.value.as < Ast > () = Ast{BinaryOpKind::Assign, std::move(var_ref_ast), std::move(yystack_[0].value.as < Ast > ())}; }
+#line 700 "grammar.tab.cc"
     break;
 
-  case 6: // arithmetic_expr: arithmetic_expr PLUS arithmetic_expr
-#line 91 "grammar.yy"
-                                           {yylhs.value.as < Ast > () = Ast{BinaryOpKind::Plus, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
-#line 665 "grammar.tab.cc"
-    break;
-
-  case 7: // arithmetic_expr: arithmetic_expr MINUS arithmetic_expr
-#line 92 "grammar.yy"
-                                            {yylhs.value.as < Ast > () = Ast{BinaryOpKind::Minus, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
-#line 671 "grammar.tab.cc"
-    break;
-
-  case 8: // arithmetic_expr: arithmetic_expr STAR arithmetic_expr
-#line 93 "grammar.yy"
-                                           {yylhs.value.as < Ast > () = Ast{BinaryOpKind::Star, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
-#line 677 "grammar.tab.cc"
-    break;
-
-  case 9: // arithmetic_expr: arithmetic_expr SLASH arithmetic_expr
-#line 94 "grammar.yy"
-                                            {yylhs.value.as < Ast > () = Ast{BinaryOpKind::Slash, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
-#line 683 "grammar.tab.cc"
-    break;
-
-  case 10: // arithmetic_expr: arithmetic_expr PERCENT arithmetic_expr
+  case 10: // arithmetic_expr: arithmetic_operand
 #line 95 "grammar.yy"
-                                              {yylhs.value.as < Ast > () = Ast{BinaryOpKind::Percent, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
-#line 689 "grammar.tab.cc"
+                       {yylhs.value.as < Ast > () = std::move(yystack_[0].value.as < Ast > ());}
+#line 706 "grammar.tab.cc"
     break;
 
-  case 11: // arithmetic_expr: MINUS arithmetic_expr
+  case 11: // arithmetic_expr: arithmetic_expr PLUS arithmetic_expr
 #line 96 "grammar.yy"
-                            {yylhs.value.as < Ast > () = Ast{UnaryOpKind::Minus, std::move(yystack_[0].value.as < Ast > ())};}
-#line 695 "grammar.tab.cc"
+                                           {yylhs.value.as < Ast > () = Ast{BinaryOpKind::Plus, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
+#line 712 "grammar.tab.cc"
     break;
 
-  case 12: // arithmetic_expr: LPAREN arithmetic_expr RPAREN
+  case 12: // arithmetic_expr: arithmetic_expr MINUS arithmetic_expr
 #line 97 "grammar.yy"
-                                    {yylhs.value.as < Ast > () = std::move(yystack_[1].value.as < Ast > ());}
-#line 701 "grammar.tab.cc"
+                                            {yylhs.value.as < Ast > () = Ast{BinaryOpKind::Minus, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
+#line 718 "grammar.tab.cc"
     break;
 
-  case 13: // arithmetic_expr: arithmetic_expr LESS arithmetic_expr
+  case 13: // arithmetic_expr: arithmetic_expr STAR arithmetic_expr
 #line 98 "grammar.yy"
-                                           {yylhs.value.as < Ast > () = Ast{BinaryOpKind::Less, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
-#line 707 "grammar.tab.cc"
+                                           {yylhs.value.as < Ast > () = Ast{BinaryOpKind::Star, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
+#line 724 "grammar.tab.cc"
     break;
 
-  case 14: // arithmetic_expr: arithmetic_expr GREATER arithmetic_expr
+  case 14: // arithmetic_expr: arithmetic_expr SLASH arithmetic_expr
 #line 99 "grammar.yy"
-                                              {yylhs.value.as < Ast > () = Ast{BinaryOpKind::Greater, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
-#line 713 "grammar.tab.cc"
+                                            {yylhs.value.as < Ast > () = Ast{BinaryOpKind::Slash, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
+#line 730 "grammar.tab.cc"
     break;
 
-  case 15: // arithmetic_expr: arithmetic_expr EQUAL arithmetic_expr
+  case 15: // arithmetic_expr: arithmetic_expr PERCENT arithmetic_expr
 #line 100 "grammar.yy"
+                                              {yylhs.value.as < Ast > () = Ast{BinaryOpKind::Percent, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
+#line 736 "grammar.tab.cc"
+    break;
+
+  case 16: // arithmetic_expr: MINUS arithmetic_expr
+#line 101 "grammar.yy"
+                            {yylhs.value.as < Ast > () = Ast{UnaryOpKind::Minus, std::move(yystack_[0].value.as < Ast > ())};}
+#line 742 "grammar.tab.cc"
+    break;
+
+  case 17: // arithmetic_expr: LPAREN arithmetic_expr RPAREN
+#line 102 "grammar.yy"
+                                    {yylhs.value.as < Ast > () = std::move(yystack_[1].value.as < Ast > ());}
+#line 748 "grammar.tab.cc"
+    break;
+
+  case 18: // arithmetic_expr: arithmetic_expr LESS arithmetic_expr
+#line 103 "grammar.yy"
+                                           {yylhs.value.as < Ast > () = Ast{BinaryOpKind::Less, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
+#line 754 "grammar.tab.cc"
+    break;
+
+  case 19: // arithmetic_expr: arithmetic_expr GREATER arithmetic_expr
+#line 104 "grammar.yy"
+                                              {yylhs.value.as < Ast > () = Ast{BinaryOpKind::Greater, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
+#line 760 "grammar.tab.cc"
+    break;
+
+  case 20: // arithmetic_expr: arithmetic_expr EQUAL arithmetic_expr
+#line 105 "grammar.yy"
                                             {yylhs.value.as < Ast > () = Ast{BinaryOpKind::Equal, std::move(yystack_[2].value.as < Ast > ()), std::move(yystack_[0].value.as < Ast > ())};}
-#line 719 "grammar.tab.cc"
+#line 766 "grammar.tab.cc"
+    break;
+
+  case 21: // type_info: SIMPLE_TYPE
+#line 110 "grammar.yy"
+                {yylhs.value.as < std::string > () = yystack_[0].value.as < std::string > ();}
+#line 772 "grammar.tab.cc"
+    break;
+
+  case 22: // type_info: MATRIX LESS type_info GREATER
+#line 111 "grammar.yy"
+                                    {yylhs.value.as < std::string > () = "matrix<" + yystack_[1].value.as < std::string > () + ">";}
+#line 778 "grammar.tab.cc"
+    break;
+
+  case 23: // var_decl: type_info IDENTIFIER
+#line 115 "grammar.yy"
+                         {yylhs.value.as < Ast > () = Ast{std::make_unique<VarDeclNode>(yystack_[0].value.as < std::string > (), yystack_[1].value.as < std::string > ())};}
+#line 784 "grammar.tab.cc"
+    break;
+
+  case 24: // var_decl: CONST type_info IDENTIFIER
+#line 116 "grammar.yy"
+                                 {yylhs.value.as < Ast > () = Ast{std::make_unique<VarDeclNode>(yystack_[0].value.as < std::string > (), yystack_[1].value.as < std::string > (), true)};}
+#line 790 "grammar.tab.cc"
     break;
 
 
-#line 723 "grammar.tab.cc"
+#line 794 "grammar.tab.cc"
 
             default:
               break;
@@ -908,7 +979,8 @@ namespace yy {
   "EQUAL", "CONST", "NEW_LINE", "SEMICOLON", "PARAM_DELIMITER", "CALL",
   "FUNC", "TESTREP", "TESTONCE", "TOP", "BOTTOM", "LEFT", "RIGHT",
   "MATRIX", "IDENTIFIER", "SIGNED_NUM", "UNSIGNED_NUM", "SIMPLE_TYPE",
-  "$accept", "program", "arithmetic_operand", "arithmetic_expr", YY_NULLPTR
+  "$accept", "program", "statement", "arithmetic_operand", "assign",
+  "arithmetic_expr", "type_info", "var_decl", YY_NULLPTR
     };
     return yy_sname[yysymbol];
   }
@@ -1177,78 +1249,90 @@ namespace yy {
   }
 
 
-  const signed char parser::yypact_ninf_ = -5;
+  const signed char parser::yypact_ninf_ = -20;
 
   const signed char parser::yytable_ninf_ = -1;
 
   const signed char
   parser::yypact_[] =
   {
-      -4,    -4,    -4,    -5,    -5,     3,    -5,    16,    36,    28,
-      -5,    -4,    -4,    -4,    -4,    -4,    -4,    -4,    -4,     7,
-      -5,    36,    36,    -5,    -5,    -5,    -1,    -1,    -1,    -5
+       5,    10,    10,   -19,    -6,     7,   -20,   -20,   -20,     8,
+      -3,   -20,   -20,    46,   -12,   -20,   -20,    54,    36,   -11,
+     -19,    10,   -20,    17,    10,    10,    10,    10,    10,    10,
+      10,    10,   -20,   -20,   -20,    24,    46,   -20,    54,    54,
+     -20,   -20,   -20,    -4,    -4,    -4,   -20
   };
 
   const signed char
   parser::yydefact_[] =
   {
-       0,     0,     0,     3,     4,     0,     5,     0,    11,     0,
-       1,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-      12,     7,     6,     8,     9,    10,    13,    14,    15,     2
+       0,     0,     0,     0,     0,     8,     6,     7,    21,     0,
+       0,    10,     4,     3,     0,     5,     8,    16,     0,     0,
+       0,     0,     1,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,    23,    17,    24,     0,     9,     2,    12,    11,
+      13,    14,    15,    18,    19,    20,    22
   };
 
   const signed char
   parser::yypgoto_[] =
   {
-      -5,    -5,    -5,     0
+     -20,   -20,   -20,   -20,   -20,    -1,     1,   -20
   };
 
   const signed char
   parser::yydefgoto_[] =
   {
-       0,     5,     6,     7
+       0,     9,    10,    11,    12,    13,    14,    15
   };
 
   const signed char
   parser::yytable_[] =
   {
-       1,     8,     9,    10,     2,    13,    14,    29,     0,    15,
-       0,    21,    22,    23,    24,    25,    26,    27,    28,     0,
-      11,    12,    13,    14,     3,     4,    15,    16,    17,    18,
-       0,    19,    11,    12,    13,    14,     0,    20,    15,    16,
-      17,    18,    13,    14,     0,     0,    15,    16,    17,    18
+      17,    18,    26,    27,    19,    20,    28,     4,    22,     1,
+      21,     8,    23,     2,     1,    32,    34,    37,     2,     3,
+      36,    35,     0,    38,    39,    40,    41,    42,    43,    44,
+      45,     4,     5,     6,     7,     8,    46,    16,     6,     7,
+      24,    25,    26,    27,     0,    33,    28,    29,    30,    31,
+      24,    25,    26,    27,     0,     0,    28,    29,    30,    31,
+      26,    27,     0,     0,    28,    29,    30,    31
   };
 
   const signed char
   parser::yycheck_[] =
   {
-       4,     1,     2,     0,     8,     6,     7,     0,    -1,    10,
-      -1,    11,    12,    13,    14,    15,    16,    17,    18,    -1,
-       4,     5,     6,     7,    28,    29,    10,    11,    12,    13,
-      -1,    15,     4,     5,     6,     7,    -1,     9,    10,    11,
-      12,    13,     6,     7,    -1,    -1,    10,    11,    12,    13
+       1,     2,     6,     7,     3,    11,    10,    26,     0,     4,
+       3,    30,    15,     8,     4,    27,    27,     0,     8,    14,
+      21,    20,    -1,    24,    25,    26,    27,    28,    29,    30,
+      31,    26,    27,    28,    29,    30,    12,    27,    28,    29,
+       4,     5,     6,     7,    -1,     9,    10,    11,    12,    13,
+       4,     5,     6,     7,    -1,    -1,    10,    11,    12,    13,
+       6,     7,    -1,    -1,    10,    11,    12,    13
   };
 
   const signed char
   parser::yystos_[] =
   {
-       0,     4,     8,    28,    29,    32,    33,    34,    34,    34,
-       0,     4,     5,     6,     7,    10,    11,    12,    13,    15,
-       9,    34,    34,    34,    34,    34,    34,    34,    34,     0
+       0,     4,     8,    14,    26,    27,    28,    29,    30,    32,
+      33,    34,    35,    36,    37,    38,    27,    36,    36,    37,
+      11,     3,     0,    15,     4,     5,     6,     7,    10,    11,
+      12,    13,    27,     9,    27,    37,    36,     0,    36,    36,
+      36,    36,    36,    36,    36,    36,    12
   };
 
   const signed char
   parser::yyr1_[] =
   {
-       0,    31,    32,    33,    33,    34,    34,    34,    34,    34,
-      34,    34,    34,    34,    34,    34
+       0,    31,    32,    33,    33,    33,    34,    34,    34,    35,
+      36,    36,    36,    36,    36,    36,    36,    36,    36,    36,
+      36,    37,    37,    38,    38
   };
 
   const signed char
   parser::yyr2_[] =
   {
-       0,     2,     3,     1,     1,     1,     3,     3,     3,     3,
-       3,     2,     3,     3,     3,     3
+       0,     2,     3,     1,     1,     1,     1,     1,     1,     3,
+       1,     3,     3,     3,     3,     3,     2,     3,     3,     3,
+       3,     1,     4,     2,     3
   };
 
 
@@ -1258,8 +1342,9 @@ namespace yy {
   const signed char
   parser::yyrline_[] =
   {
-       0,    78,    78,    81,    84,    90,    91,    92,    93,    94,
-      95,    96,    97,    98,    99,   100
+       0,    74,    74,    78,    79,    80,    84,    85,    86,    90,
+      95,    96,    97,    98,    99,   100,   101,   102,   103,   104,
+     105,   110,   111,   115,   116
   };
 
   void
@@ -1291,9 +1376,9 @@ namespace yy {
 
 
 } // yy
-#line 1295 "grammar.tab.cc"
+#line 1380 "grammar.tab.cc"
 
-#line 125 "grammar.yy"
+#line 119 "grammar.yy"
 
 
 void yy::parser::error (const location_type& l, const std::string& m){

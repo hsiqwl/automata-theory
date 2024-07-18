@@ -16,6 +16,6 @@ void Ast::PrintOut(std::ostream &stream) const {
     root_->Accept(printer);
 }
 
-long Ast::Evaluate() const {
+/*long Ast::Evaluate() const {
     return Interpreter::GetValue(root_);
-}
+}*/

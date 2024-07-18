@@ -12,8 +12,7 @@ int main(int argc, char *argv[]) {
         else if(!drv.parse(argv[i]))
             std::cout << "parsing ended\n";
     }
-    auto res = drv.tree_->Evaluate();
-    std::cout << res << '\n';
+    drv.tree_->PrintOut();
     return 0;
 
 }

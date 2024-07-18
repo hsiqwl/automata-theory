@@ -2,17 +2,24 @@
 #include "printer.h"
 
 void AstPrinter::Visit(const UnaryOpNode &node) {
-    node.PrintOut(*buf_);
+    node.GetOperand()->Accept(*this);
+    (*buf_) << "UnaryOpNode:" << node.label_ << '\n';
 }
 
 void AstPrinter::Visit(const BinaryOpNode &node) {
-    node.PrintOut(*buf_);
-}
-
-void AstPrinter::Visit(const IdentifierNode &node) {
-    node.PrintOut(*buf_);
+    node.GetLeft()->Accept(*this);
+    node.GetRight()->Accept(*this);
+    (*buf_) << "BinaryOpNode:" << node.label_ << '\n';
 }
 
 void AstPrinter::Visit(const NumericLiteralNode &node) {
-    node.PrintOut(*buf_);
+    (*buf_) << "NumericLiteralNode:" << node.label_ << '\n';
+}
+
+void AstPrinter::Visit(const VarDeclNode &node) {
+    (*buf_) << "VarDeclNode:" << node.label_ << '\n';
+}
+
+void AstPrinter::Visit(const VarReferenceNode &node) {
+    (*buf_) << "VarReferenceNode:" << node.label_ << '\n';
 }

@@ -48,9 +48,6 @@
 #line 10 "grammar.yy"
 
     #include "ast.h"
-    #include "binary_op.h"
-    #include "numeric_literal.h"
-    #include "unary_op.h"
     #include <string>
     #include <memory>
     #include <iostream>
@@ -58,7 +55,7 @@
 
     class driver;
 
-#line 62 "grammar.tab.hh"
+#line 59 "grammar.tab.hh"
 
 # include <cassert>
 # include <cstdlib> // std::abort
@@ -198,7 +195,7 @@
 #endif
 
 namespace yy {
-#line 202 "grammar.tab.hh"
+#line 199 "grammar.tab.hh"
 
 
 
@@ -417,8 +414,11 @@ namespace yy {
     /// An auxiliary type to compute the largest semantic type.
     union union_type
     {
+      // statement
       // arithmetic_operand
+      // assign
       // arithmetic_expr
+      // var_decl
       char dummy1[sizeof (Ast)];
 
       // SIGNED_NUM
@@ -426,6 +426,7 @@ namespace yy {
 
       // IDENTIFIER
       // SIMPLE_TYPE
+      // type_info
       char dummy3[sizeof (std::string)];
 
       // UNSIGNED_NUM
@@ -561,8 +562,12 @@ namespace yy {
         S_SIMPLE_TYPE = 30,                      // SIMPLE_TYPE
         S_YYACCEPT = 31,                         // $accept
         S_program = 32,                          // program
-        S_arithmetic_operand = 33,               // arithmetic_operand
-        S_arithmetic_expr = 34                   // arithmetic_expr
+        S_statement = 33,                        // statement
+        S_arithmetic_operand = 34,               // arithmetic_operand
+        S_assign = 35,                           // assign
+        S_arithmetic_expr = 36,                  // arithmetic_expr
+        S_type_info = 37,                        // type_info
+        S_var_decl = 38                          // var_decl
       };
     };
 
@@ -599,8 +604,11 @@ namespace yy {
       {
         switch (this->kind ())
     {
+      case symbol_kind::S_statement: // statement
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
+      case symbol_kind::S_assign: // assign
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
+      case symbol_kind::S_var_decl: // var_decl
         value.move< Ast > (std::move (that.value));
         break;
 
@@ -610,6 +618,7 @@ namespace yy {
 
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_SIMPLE_TYPE: // SIMPLE_TYPE
+      case symbol_kind::S_type_info: // type_info
         value.move< std::string > (std::move (that.value));
         break;
 
@@ -720,8 +729,11 @@ namespace yy {
         // Value type destructor.
 switch (yykind)
     {
+      case symbol_kind::S_statement: // statement
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
+      case symbol_kind::S_assign: // assign
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
+      case symbol_kind::S_var_decl: // var_decl
         value.template destroy< Ast > ();
         break;
 
@@ -731,6 +743,7 @@ switch (yykind)
 
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_SIMPLE_TYPE: // SIMPLE_TYPE
+      case symbol_kind::S_type_info: // type_info
         value.template destroy< std::string > ();
         break;
 
@@ -1733,9 +1746,9 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 49,     ///< Last index in yytable_.
-      yynnts_ = 4,  ///< Number of nonterminal symbols.
-      yyfinal_ = 10 ///< Termination state number.
+      yylast_ = 67,     ///< Last index in yytable_.
+      yynnts_ = 8,  ///< Number of nonterminal symbols.
+      yyfinal_ = 22 ///< Termination state number.
     };
 
 
@@ -1760,8 +1773,11 @@ switch (yykind)
   {
     switch (this->kind ())
     {
+      case symbol_kind::S_statement: // statement
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
+      case symbol_kind::S_assign: // assign
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
+      case symbol_kind::S_var_decl: // var_decl
         value.copy< Ast > (YY_MOVE (that.value));
         break;
 
@@ -1771,6 +1787,7 @@ switch (yykind)
 
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_SIMPLE_TYPE: // SIMPLE_TYPE
+      case symbol_kind::S_type_info: // type_info
         value.copy< std::string > (YY_MOVE (that.value));
         break;
 
@@ -1809,8 +1826,11 @@ switch (yykind)
     super_type::move (s);
     switch (this->kind ())
     {
+      case symbol_kind::S_statement: // statement
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
+      case symbol_kind::S_assign: // assign
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
+      case symbol_kind::S_var_decl: // var_decl
         value.move< Ast > (YY_MOVE (s.value));
         break;
 
@@ -1820,6 +1840,7 @@ switch (yykind)
 
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_SIMPLE_TYPE: // SIMPLE_TYPE
+      case symbol_kind::S_type_info: // type_info
         value.move< std::string > (YY_MOVE (s.value));
         break;
 
@@ -1893,7 +1914,7 @@ switch (yykind)
 
 
 } // yy
-#line 1897 "grammar.tab.hh"
+#line 1918 "grammar.tab.hh"
 
 
 

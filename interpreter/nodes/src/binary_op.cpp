@@ -28,16 +28,15 @@ void BinaryOpNode::SetLabel() {
         case BinaryOpKind::Equal:
             label_ = "=";
             return;
+        case BinaryOpKind::Assign:
+            label_ = "<-";
+            return;
     }
 }
 
 BinaryOpNode::BinaryOpNode(BinaryOpKind op_kind, std::unique_ptr<INode>&& lhs, std::unique_ptr<INode>&& rhs)
     : INode(NodeKind::BinaryOp), op_kind_(op_kind), lhs_(std::move(lhs)), rhs_(std::move(rhs)) {
     SetLabel();
-}
-
-void BinaryOpNode::PrintOut(std::ostream &stream) const {
-    stream << "BinaryOp : '" << label_ << "'\n";
 }
 
 void BinaryOpNode::Accept(NodeVisitor &visitor) const {

@@ -13,13 +13,13 @@ public:
 private:
     matrix_t value_;
 
-    [[nodiscard]] bool contains_numeric_values() const;
+    [[nodiscard]] bool ContainsNumericValues() const;
 
-    [[nodiscard]] bool contains_cell_values() const;
+    [[nodiscard]] bool ContainsCellValues() const;
 
-    [[nodiscard]] int compute_average() const;
+    [[nodiscard]] int ComputeAverage() const;
 
-    void set_value_for_whole_matrix(std::any&& new_value);
+    void SetValueForWholeMatrix(std::any&& new_value);
 
 public:
     MatrixValue() = default;
