@@ -12,10 +12,6 @@ public:
 
     Ast(std::unique_ptr<INode>&& node);
 
-    Ast(BinaryOpKind bin_op_kind, Ast&& lhs, Ast&& rhs);
-
-    Ast(UnaryOpKind un_op_kind, Ast&& operand);
-
     void PrintOut(std::ostream& stream = std::cout) const;
 
     long Evaluate() const;

@@ -3,21 +3,30 @@
 
 class BinaryOpNode;
 class UnaryOpNode;
-class NumericLiteralNode;
+class SignedLiteralNode;
+class UnsignedLiteralNode;
 class VarDeclNode;
 class VarReferenceNode;
+class AssignNode;
+class StatementListNode;
 
-class NodeVisitor{
+class NodeVisitor {
 public:
-    virtual void Visit(const BinaryOpNode& node) = 0;
+    virtual void Visit(const BinaryOpNode &node) = 0;
 
-    virtual void Visit(const UnaryOpNode& node) = 0;
+    virtual void Visit(const UnaryOpNode &node) = 0;
 
-    virtual void Visit(const NumericLiteralNode& node) = 0;
+    virtual void Visit(const SignedLiteralNode &node) = 0;
 
-    virtual void Visit(const VarDeclNode& node) = 0;
+    virtual void Visit(const UnsignedLiteralNode& node) = 0;
 
-    virtual void Visit(const VarReferenceNode& node) = 0;
+    virtual void Visit(const VarDeclNode &node) = 0;
+
+    virtual void Visit(const VarReferenceNode &node) = 0;
+
+    virtual void Visit(const AssignNode &node) = 0;
+
+    virtual void Visit(const StatementListNode &node) = 0;
 
     virtual ~NodeVisitor() = default;
 };

@@ -1,41 +1,44 @@
-#ifndef INTERPRETER_VALUE_HOLDER_H
-#define INTERPRETER_VALUE_HOLDER_H
+#ifndef INTERPRETER_VALUE_INTERFACE_H
+#define INTERPRETER_VALUE_INTERFACE_H
 #include <memory>
 #include <any>
 #include <stdexcept>
+#include "type_holder.h"
 
-class ValueInterface{
+class Value;
+
+class IValue {
 public:
-    ValueInterface() = default;
+    IValue(TypeHolder &&type) : type_(std::move(type)) {}
 
-    virtual ~ValueInterface() = default;
+    TypeHolderWrapper GetType() const noexcept { return {type_}; }
 
-    virtual bool operator == (const ValueInterface& other) const = 0;
+    virtual Value Equal(const IValue &other) const = 0;
 
-    virtual bool operator < (const ValueInterface& other) const = 0;
+    virtual Value Less(const IValue &other) const = 0;
 
-    virtual bool operator > (const ValueInterface& other) const = 0;
+    virtual Value Greater(const IValue &other) const = 0;
 
-    virtual std::unique_ptr<ValueInterface> operator + (const ValueInterface& other) const = 0;
+    virtual Value Plus(const IValue &other) const = 0;
 
-    virtual std::unique_ptr<ValueInterface> operator - (const ValueInterface& other) const = 0;
+    virtual Value Minus(const IValue &other) const = 0;
 
-    virtual std::unique_ptr<ValueInterface> operator * (const ValueInterface& other) const = 0;
+    virtual Value Star(const IValue &other) const = 0;
 
-    virtual std::unique_ptr<ValueInterface> operator / (const ValueInterface& other) const = 0;
+    virtual Value Slash(const IValue &other) const = 0;
 
-    virtual std::unique_ptr<ValueInterface> operator % (const ValueInterface& other) const = 0;
+    virtual Value Percent(const IValue &other) const = 0;
 
-    virtual std::unique_ptr<ValueInterface> operator ^ (const ValueInterface& other) const = 0;
+    virtual Value Hash() const = 0;
 
-    virtual const ValueInterface& operator () (size_t i, size_t j) const = 0;
-
-    virtual ValueInterface& operator () (size_t i, size_t j) = 0;
-
-    virtual void SetValue(std::any&& new_value) = 0;
+    virtual void SetValue(std::any &&new_value) = 0;
 
     [[nodiscard]] virtual std::any GetValue() const = 0;
+
+    virtual ~IValue() = default;
+
+private:
+    TypeHolder type_;
 };
 
-
-#endif //INTERPRETER_VALUE_HOLDER_H
+#endif //INTERPRETER_VALUE_INTERFACE_H

@@ -28,9 +28,6 @@ void BinaryOpNode::SetLabel() {
         case BinaryOpKind::Equal:
             label_ = "=";
             return;
-        case BinaryOpKind::Assign:
-            label_ = "<-";
-            return;
     }
 }
 

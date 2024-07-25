@@ -1,7 +1,7 @@
 #include "interpreter.h"
 #include "node_traits.h"
 
-void Interpreter::Visit(const NumericLiteralNode &node) {
+/*void Interpreter::Visit(const NumericLiteralNode &node) {
     Return(node.GetValue());
 }
 
@@ -38,7 +38,4 @@ void Interpreter::Visit(const BinaryOpNode &node) {
         }
     }
 }
-
-void Interpreter::Visit(const IdentifierNode &node) {
-    // HERE SHOULD BE SOME CODE
-}
+*/

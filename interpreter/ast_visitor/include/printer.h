@@ -16,6 +16,10 @@ public:
 
     void Visit(const VarReferenceNode& node) override;
 
+    void Visit(const AssignNode& node) override;
+
+    void Visit(const StatementListNode& node) override;
+
     std::ostream* buf_ = &std::cout;
 };
 

@@ -31,6 +31,8 @@ public:
 
     Cell(bool top, bool down, bool right, bool left);
 
+    Cell(int wall_indicator);
+
     void SetChangeability(Direction dir, bool changeable);
 
     [[nodiscard]] bool GetChangeability(Direction dir) const;
@@ -42,8 +44,6 @@ public:
     Cell operator / (const Cell& other) const;
 
     Cell operator % (const Cell& other) const;
-
-    bool operator == (const Cell& other) const;
 };
 
 #endif //INTERPRETER_CELL_H

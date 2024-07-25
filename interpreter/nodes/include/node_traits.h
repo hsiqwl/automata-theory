@@ -3,9 +3,12 @@
 #include "enums.h"
 #include "binary_op.h"
 #include "unary_op.h"
-#include "numeric_literal.h"
+#include "signed_literal.h"
+#include "unsigned_literal.h"
 #include "var_ref.h"
 #include "var_decl.h"
+#include "assign.h"
+#include "statement_list.h"
 #include <type_traits>
 
 template<NodeKind Kind>
@@ -21,11 +24,18 @@ MAKE_NODE_TRAITS(BinaryOpNode, NodeKind::BinaryOp);
 
 MAKE_NODE_TRAITS(UnaryOpNode, NodeKind::UnaryOp);
 
-MAKE_NODE_TRAITS(NumericLiteralNode, NodeKind::NumericLiteral);
-
 MAKE_NODE_TRAITS(VarReferenceNode, NodeKind::VarRef);
 
 MAKE_NODE_TRAITS(VarDeclNode, NodeKind::VarDecl);
+
+MAKE_NODE_TRAITS(AssignNode, NodeKind::Assign);
+
+MAKE_NODE_TRAITS(StatementListNode, NodeKind::StatementList);
+
+MAKE_NODE_TRAITS(SignedLiteralNode, NodeKind::SignedLiteral);
+
+MAKE_NODE_TRAITS(UnsignedLiteralNode, NodeKind::UnsignedLiteral);
+
 
 template<std::size_t Kind, typename = void>
 struct kind_has_type : public std::false_type {};

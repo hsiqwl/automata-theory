@@ -1,4 +1,43 @@
 #include "cell_value.h"
+#include "value.h"
+
+CellValue::CellValue(Cell value): IValue(TypeToken::Cell), ValueHolder<Cell>(value) {}
+
+Value CellValue::Equal(const IValue &other) const {
+    throw std::logic_error("cannot apply '=' operation on Cell type");
+}
+
+Value CellValue::Less(const IValue &other) const {
+    throw std::logic_error("cannot apply '<' operation on Cell type");
+}
+
+Value CellValue::Greater(const IValue &other) const {
+    throw std::logic_error("cannot apply '>' operation on Cell type");
+}
+
+Value CellValue::Minus(const IValue &other) const {
+    return CellValue(value_ - std::any_cast<Cell>(other.GetValue()));
+}
+
+Value CellValue::Plus(const IValue &other) const {
+    throw std::logic_error("cannot apply '+' operation on Cell type");
+}
+
+Value CellValue::Star(const IValue &other) const {
+    throw std::logic_error("cannot apply '*' operation on Cell type");
+}
+
+Value CellValue::Slash(const IValue &other) const {
+    return CellValue(value_ / std::any_cast<Cell>(other.GetValue()));
+}
+
+Value CellValue::Percent(const IValue &other) const {
+    return CellValue(value_ % std::any_cast<Cell>(other.GetValue()));
+}
+
+Value CellValue::Hash() const {
+    throw std::logic_error("Cannot apply '#' operator to Signed type");
+}
 
 std::any CellValue::GetValue() const {
     return std::make_any<Cell>(value_);
@@ -6,54 +45,4 @@ std::any CellValue::GetValue() const {
 
 void CellValue::SetValue(std::any &&new_value) {
     value_ = std::any_cast<Cell>(std::move(new_value));
-}
-
-bool CellValue::operator==(const ValueInterface &other) const {
-    return value_ == std::any_cast<Cell>(other.GetValue());
-}
-
-bool CellValue::operator>(const ValueInterface &other) const {
-    throw std::logic_error("Can't perform comparing operator '>' on type_ cell");
-}
-
-bool CellValue::operator<(const ValueInterface &other) const {
-    throw std::logic_error("Can't perform comparing operator '<' on type_ cell");
-}
-
-ValueInterface &CellValue::operator()(size_t i, size_t j) {
-    throw std::logic_error("Can't perform addressing operator '()' on type_ cell");
-}
-
-const ValueInterface &CellValue::operator()(size_t i, size_t j) const {
-    throw std::logic_error("Can't perform addressing operator '()' on type_ cell");
-}
-
-std::unique_ptr<ValueInterface> CellValue::operator*(const ValueInterface &other) const {
-    throw std::logic_error("Can't perform subtract operator '*' on type_ cell");
-}
-
-std::unique_ptr<ValueInterface> CellValue::operator+(const ValueInterface &other) const {
-    throw std::logic_error("Can't perform summing operator '+' on type_ cell");
-}
-
-std::unique_ptr<ValueInterface> CellValue::operator-(const ValueInterface &other) const {
-    std::unique_ptr<CellValue> new_value = std::make_unique<CellValue>();
-    new_value->SetValue(std::make_any<Cell>(value_ - std::any_cast<Cell>(other.GetValue())));
-    return new_value;
-}
-
-std::unique_ptr<ValueInterface> CellValue::operator/(const ValueInterface &other) const {
-    std::unique_ptr<CellValue> new_value = std::make_unique<CellValue>();
-    new_value->SetValue(std::make_any<Cell>(value_ / std::any_cast<Cell>(other.GetValue())));
-    return new_value;
-}
-
-std::unique_ptr<ValueInterface> CellValue::operator%(const ValueInterface &other) const {
-    std::unique_ptr<CellValue> new_value = std::make_unique<CellValue>();
-    new_value->SetValue(std::make_any<Cell>(value_ % std::any_cast<Cell>(other.GetValue())));
-    return new_value;
-}
-
-std::unique_ptr<ValueInterface> CellValue::operator^(const ValueInterface &other) const {
-    throw std::logic_error("Can't perform operator '^' on type_ cell");
 }

@@ -4,9 +4,12 @@
 enum class NodeKind{
     BinaryOp,
     UnaryOp,
-    NumericLiteral,
+    SignedLiteral,
+    UnsignedLiteral,
     VarDecl,
     VarRef,
+    Assign,
+    StatementList,
     MAX_TOKEN_NAMES_ID
 };
 
@@ -18,8 +21,7 @@ enum class BinaryOpKind{
     Less,
     Greater,
     Equal,
-    Percent,
-    Assign
+    Percent
 };
 
 enum class UnaryOpKind{

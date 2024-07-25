@@ -6,7 +6,7 @@ class VarReferenceNode: public INode{
 public:
     VarReferenceNode(std::string_view name);
 
-    const std::string& GetVarName() const noexcept;
+    [[nodiscard]] const std::string& GetVarName() const noexcept;
 
     void Accept(NodeVisitor& visitor) const override;
 

@@ -13,6 +13,13 @@ Cell::Cell(bool top, bool down, bool right, bool left) {
 
 Cell::Cell(): Cell(false, false, false, false) {}
 
+Cell::Cell(int wall_indicator) {
+    if (wall_indicator)
+        top_ = down_ = right_ = left_ = true;
+    else
+        top_ = down_ = right_ = left_ = false;
+}
+
 bool Cell::GetChangeability(Direction dir) const {
     switch (dir) {
         case Direction::top:
@@ -78,11 +85,4 @@ Cell Cell::operator%(const Cell &other) const {
     bool new_right = right_ & other.right_;
     bool new_left = left_ & other.left_;
     return {new_top, new_down, new_right, new_left};
-}
-
-bool Cell::operator==(const Cell &other) const {
-    return top_ == other.top_ &&
-           down_ == other.down_ &&
-           right_ == other.down_ &&
-           left_ == other.left_;
 }
