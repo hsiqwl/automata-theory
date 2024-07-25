@@ -1,21 +1,19 @@
 #include "unary_op.h"
 #include "node_visitor.h"
 
-void UnaryOpNode::SetLabel() {
+char UnaryOpNode::GetLabel() const{
     switch (op_kind_) {
         case UnaryOpKind::Plus: {
-            label_ = "+";
+            return '+';
         }
         case UnaryOpKind::Minus:{
-            label_ = "-";
+            return '-';
         }
     }
 }
 
 UnaryOpNode::UnaryOpNode(UnaryOpKind op_kind, std::unique_ptr<INode>&& operand)
-    : INode(NodeKind::UnaryOp), operand_(std::move(operand)), op_kind_(op_kind) {
-    SetLabel();
-}
+    : INode(NodeKind::UnaryOp), operand_(std::move(operand)), op_kind_(op_kind) {}
 
 void UnaryOpNode::Accept(NodeVisitor &visitor) const{
     visitor.Visit(*this);
@@ -27,4 +25,9 @@ UnaryOpKind UnaryOpNode::GetOpKind() const noexcept {
 
 const std::unique_ptr<INode> &UnaryOpNode::GetOperand() const noexcept {
     return operand_;
+}
+
+void UnaryOpNode::PrintOut(std::ostream &stream) const {
+    auto fmt_string = std::format("UnaryOpNode : '{}'", GetLabel());
+    stream << fmt_string << '\n';
 }

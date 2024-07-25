@@ -10,8 +10,6 @@ public:
 
     void Visit(const UnaryOpNode& node) override;
 
-    void Visit(const NumericLiteralNode& node) override;
-
     void Visit(const VarDeclNode& node) override;
 
     void Visit(const VarReferenceNode& node) override;
@@ -19,6 +17,12 @@ public:
     void Visit(const AssignNode& node) override;
 
     void Visit(const StatementListNode& node) override;
+
+    void Visit(const SignedLiteralNode& node) override;
+
+    void Visit(const UnsignedLiteralNode& node) override;
+
+    void Visit(const InitializationNode& node) override;
 
     std::ostream* buf_ = &std::cout;
 };

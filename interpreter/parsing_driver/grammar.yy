@@ -61,9 +61,11 @@
 %token <int> SIGNED_NUM
 %token <unsigned int> UNSIGNED_NUM
 %token <std::string> SIMPLE_TYPE
-%nterm <std::unique_ptr<INode>> arithmetic_operand arithmetic_expr var_decl assign statement
+%nterm <std::unique_ptr<INode>> arithmetic_operand arithmetic_expr assign statement
+%nterm <std::unique_ptr<VarDeclNode>> var_decl
+%nterm <std::unique_ptr<InitializationNode>> initialization
 %nterm <std::unique_ptr<StatementListNode>> statement_list
-%nterm <std::string> type_info
+%nterm <TypeHolder> type_info
 
 %left PLUS MINUS
 %left LESS GREATER EQUAL
@@ -85,12 +87,12 @@ statement_list:
 statement:
     arithmetic_expr {$$ = std::move($1);}
     | assign {$$ = std::move($1);}
-    | var_decl {$$ = std::move($1);}
+    | initialization {$$ = std::move($1);}
     ;
 
 arithmetic_operand:
-    SIGNED_NUM {$$ = std::make_unique<NumericLiteralNode>($1);}
-    | UNSIGNED_NUM {$$ = std::make_unique<NumericLiteralNode>($1);}
+    SIGNED_NUM {$$ = std::make_unique<SignedLiteralNode>($1);}
+    | UNSIGNED_NUM {$$ = std::make_unique<UnsignedLiteralNode>($1);}
     | IDENTIFIER {$$ = std::make_unique<VarReferenceNode>($1);}
     ;
 
@@ -131,8 +133,18 @@ arithmetic_expr:
     ;
 
 type_info:
-    SIMPLE_TYPE {$$ = $1;}
-    | MATRIX LESS type_info GREATER {$$ = "matrix<" + $3 + ">";}
+    SIMPLE_TYPE {
+        if($1 == "signed")
+            $$ = {TypeToken::Signed};
+        else if($1 == "unsigned")
+            $$ = {TypeToken::Unsigned};
+        else
+            $$ = {TypeToken::Cell};
+        }
+    | MATRIX LESS type_info GREATER {
+        $$ = $3;
+        $$.MakeMatrixWrap();
+        }
     ;
 
 var_decl:
@@ -140,19 +152,15 @@ var_decl:
     | CONST type_info IDENTIFIER {$$ = std::make_unique<VarDeclNode>($3, $2, true);}
     ;
 
+initialization:
+    var_decl {$$ = std::make_unique<InitializationNode>(std::move($1));}
+    | var_decl ASSIGN arithmetic_expr {$$ = std::make_unique<InitializationNode>(std::move($1), std::move($3));}
+    ;
+
 assign:
     IDENTIFIER ASSIGN arithmetic_expr {
         auto var_ref_node = std::make_unique<VarReferenceNode>($1);
         $$ = std::make_unique<AssignNode>(std::move(var_ref_node), std::move($3));
-        }
-    | var_decl ASSIGN arithmetic_expr {
-          auto& var_node = static_cast<VarDeclNode&>(*$1);
-          auto var_ref_node = std::make_unique<VarReferenceNode>(var_node.GetName());
-          auto assign_node = std::make_unique<AssignNode>(std::move(var_ref_node), std::move($3));
-          auto stmt_list = std::make_unique<StatementListNode>();
-          stmt_list->AddStatement(std::move($1));
-          stmt_list->AddStatement(std::move(assign_node));
-          $$ = std::move(stmt_list);
         }
     ;
 

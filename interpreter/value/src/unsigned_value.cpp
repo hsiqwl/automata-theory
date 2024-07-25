@@ -1,7 +1,7 @@
 #include "unsigned_value.h"
 #include "value.h"
 
-UnsignedValue::UnsignedValue(unsigned value): IValue(TypeHolder{TypeToken::Signed}), ValueHolder<unsigned>(value) {}
+UnsignedValue::UnsignedValue(unsigned value): IValue(TypeHolder{TypeToken::Unsigned}), ValueHolder<unsigned>(value) {}
 
 Value UnsignedValue::Equal(const IValue &other) const {
     if (value_ == std::any_cast<unsigned >(other.GetValue()))

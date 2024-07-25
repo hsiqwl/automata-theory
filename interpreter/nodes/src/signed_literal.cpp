@@ -10,3 +10,8 @@ Value SignedLiteralNode::GetValue() const noexcept {
 void SignedLiteralNode::Accept(NodeVisitor &visitor) const {
     visitor.Visit(*this);
 }
+
+void SignedLiteralNode::PrintOut(std::ostream &stream) const {
+    auto fmt_string = std::format("SignedLiteralNode with value: {}", std::any_cast<int>(value_.GetValue()));
+    stream << fmt_string << '\n';
+}

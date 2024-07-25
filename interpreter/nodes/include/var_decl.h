@@ -2,8 +2,9 @@
 #define INTERPRETER_VAR_DECL_H
 #include "node_interface.h"
 #include "type_holder.h"
+#include "printable_interface.h"
 
-class VarDeclNode: public INode{
+class VarDeclNode: public INode, public IPrintable{
 public:
     VarDeclNode(std::string_view name, const TypeHolder& type, bool is_const = false);
 
@@ -14,6 +15,8 @@ public:
     [[nodiscard]] bool IsConst() const noexcept;
 
     void Accept(NodeVisitor& visitor) const override;
+
+    void PrintOut(std::ostream& stream) const override;
 
 private:
     std::string name_;

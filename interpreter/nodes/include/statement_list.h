@@ -2,8 +2,9 @@
 #define INTERPRETER_STATEMENT_LIST_H
 #include "node_interface.h"
 #include <vector>
+#include "printable_interface.h"
 
-class StatementListNode: public INode{
+class StatementListNode: public INode, public IPrintable{
 public:
     StatementListNode();
 
@@ -14,6 +15,8 @@ public:
     [[nodiscard]] std::size_t NumOfStatements() const noexcept;
 
     const std::unique_ptr<INode>& operator [] (int index) const;
+
+    void PrintOut(std::ostream& stream) const override;
 
 private:
     std::vector<std::unique_ptr<INode>> statements_;

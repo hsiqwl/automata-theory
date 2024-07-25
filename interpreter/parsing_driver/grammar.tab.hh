@@ -414,26 +414,33 @@ namespace yy {
     /// An auxiliary type to compute the largest semantic type.
     union union_type
     {
+      // type_info
+      char dummy1[sizeof (TypeHolder)];
+
       // SIGNED_NUM
-      char dummy1[sizeof (int)];
+      char dummy2[sizeof (int)];
 
       // IDENTIFIER
       // SIMPLE_TYPE
-      // type_info
-      char dummy2[sizeof (std::string)];
+      char dummy3[sizeof (std::string)];
 
       // statement
       // arithmetic_operand
       // arithmetic_expr
-      // var_decl
       // assign
-      char dummy3[sizeof (std::unique_ptr<INode>)];
+      char dummy4[sizeof (std::unique_ptr<INode>)];
+
+      // initialization
+      char dummy5[sizeof (std::unique_ptr<InitializationNode>)];
 
       // statement_list
-      char dummy4[sizeof (std::unique_ptr<StatementListNode>)];
+      char dummy6[sizeof (std::unique_ptr<StatementListNode>)];
+
+      // var_decl
+      char dummy7[sizeof (std::unique_ptr<VarDeclNode>)];
 
       // UNSIGNED_NUM
-      char dummy5[sizeof (unsigned int)];
+      char dummy8[sizeof (unsigned int)];
     };
 
     /// The size of the largest semantic type.
@@ -571,7 +578,8 @@ namespace yy {
         S_arithmetic_expr = 36,                  // arithmetic_expr
         S_type_info = 37,                        // type_info
         S_var_decl = 38,                         // var_decl
-        S_assign = 39                            // assign
+        S_initialization = 39,                   // initialization
+        S_assign = 40                            // assign
       };
     };
 
@@ -608,26 +616,36 @@ namespace yy {
       {
         switch (this->kind ())
     {
+      case symbol_kind::S_type_info: // type_info
+        value.move< TypeHolder > (std::move (that.value));
+        break;
+
       case symbol_kind::S_SIGNED_NUM: // SIGNED_NUM
         value.move< int > (std::move (that.value));
         break;
 
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_SIMPLE_TYPE: // SIMPLE_TYPE
-      case symbol_kind::S_type_info: // type_info
         value.move< std::string > (std::move (that.value));
         break;
 
       case symbol_kind::S_statement: // statement
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
-      case symbol_kind::S_var_decl: // var_decl
       case symbol_kind::S_assign: // assign
         value.move< std::unique_ptr<INode> > (std::move (that.value));
         break;
 
+      case symbol_kind::S_initialization: // initialization
+        value.move< std::unique_ptr<InitializationNode> > (std::move (that.value));
+        break;
+
       case symbol_kind::S_statement_list: // statement_list
         value.move< std::unique_ptr<StatementListNode> > (std::move (that.value));
+        break;
+
+      case symbol_kind::S_var_decl: // var_decl
+        value.move< std::unique_ptr<VarDeclNode> > (std::move (that.value));
         break;
 
       case symbol_kind::S_UNSIGNED_NUM: // UNSIGNED_NUM
@@ -653,6 +671,20 @@ namespace yy {
 #else
       basic_symbol (typename Base::kind_type t, const location_type& l)
         : Base (t)
+        , location (l)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, TypeHolder&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const TypeHolder& v, const location_type& l)
+        : Base (t)
+        , value (v)
         , location (l)
       {}
 #endif
@@ -700,6 +732,20 @@ namespace yy {
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, std::unique_ptr<InitializationNode>&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const std::unique_ptr<InitializationNode>& v, const location_type& l)
+        : Base (t)
+        , value (v)
+        , location (l)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
       basic_symbol (typename Base::kind_type t, std::unique_ptr<StatementListNode>&& v, location_type&& l)
         : Base (t)
         , value (std::move (v))
@@ -707,6 +753,20 @@ namespace yy {
       {}
 #else
       basic_symbol (typename Base::kind_type t, const std::unique_ptr<StatementListNode>& v, const location_type& l)
+        : Base (t)
+        , value (v)
+        , location (l)
+      {}
+#endif
+
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, std::unique_ptr<VarDeclNode>&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const std::unique_ptr<VarDeclNode>& v, const location_type& l)
         : Base (t)
         , value (v)
         , location (l)
@@ -751,26 +811,36 @@ namespace yy {
         // Value type destructor.
 switch (yykind)
     {
+      case symbol_kind::S_type_info: // type_info
+        value.template destroy< TypeHolder > ();
+        break;
+
       case symbol_kind::S_SIGNED_NUM: // SIGNED_NUM
         value.template destroy< int > ();
         break;
 
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_SIMPLE_TYPE: // SIMPLE_TYPE
-      case symbol_kind::S_type_info: // type_info
         value.template destroy< std::string > ();
         break;
 
       case symbol_kind::S_statement: // statement
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
-      case symbol_kind::S_var_decl: // var_decl
       case symbol_kind::S_assign: // assign
         value.template destroy< std::unique_ptr<INode> > ();
         break;
 
+      case symbol_kind::S_initialization: // initialization
+        value.template destroy< std::unique_ptr<InitializationNode> > ();
+        break;
+
       case symbol_kind::S_statement_list: // statement_list
         value.template destroy< std::unique_ptr<StatementListNode> > ();
+        break;
+
+      case symbol_kind::S_var_decl: // var_decl
+        value.template destroy< std::unique_ptr<VarDeclNode> > ();
         break;
 
       case symbol_kind::S_UNSIGNED_NUM: // UNSIGNED_NUM
@@ -1772,8 +1842,8 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 72,     ///< Last index in yytable_.
-      yynnts_ = 9,  ///< Number of nonterminal symbols.
+      yylast_ = 73,     ///< Last index in yytable_.
+      yynnts_ = 10,  ///< Number of nonterminal symbols.
       yyfinal_ = 3 ///< Termination state number.
     };
 
@@ -1799,26 +1869,36 @@ switch (yykind)
   {
     switch (this->kind ())
     {
+      case symbol_kind::S_type_info: // type_info
+        value.copy< TypeHolder > (YY_MOVE (that.value));
+        break;
+
       case symbol_kind::S_SIGNED_NUM: // SIGNED_NUM
         value.copy< int > (YY_MOVE (that.value));
         break;
 
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_SIMPLE_TYPE: // SIMPLE_TYPE
-      case symbol_kind::S_type_info: // type_info
         value.copy< std::string > (YY_MOVE (that.value));
         break;
 
       case symbol_kind::S_statement: // statement
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
-      case symbol_kind::S_var_decl: // var_decl
       case symbol_kind::S_assign: // assign
         value.copy< std::unique_ptr<INode> > (YY_MOVE (that.value));
         break;
 
+      case symbol_kind::S_initialization: // initialization
+        value.copy< std::unique_ptr<InitializationNode> > (YY_MOVE (that.value));
+        break;
+
       case symbol_kind::S_statement_list: // statement_list
         value.copy< std::unique_ptr<StatementListNode> > (YY_MOVE (that.value));
+        break;
+
+      case symbol_kind::S_var_decl: // var_decl
+        value.copy< std::unique_ptr<VarDeclNode> > (YY_MOVE (that.value));
         break;
 
       case symbol_kind::S_UNSIGNED_NUM: // UNSIGNED_NUM
@@ -1856,26 +1936,36 @@ switch (yykind)
     super_type::move (s);
     switch (this->kind ())
     {
+      case symbol_kind::S_type_info: // type_info
+        value.move< TypeHolder > (YY_MOVE (s.value));
+        break;
+
       case symbol_kind::S_SIGNED_NUM: // SIGNED_NUM
         value.move< int > (YY_MOVE (s.value));
         break;
 
       case symbol_kind::S_IDENTIFIER: // IDENTIFIER
       case symbol_kind::S_SIMPLE_TYPE: // SIMPLE_TYPE
-      case symbol_kind::S_type_info: // type_info
         value.move< std::string > (YY_MOVE (s.value));
         break;
 
       case symbol_kind::S_statement: // statement
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
-      case symbol_kind::S_var_decl: // var_decl
       case symbol_kind::S_assign: // assign
         value.move< std::unique_ptr<INode> > (YY_MOVE (s.value));
         break;
 
+      case symbol_kind::S_initialization: // initialization
+        value.move< std::unique_ptr<InitializationNode> > (YY_MOVE (s.value));
+        break;
+
       case symbol_kind::S_statement_list: // statement_list
         value.move< std::unique_ptr<StatementListNode> > (YY_MOVE (s.value));
+        break;
+
+      case symbol_kind::S_var_decl: // var_decl
+        value.move< std::unique_ptr<VarDeclNode> > (YY_MOVE (s.value));
         break;
 
       case symbol_kind::S_UNSIGNED_NUM: // UNSIGNED_NUM
@@ -1948,7 +2038,7 @@ switch (yykind)
 
 
 } // yy
-#line 1952 "grammar.tab.hh"
+#line 2042 "grammar.tab.hh"
 
 
 

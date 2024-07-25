@@ -11,8 +11,6 @@ public:
 
     void Visit(const UnaryOpNode& node) override;
 
-    void Visit(const NumericLiteralNode& node) override;
-
 };
 
 #endif //INTERPRETER_INTERPRETER_H

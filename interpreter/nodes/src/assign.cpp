@@ -3,7 +3,6 @@
 
 AssignNode::AssignNode(std::unique_ptr<INode> &&lhs, std::unique_ptr<INode> &&rhs)
     : INode(NodeKind::Assign), lhs_(std::move(lhs)), rhs_(std::move(rhs)) {
-    label_ = "<-";
 }
 
 const std::unique_ptr<INode> &AssignNode::GetLeft() const noexcept {
@@ -16,4 +15,9 @@ const std::unique_ptr<INode> &AssignNode::GetRight() const noexcept {
 
 void AssignNode::Accept(NodeVisitor &visitor) const {
     visitor.Visit(*this);
+}
+
+void AssignNode::PrintOut(std::ostream &stream) const {
+    auto ftm_string = std::format("AssignNode: '<-'");
+    stream << ftm_string << '\n';
 }

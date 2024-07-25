@@ -2,15 +2,11 @@
 #define INTERPRETER_NODE_INTERFACE_H
 #include "enums.h"
 #include <memory>
-#include <fstream>
 #include <string>
 
 class NodeVisitor;
 
 class INode {
-public:
-    std::string label_; //for debugging and printing
-
 private:
     NodeKind kind_;
 

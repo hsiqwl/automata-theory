@@ -14,6 +14,8 @@ private:
     friend class TypeHolderWrapper;
 
 public:
+    TypeHolder() = default;
+
     TypeHolder(TypeToken simple_type_token);
 
     void MakeMatrixWrap();

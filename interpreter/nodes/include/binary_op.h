@@ -1,9 +1,9 @@
 #ifndef INTERPRETER_BINARY_OP_H
 #define INTERPRETER_BINARY_OP_H
 #include "node_interface.h"
-#include <string>
+#include "printable_interface.h"
 
-class BinaryOpNode: public INode{
+class BinaryOpNode: public INode, public IPrintable{
 public:
     BinaryOpNode(BinaryOpKind op_kind, std::unique_ptr<INode>&& lhs, std::unique_ptr<INode>&& rhs);
 
@@ -15,6 +15,8 @@ public:
 
     [[nodiscard]] BinaryOpKind GetOpKind() const noexcept;
 
+    void PrintOut(std::ostream& stream) const override;
+
 private:
     BinaryOpKind op_kind_;
 
@@ -22,7 +24,7 @@ private:
 
     std::unique_ptr<INode> rhs_;
 
-    void SetLabel();
+    char GetLabel() const;
 };
 
 #endif //INTERPRETER_BINARY_OP_H

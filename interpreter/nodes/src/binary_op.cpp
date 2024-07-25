@@ -1,39 +1,29 @@
 #include "binary_op.h"
 #include "node_visitor.h"
 
-
-void BinaryOpNode::SetLabel() {
+char BinaryOpNode::GetLabel() const{
     switch (op_kind_) {
         case BinaryOpKind::Plus:
-            label_ = "+";
-            return;
+            return '+';
         case BinaryOpKind::Minus:
-            label_ = "-";
-            return;
+            return '-';
         case BinaryOpKind::Star:
-            label_ = "*";
-            return;
+            return '*';
         case BinaryOpKind::Slash:
-            label_ = "/";
-            return;
+            return '/';
         case BinaryOpKind::Percent:
-            label_ = "%";
-            return;
+            return '%';
         case BinaryOpKind::Less:
-            label_ = "<";
-            return;
+            return '<';
         case BinaryOpKind::Greater:
-            label_ = ">";
-            return;
+            return '>';
         case BinaryOpKind::Equal:
-            label_ = "=";
-            return;
+            return '=';
     }
 }
 
 BinaryOpNode::BinaryOpNode(BinaryOpKind op_kind, std::unique_ptr<INode>&& lhs, std::unique_ptr<INode>&& rhs)
     : INode(NodeKind::BinaryOp), op_kind_(op_kind), lhs_(std::move(lhs)), rhs_(std::move(rhs)) {
-    SetLabel();
 }
 
 void BinaryOpNode::Accept(NodeVisitor &visitor) const {
@@ -50,4 +40,9 @@ const std::unique_ptr<INode> &BinaryOpNode::GetRight() const noexcept {
 
 BinaryOpKind BinaryOpNode::GetOpKind() const noexcept {
     return op_kind_;
+}
+
+void BinaryOpNode::PrintOut(std::ostream &stream) const {
+    auto fmt_string = std::format("BinaryOpNode: '{}'", GetLabel());
+    stream << fmt_string << '\n';
 }
