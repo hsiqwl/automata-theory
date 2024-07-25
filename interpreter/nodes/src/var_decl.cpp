@@ -1,7 +1,7 @@
 #include "var_decl.h"
 #include "node_visitor.h"
 
-VarDeclNode::VarDeclNode(std::string_view name, std::string_view type, bool is_const)
+VarDeclNode::VarDeclNode(std::string_view name, const TypeHolder& type, bool is_const)
     : INode(NodeKind::VarDecl), name_(name), type_(type), const_(is_const) {
     label_ = name_;
 }
@@ -14,7 +14,7 @@ const std::string &VarDeclNode::GetName() const noexcept {
     return name_;
 }
 
-const std::string &VarDeclNode::GetType() const noexcept {
+const TypeHolderWrapper & VarDeclNode::GetType() const noexcept {
     return type_;
 }
 

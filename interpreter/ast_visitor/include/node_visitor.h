@@ -8,6 +8,7 @@ class UnsignedLiteralNode;
 class VarDeclNode;
 class VarReferenceNode;
 class AssignNode;
+class InitializationNode;
 class StatementListNode;
 
 class NodeVisitor {
@@ -26,7 +27,10 @@ public:
 
     virtual void Visit(const AssignNode &node) = 0;
 
+    virtual void Visit(const InitializationNode& node) = 0;
+
     virtual void Visit(const StatementListNode &node) = 0;
+
 
     virtual ~NodeVisitor() = default;
 };

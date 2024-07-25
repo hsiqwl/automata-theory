@@ -11,7 +11,7 @@ protected:
 public:
     Symbol(std::string_view name);
 
-    const std::string& get_name() const;
+    const std::string& GetName() const;
 
     virtual ~Symbol() = default;
 

@@ -14,6 +14,7 @@ add_library(nodes STATIC
         src/var_decl.cpp
         src/var_ref.cpp
         src/assign.cpp
-        src/statement_list.cpp)
+        src/statement_list.cpp
+        src/initialization.cpp)
 target_include_directories(nodes PUBLIC include)
 target_link_libraries(nodes visitor values)

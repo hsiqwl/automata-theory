@@ -1,14 +1,15 @@
 #ifndef INTERPRETER_VAR_DECL_H
 #define INTERPRETER_VAR_DECL_H
 #include "node_interface.h"
+#include "type_holder.h"
 
 class VarDeclNode: public INode{
 public:
-    VarDeclNode(std::string_view name, std::string_view type, bool is_const = false);
+    VarDeclNode(std::string_view name, const TypeHolder& type, bool is_const = false);
 
     [[nodiscard]] const std::string& GetName() const noexcept;
 
-    [[nodiscard]] const std::string& GetType() const noexcept;
+    [[nodiscard]] const TypeHolderWrapper & GetType() const  noexcept;
 
     [[nodiscard]] bool IsConst() const noexcept;
 
@@ -17,7 +18,7 @@ public:
 private:
     std::string name_;
 
-    std::string type_;
+    TypeHolderWrapper type_;
 
     bool const_;
 };

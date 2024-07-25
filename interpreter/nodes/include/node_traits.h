@@ -8,6 +8,7 @@
 #include "var_ref.h"
 #include "var_decl.h"
 #include "assign.h"
+#include "initialization.h"
 #include "statement_list.h"
 #include <type_traits>
 
@@ -35,6 +36,8 @@ MAKE_NODE_TRAITS(StatementListNode, NodeKind::StatementList);
 MAKE_NODE_TRAITS(SignedLiteralNode, NodeKind::SignedLiteral);
 
 MAKE_NODE_TRAITS(UnsignedLiteralNode, NodeKind::UnsignedLiteral);
+
+MAKE_NODE_TRAITS(InitializationNode, NodeKind::Initialization);
 
 
 template<std::size_t Kind, typename = void>

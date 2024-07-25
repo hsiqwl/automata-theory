@@ -9,7 +9,7 @@ bool ScopedSymTable::SymbolIsDeclared(const std::string &name) {
 }
 
 void ScopedSymTable::InsertSymbol(std::unique_ptr<Symbol> &&new_symbol) {
-    sym_tab_.emplace(new_symbol->get_name(), std::move(new_symbol));
+    sym_tab_.emplace(new_symbol->GetName(), std::move(new_symbol));
 }
 
 Symbol &ScopedSymTable::GetSymbol(const std::string &name) {

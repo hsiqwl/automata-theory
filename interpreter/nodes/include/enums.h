@@ -9,6 +9,7 @@ enum class NodeKind{
     VarDecl,
     VarRef,
     Assign,
+    Initialization,
     StatementList,
     MAX_TOKEN_NAMES_ID
 };

@@ -7,18 +7,18 @@ class FunctionSymbol: public Symbol{
 private:
     std::vector<VarSymbol> params_;
 
-    std::string return_type_;
+    TypeHolderWrapper return_type_;
 
 public:
-    FunctionSymbol(std::string_view name, std::string_view return_type);
+    FunctionSymbol(std::string_view name, const TypeHolder &return_type);
 
-    FunctionSymbol(std::string_view name, std::string_view return_type, std::vector<VarSymbol>&& params);
+    FunctionSymbol(std::string_view name, const TypeHolder &return_type, std::vector<VarSymbol>&& params);
 
-    size_t get_param_number() const;
+    size_t GetParamNumber() const noexcept;
 
-    const std::string& get_return_type() const;
+    const TypeHolderWrapper& GetReturnType() const noexcept;
 
-    const VarSymbol& operator [] (int index) const;
+    const VarSymbol& GetParamByIndex(size_t index) const;
 
     void print(std::ostream& stream) const override;
 };

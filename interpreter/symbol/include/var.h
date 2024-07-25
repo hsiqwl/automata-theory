@@ -1,20 +1,20 @@
 #ifndef INTERPRETER_VAR_H
 #define INTERPRETER_VAR_H
 #include "symbol.h"
-
+#include "type_holder.h"
 
 class VarSymbol: public Symbol{
 private:
-    std::string type_;
+    TypeHolderWrapper type_;
 
-    bool is_const_;
+    bool const_qualifier_;
 
 public:
-    VarSymbol(std::string_view name, std::string_view type, bool is_const = false);
+    VarSymbol(std::string_view name, const TypeHolder &type, bool is_const = false);
 
-    const std::string& get_type() const;
+    const TypeHolderWrapper& GetType() const;
 
-    bool is_const() const;
+    bool IsConst() const;
 
     void print(std::ostream& stream) const override;
 };
