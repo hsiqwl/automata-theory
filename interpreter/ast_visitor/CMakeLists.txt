@@ -13,6 +13,10 @@ add_library(printer STATIC src/printer.cpp)
 target_include_directories(printer PUBLIC include)
 target_link_libraries(printer visitor node_traits)
 
+add_library(semantic_analyzer STATIC src/semantic_analyzer.cpp)
+target_include_directories(semantic_analyzer PUBLIC include)
+target_link_libraries(semantic_analyzer visitor node_traits value_getter error_context symbol_table)
+
 if(FALSE)
 add_library(interpreter STATIC src/interpreter.cpp)
 target_include_directories(interpreter PUBLIC include)

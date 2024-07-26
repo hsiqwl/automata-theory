@@ -3,6 +3,6 @@ project(interpreter)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_library(symbol_table STATIC src/scoped_symbol_table.cpp)
+add_library(symbol_table STATIC src/scoped_symbol_table.cpp src/sym_tab_manager.cpp)
 target_include_directories(symbol_table PUBLIC include)
 target_link_libraries(symbol_table symbols)

@@ -34,5 +34,7 @@ public:
     bool IsSimpleType() const noexcept;
 
     TypeToken GetSimpleType() const;
+
+    bool IsNoneType() const noexcept;
 };
 #endif //INTERPRETER_TYPE_HOLDER_H

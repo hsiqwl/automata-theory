@@ -2,6 +2,7 @@
 #define INTERPRETER_SCOPED_SYMBOL_TABLE_H
 #include "symbol.h"
 #include <unordered_map>
+#include <functional>
 #include <memory>
 
 class ScopedSymTable{
@@ -10,16 +11,16 @@ private:
 
     std::string scope_name_;
 
-    ScopedSymTable* enclosing_scope_;
-
 public:
-    ScopedSymTable(std::string_view scope_name, ScopedSymTable* enclosing_scope);
+    ScopedSymTable(std::string_view scope_name = "Global Scope");
 
     void InsertSymbol(std::unique_ptr<Symbol>&& new_symbol);
 
-    bool SymbolIsDeclared(const std::string& name);
+    bool SymbolDeclared(const std::string& name) const noexcept;
 
-    Symbol& GetSymbol(const std::string& name);
+    const Symbol & GetSymbol(const std::string& name) const;
+
+    const std::string& GetScopeName() const noexcept;
 };
 
 #endif //INTERPRETER_SCOPED_SYMBOL_TABLE_H

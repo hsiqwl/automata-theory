@@ -29,3 +29,7 @@ TypeToken TypeHolderWrapper::GetSimpleType() const {
     else
         throw std::logic_error("Type is not simple, but compound");
 }
+
+bool TypeHolderWrapper::IsNoneType() const noexcept {
+    return type_.empty();
+}
