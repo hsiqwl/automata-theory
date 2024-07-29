@@ -77,17 +77,33 @@ program:
     statement_list YYEOF {drv.tree_ = std::make_unique<Ast>(std::move($1));}
     ;
 
-statement_list:
-    statement_list statement NEW_LINE {
+func_decl:
+    FUNC IDENTIFIER LPAREN param_list RPAREN sentence_group {}
+    ;
+
+func_call:
+    CALL IDENTIFIER RPAREN argument_list RPAREN
+
+sentence_group:
+    LPAREN sentence_list RPAREN {$$ = std::move($2);}
+    ;
+
+sentence_list:
+    sentence_list sentence NEW_LINE {
         $1->AddStatement(std::move($2));
         $$ = std::move($1);
         }
     | %empty {$$ = std::make_unique<StatementListNode>();}
 
+sentence:
+    statement SEMICOLON {$$ = std::move($1);}
+    ;
+
 statement:
     arithmetic_expr {$$ = std::move($1);}
     | assign {$$ = std::move($1);}
     | initialization {$$ = std::move($1);}
+    | func_call {}
     ;
 
 arithmetic_operand:
@@ -163,6 +179,12 @@ assign:
         $$ = std::make_unique<AssignNode>(std::move(var_ref_node), std::move($3));
         }
     ;
+
+if_clause:
+    TESTONCE LPAREN arithmetic_expr RPAREN sentence_group
+
+for_clause:
+    TESTREP LPAREN arithmetic_expr RPAREN sentence_group
 
 %%
 
