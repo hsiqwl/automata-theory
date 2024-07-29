@@ -15,7 +15,7 @@ std::size_t StatementListNode::NumOfStatements() const noexcept {
     return statements_.size();
 }
 
-const std::unique_ptr<INode> &StatementListNode::operator[](int index) const {
+const std::unique_ptr<INode> &StatementListNode::operator[](size_t index) const {
     return statements_[index];
 }
 

@@ -1,15 +1,19 @@
 #ifndef INTERPRETER_SEMANTIC_ANALYZER_H
 #define INTERPRETER_SEMANTIC_ANALYZER_H
-#include "node_interface.h"
-#include "node_visitor.h"
-#include "value_getter.h"
+#include "type_resolver.h"
 #include "semantic_error_context.h"
-#include "sym_tab_manager.h"
 
-class SemanticAnalyzer:
-        public ValueGetter<SemanticAnalyzer, std::unique_ptr<INode>, SemanticErrorContext>,
-        public NodeVisitor{
+class SemanticAnalyzer: public SharableObjectHolder<SymbolTableManager>,
+                        public ValueGetterWithSharableObjectHolder
+                        <
+                        SemanticAnalyzer,
+                        INode*,
+                        SemanticErrorContext
+                        >,
+                        public NodeVisitor{
 public:
+    SemanticAnalyzer(SymbolTableManager* manager);
+
     void Visit(const BinaryOpNode& node) override;
 
     void Visit(const UnaryOpNode& node) override;
@@ -27,10 +31,6 @@ public:
     void Visit(const UnsignedLiteralNode& node) override;
 
     void Visit(const InitializationNode& node) override;
-
-private:
-    SymbolTableManager scope_manager_;
-
 };
 
 #endif //INTERPRETER_SEMANTIC_ANALYZER_H

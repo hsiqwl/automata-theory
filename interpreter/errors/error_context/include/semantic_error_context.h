@@ -8,7 +8,7 @@
 
 class SemanticErrorContext: public IPrintable{
 private:
-    std::vector<std::unique_ptr<SemanticError>> errors_;
+    std::vector<std::shared_ptr<SemanticError>> errors_;
 
 public:
     SemanticErrorContext() = default;

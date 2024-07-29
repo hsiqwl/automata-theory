@@ -46,6 +46,7 @@ void AstPrinter::Visit(const UnsignedLiteralNode &node) {
 
 void AstPrinter::Visit(const InitializationNode &node) {
     node.GetVarToInit()->Accept(*this);
-    node.GetInitExpr()->Accept(*this);
+    if(node.GetInitExpr() != nullptr)
+        node.GetInitExpr()->Accept(*this);
     node.PrintOut(*buf_);
 }

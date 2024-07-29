@@ -14,7 +14,7 @@ public:
 
     [[nodiscard]] std::size_t NumOfStatements() const noexcept;
 
-    const std::unique_ptr<INode>& operator [] (int index) const;
+    const std::unique_ptr<INode>& operator [] (size_t index) const;
 
     void PrintOut(std::ostream& stream) const override;
 

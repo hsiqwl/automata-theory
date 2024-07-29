@@ -18,5 +18,4 @@ public:
     virtual void print(std::ostream& stream) const = 0;
 };
 
-
 #endif //INTERPRETER_SYMBOL_H

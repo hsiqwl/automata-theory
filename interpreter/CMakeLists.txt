@@ -24,5 +24,5 @@ target_link_libraries(parse_driver ast)
 
 
 add_executable(main main.cpp)
-target_link_libraries(main parse_driver printer)
+target_link_libraries(main parse_driver printer semantic_analyzer)
 

@@ -1,7 +1,6 @@
 #ifndef INTERPRETER_AST_H
 #define INTERPRETER_AST_H
 #include "node_traits.h"
-#include <iostream>
 
 class Ast{
 private:
@@ -12,9 +11,7 @@ public:
 
     Ast(std::unique_ptr<INode>&& node);
 
-    void PrintOut(std::ostream& stream = std::cout) const;
-
-    long Evaluate() const;
+    const std::unique_ptr<INode>& GetRoot() const noexcept;
 };
 
 #endif //INTERPRETER_AST_H

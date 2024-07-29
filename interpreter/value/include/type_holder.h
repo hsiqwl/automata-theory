@@ -26,10 +26,18 @@ class TypeHolderWrapper{
 private:
     std::deque<TypeToken> type_;
 
+    bool IsNumericType() const noexcept;
+
+    bool IsCellType() const noexcept;
+
 public:
     TypeHolderWrapper(const TypeHolder& type_holder);
 
+    TypeHolderWrapper() = default;
+
     bool IsSameAs(const TypeHolderWrapper& other) const noexcept;
+
+    bool IsConvertibleTo(const TypeHolderWrapper& other) const noexcept;
 
     bool IsSimpleType() const noexcept;
 

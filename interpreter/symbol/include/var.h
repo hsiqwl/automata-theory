@@ -10,7 +10,7 @@ private:
     bool const_qualifier_;
 
 public:
-    VarSymbol(std::string_view name, const TypeHolder &type, bool is_const = false);
+    VarSymbol(std::string_view name, const TypeHolderWrapper &type, bool is_const = false);
 
     const TypeHolderWrapper& GetType() const;
 

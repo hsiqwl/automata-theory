@@ -23,6 +23,22 @@ bool TypeHolderWrapper::IsSimpleType() const noexcept {
     return type_.size() == 1;
 }
 
+bool TypeHolderWrapper::IsCellType() const noexcept {
+    return IsSimpleType() && GetSimpleType() == TypeToken::Cell;
+}
+
+bool TypeHolderWrapper::IsNumericType() const noexcept {
+    return IsSimpleType() && !IsCellType();
+}
+
+bool TypeHolderWrapper::IsConvertibleTo(const TypeHolderWrapper &other) const noexcept {
+    if(IsSameAs(other) || IsSimpleType() && other.IsSimpleType()) {
+        if((IsNumericType() || IsCellType()) && (other.IsNumericType() || other.IsCellType()))
+            return true;
+    }
+    return false;
+}
+
 TypeToken TypeHolderWrapper::GetSimpleType() const {
     if (IsSimpleType())
         return type_.back();
