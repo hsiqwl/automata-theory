@@ -424,6 +424,7 @@ namespace yy {
       // SIMPLE_TYPE
       char dummy3[sizeof (std::string)];
 
+      // sentence
       // statement
       // arithmetic_operand
       // arithmetic_expr
@@ -433,7 +434,8 @@ namespace yy {
       // initialization
       char dummy5[sizeof (std::unique_ptr<InitializationNode>)];
 
-      // statement_list
+      // sentence_group
+      // sentence_list
       char dummy6[sizeof (std::unique_ptr<StatementListNode>)];
 
       // var_decl
@@ -507,7 +509,7 @@ namespace yy {
     TOK_CONST = 14,                // CONST
     TOK_NEW_LINE = 15,             // NEW_LINE
     TOK_SEMICOLON = 16,            // SEMICOLON
-    TOK_PARAM_DELIMITER = 17,      // PARAM_DELIMITER
+    TOK_ARG_DELIMITER = 17,        // ARG_DELIMITER
     TOK_CALL = 18,                 // CALL
     TOK_FUNC = 19,                 // FUNC
     TOK_TESTREP = 20,              // TESTREP
@@ -517,10 +519,11 @@ namespace yy {
     TOK_LEFT = 24,                 // LEFT
     TOK_RIGHT = 25,                // RIGHT
     TOK_MATRIX = 26,               // MATRIX
-    TOK_IDENTIFIER = 27,           // IDENTIFIER
-    TOK_SIGNED_NUM = 28,           // SIGNED_NUM
-    TOK_UNSIGNED_NUM = 29,         // UNSIGNED_NUM
-    TOK_SIMPLE_TYPE = 30           // SIMPLE_TYPE
+    TOK_COMMA = 27,                // COMMA
+    TOK_IDENTIFIER = 28,           // IDENTIFIER
+    TOK_SIGNED_NUM = 29,           // SIGNED_NUM
+    TOK_UNSIGNED_NUM = 30,         // UNSIGNED_NUM
+    TOK_SIMPLE_TYPE = 31           // SIMPLE_TYPE
       };
       /// Backward compatibility alias (Bison 3.6).
       typedef token_kind_type yytokentype;
@@ -537,7 +540,7 @@ namespace yy {
     {
       enum symbol_kind_type
       {
-        YYNTOKENS = 31, ///< Number of tokens.
+        YYNTOKENS = 32, ///< Number of tokens.
         S_YYEMPTY = -2,
         S_YYEOF = 0,                             // "end of file"
         S_YYerror = 1,                           // error
@@ -556,7 +559,7 @@ namespace yy {
         S_CONST = 14,                            // CONST
         S_NEW_LINE = 15,                         // NEW_LINE
         S_SEMICOLON = 16,                        // SEMICOLON
-        S_PARAM_DELIMITER = 17,                  // PARAM_DELIMITER
+        S_ARG_DELIMITER = 17,                    // ARG_DELIMITER
         S_CALL = 18,                             // CALL
         S_FUNC = 19,                             // FUNC
         S_TESTREP = 20,                          // TESTREP
@@ -566,20 +569,28 @@ namespace yy {
         S_LEFT = 24,                             // LEFT
         S_RIGHT = 25,                            // RIGHT
         S_MATRIX = 26,                           // MATRIX
-        S_IDENTIFIER = 27,                       // IDENTIFIER
-        S_SIGNED_NUM = 28,                       // SIGNED_NUM
-        S_UNSIGNED_NUM = 29,                     // UNSIGNED_NUM
-        S_SIMPLE_TYPE = 30,                      // SIMPLE_TYPE
-        S_YYACCEPT = 31,                         // $accept
-        S_program = 32,                          // program
-        S_statement_list = 33,                   // statement_list
-        S_statement = 34,                        // statement
-        S_arithmetic_operand = 35,               // arithmetic_operand
-        S_arithmetic_expr = 36,                  // arithmetic_expr
-        S_type_info = 37,                        // type_info
-        S_var_decl = 38,                         // var_decl
-        S_initialization = 39,                   // initialization
-        S_assign = 40                            // assign
+        S_COMMA = 27,                            // COMMA
+        S_IDENTIFIER = 28,                       // IDENTIFIER
+        S_SIGNED_NUM = 29,                       // SIGNED_NUM
+        S_UNSIGNED_NUM = 30,                     // UNSIGNED_NUM
+        S_SIMPLE_TYPE = 31,                      // SIMPLE_TYPE
+        S_YYACCEPT = 32,                         // $accept
+        S_program = 33,                          // program
+        S_block = 34,                            // block
+        S_func_decl = 35,                        // func_decl
+        S_func_call = 36,                        // func_call
+        S_param_list = 37,                       // param_list
+        S_argument_list = 38,                    // argument_list
+        S_sentence_group = 39,                   // sentence_group
+        S_sentence_list = 40,                    // sentence_list
+        S_sentence = 41,                         // sentence
+        S_statement = 42,                        // statement
+        S_arithmetic_operand = 43,               // arithmetic_operand
+        S_arithmetic_expr = 44,                  // arithmetic_expr
+        S_type_info = 45,                        // type_info
+        S_var_decl = 46,                         // var_decl
+        S_initialization = 47,                   // initialization
+        S_assign = 48                            // assign
       };
     };
 
@@ -629,6 +640,7 @@ namespace yy {
         value.move< std::string > (std::move (that.value));
         break;
 
+      case symbol_kind::S_sentence: // sentence
       case symbol_kind::S_statement: // statement
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
@@ -640,7 +652,8 @@ namespace yy {
         value.move< std::unique_ptr<InitializationNode> > (std::move (that.value));
         break;
 
-      case symbol_kind::S_statement_list: // statement_list
+      case symbol_kind::S_sentence_group: // sentence_group
+      case symbol_kind::S_sentence_list: // sentence_list
         value.move< std::unique_ptr<StatementListNode> > (std::move (that.value));
         break;
 
@@ -824,6 +837,7 @@ switch (yykind)
         value.template destroy< std::string > ();
         break;
 
+      case symbol_kind::S_sentence: // sentence
       case symbol_kind::S_statement: // statement
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
@@ -835,7 +849,8 @@ switch (yykind)
         value.template destroy< std::unique_ptr<InitializationNode> > ();
         break;
 
-      case symbol_kind::S_statement_list: // statement_list
+      case symbol_kind::S_sentence_group: // sentence_group
+      case symbol_kind::S_sentence_list: // sentence_list
         value.template destroy< std::unique_ptr<StatementListNode> > ();
         break;
 
@@ -945,7 +960,7 @@ switch (yykind)
       {
 #if !defined _MSC_VER || defined __clang__
         YY_ASSERT (tok == token::TOK_YYEOF
-                   || (token::TOK_YYerror <= tok && tok <= token::TOK_MATRIX));
+                   || (token::TOK_YYerror <= tok && tok <= token::TOK_COMMA));
 #endif
       }
 #if 201103L <= YY_CPLUSPLUS
@@ -1291,16 +1306,16 @@ switch (yykind)
 #if 201103L <= YY_CPLUSPLUS
       static
       symbol_type
-      make_PARAM_DELIMITER (location_type l)
+      make_ARG_DELIMITER (location_type l)
       {
-        return symbol_type (token::TOK_PARAM_DELIMITER, std::move (l));
+        return symbol_type (token::TOK_ARG_DELIMITER, std::move (l));
       }
 #else
       static
       symbol_type
-      make_PARAM_DELIMITER (const location_type& l)
+      make_ARG_DELIMITER (const location_type& l)
       {
-        return symbol_type (token::TOK_PARAM_DELIMITER, l);
+        return symbol_type (token::TOK_ARG_DELIMITER, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -1436,6 +1451,21 @@ switch (yykind)
       make_MATRIX (const location_type& l)
       {
         return symbol_type (token::TOK_MATRIX, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_COMMA (location_type l)
+      {
+        return symbol_type (token::TOK_COMMA, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_COMMA (const location_type& l)
+      {
+        return symbol_type (token::TOK_COMMA, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -1842,9 +1872,9 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 73,     ///< Last index in yytable_.
-      yynnts_ = 10,  ///< Number of nonterminal symbols.
-      yyfinal_ = 3 ///< Termination state number.
+      yylast_ = 98,     ///< Last index in yytable_.
+      yynnts_ = 17,  ///< Number of nonterminal symbols.
+      yyfinal_ = 2 ///< Termination state number.
     };
 
 
@@ -1882,6 +1912,7 @@ switch (yykind)
         value.copy< std::string > (YY_MOVE (that.value));
         break;
 
+      case symbol_kind::S_sentence: // sentence
       case symbol_kind::S_statement: // statement
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
@@ -1893,7 +1924,8 @@ switch (yykind)
         value.copy< std::unique_ptr<InitializationNode> > (YY_MOVE (that.value));
         break;
 
-      case symbol_kind::S_statement_list: // statement_list
+      case symbol_kind::S_sentence_group: // sentence_group
+      case symbol_kind::S_sentence_list: // sentence_list
         value.copy< std::unique_ptr<StatementListNode> > (YY_MOVE (that.value));
         break;
 
@@ -1949,6 +1981,7 @@ switch (yykind)
         value.move< std::string > (YY_MOVE (s.value));
         break;
 
+      case symbol_kind::S_sentence: // sentence
       case symbol_kind::S_statement: // statement
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
@@ -1960,7 +1993,8 @@ switch (yykind)
         value.move< std::unique_ptr<InitializationNode> > (YY_MOVE (s.value));
         break;
 
-      case symbol_kind::S_statement_list: // statement_list
+      case symbol_kind::S_sentence_group: // sentence_group
+      case symbol_kind::S_sentence_list: // sentence_list
         value.move< std::unique_ptr<StatementListNode> > (YY_MOVE (s.value));
         break;
 
@@ -2038,7 +2072,7 @@ switch (yykind)
 
 
 } // yy
-#line 2042 "grammar.tab.hh"
+#line 2076 "grammar.tab.hh"
 
 
 

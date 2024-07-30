@@ -45,7 +45,7 @@
     CONST
     NEW_LINE
     SEMICOLON
-    PARAM_DELIMITER
+    ARG_DELIMITER
     CALL
     FUNC
     TESTREP
@@ -55,16 +55,17 @@
     LEFT
     RIGHT
     MATRIX
+    COMMA
 ;
 
 %token <std::string> IDENTIFIER
 %token <int> SIGNED_NUM
 %token <unsigned int> UNSIGNED_NUM
 %token <std::string> SIMPLE_TYPE
-%nterm <std::unique_ptr<INode>> arithmetic_operand arithmetic_expr assign statement
+%nterm <std::unique_ptr<INode>> arithmetic_operand arithmetic_expr assign statement sentence
 %nterm <std::unique_ptr<VarDeclNode>> var_decl
 %nterm <std::unique_ptr<InitializationNode>> initialization
-%nterm <std::unique_ptr<StatementListNode>> statement_list
+%nterm <std::unique_ptr<StatementListNode>> sentence_list sentence_group
 %nterm <TypeHolder> type_info
 
 %left PLUS MINUS
@@ -74,7 +75,13 @@
 
 %%
 program:
-    statement_list YYEOF {drv.tree_ = std::make_unique<Ast>(std::move($1));}
+    program block YYEOF
+    | %empty
+    ;
+
+block:
+    sentence_list
+    | func_decl
     ;
 
 func_decl:
@@ -82,7 +89,16 @@ func_decl:
     ;
 
 func_call:
-    CALL IDENTIFIER RPAREN argument_list RPAREN
+    CALL IDENTIFIER RPAREN argument_list RPAREN {}
+
+param_list:
+    param_list COMMA var_decl {}
+    | var_decl {}
+    ;
+
+argument_list:
+    argument_list  IDENTIFIER {}
+    | IDENTIFIER
 
 sentence_group:
     LPAREN sentence_list RPAREN {$$ = std::move($2);}
@@ -103,13 +119,13 @@ statement:
     arithmetic_expr {$$ = std::move($1);}
     | assign {$$ = std::move($1);}
     | initialization {$$ = std::move($1);}
-    | func_call {}
     ;
 
 arithmetic_operand:
     SIGNED_NUM {$$ = std::make_unique<SignedLiteralNode>($1);}
     | UNSIGNED_NUM {$$ = std::make_unique<UnsignedLiteralNode>($1);}
     | IDENTIFIER {$$ = std::make_unique<VarReferenceNode>($1);}
+    | func_call {}
     ;
 
 arithmetic_expr:
@@ -165,7 +181,9 @@ type_info:
 
 var_decl:
     type_info IDENTIFIER {$$ = std::make_unique<VarDeclNode>($2, $1);}
-    | CONST type_info IDENTIFIER {$$ = std::make_unique<VarDeclNode>($3, $2, true);}
+    | CONST type_info IDENTIFIER {
+        $2.MakeConst();
+        $$ = std::make_unique<VarDeclNode>($3, $2, true);}
     ;
 
 initialization:
@@ -191,4 +209,3 @@ for_clause:
 void yy::parser::error (const location_type& l, const std::string& m){
     std::cerr << l << ": " << m << '\n';
 }
-

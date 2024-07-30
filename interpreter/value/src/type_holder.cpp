@@ -11,8 +11,13 @@ void TypeHolder::MakeMatrixWrap() {
     type_.push_front(TypeToken::Matrix);
 }
 
+void TypeHolder::MakeConst() noexcept {
+    const_qualified_ = true;
+}
+
 TypeHolderWrapper::TypeHolderWrapper(const TypeHolder &type_holder) {
     type_ = type_holder.type_;
+    const_qualified_ = type_holder.const_qualified_;
 }
 
 bool TypeHolderWrapper::IsSameAs(const TypeHolderWrapper &other) const noexcept {
@@ -48,4 +53,8 @@ TypeToken TypeHolderWrapper::GetSimpleType() const {
 
 bool TypeHolderWrapper::IsNoneType() const noexcept {
     return type_.empty();
+}
+
+bool TypeHolderWrapper::IsConst() const noexcept {
+    return const_qualified_;
 }

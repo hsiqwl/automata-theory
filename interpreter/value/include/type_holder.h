@@ -11,6 +11,8 @@ class TypeHolder{
 private:
     std::deque<TypeToken> type_;
 
+    bool const_qualified_ = false;
+
     friend class TypeHolderWrapper;
 
 public:
@@ -19,12 +21,16 @@ public:
     TypeHolder(TypeToken simple_type_token);
 
     void MakeMatrixWrap();
+
+    void MakeConst() noexcept;
 };
 
 
 class TypeHolderWrapper{
 private:
     std::deque<TypeToken> type_;
+
+    bool const_qualified_;
 
     bool IsNumericType() const noexcept;
 
@@ -44,5 +50,7 @@ public:
     TypeToken GetSimpleType() const;
 
     bool IsNoneType() const noexcept;
+
+    bool IsConst() const noexcept;
 };
 #endif //INTERPRETER_TYPE_HOLDER_H

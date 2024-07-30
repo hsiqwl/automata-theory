@@ -7,6 +7,16 @@ void SemanticAnalyzer::Visit(const AssignNode &node) {
     SemanticErrorContext context;
     context.Add(GetValue(node.GetLeft().get(), object_ptr_));
     context.Add(GetValue(node.GetRight().get(), object_ptr_));
+    try {
+        auto lhs_type = TypeResolver::GetValue(node.GetLeft().get(), object_ptr_);
+        auto rhs_type = TypeResolver::GetValue(node.GetRight().get(), object_ptr_);
+        if (lhs_type.IsConst())
+            context.Add(std::make_unique<AssignmentOfConstVar>());
+        if (!rhs_type.IsConvertibleTo(lhs_type))
+            context.Add(std::make_unique<NoKnownConversion>());
+    } catch (const SemanticError &error) {
+        context.Add(std::make_unique<NoKnownConversion>());
+    }
     Return(std::move(context));
 }
 
