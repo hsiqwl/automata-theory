@@ -11,6 +11,9 @@
 #include "initialization.h"
 #include "statement_list.h"
 #include <type_traits>
+#include "if_node.h"
+#include "while_node.h"
+#include "func_decl.h"
 
 template<NodeKind Kind>
 struct node_type_from_kind;
@@ -38,6 +41,13 @@ MAKE_NODE_TRAITS(SignedLiteralNode, NodeKind::SignedLiteral);
 MAKE_NODE_TRAITS(UnsignedLiteralNode, NodeKind::UnsignedLiteral);
 
 MAKE_NODE_TRAITS(InitializationNode, NodeKind::Initialization);
+
+MAKE_NODE_TRAITS(IfNode, NodeKind::IfNode);
+
+MAKE_NODE_TRAITS(WhileNode, NodeKind::WhileNode);
+
+MAKE_NODE_TRAITS(FuncDecl, NodeKind::FuncDecl);
+
 
 
 template<std::size_t Kind, typename = void>

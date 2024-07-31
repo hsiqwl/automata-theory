@@ -82,7 +82,7 @@ program_block:
     | func_decl program_block {}
     | sentence program_block {}
     | if_clause program_block {}
-    | for_clause program_block {}
+    | while_clause program_block {}
 
 func_decl:
     FUNC IDENTIFIER LPAREN param_list RPAREN sentence_group {}
@@ -100,6 +100,7 @@ param_list:
 argument_list:
     argument_list ARG_DELIMITER IDENTIFIER {}
     | IDENTIFIER
+    | %empty {}
     ;
 
 sentence_group:
@@ -112,7 +113,7 @@ sentence_list:
         $$ = std::move($1);
         }
     | if_clause {}
-    | for_clause {}
+    | while_clause {}
     | sentence {$$ = std::make_unique<StatementListNode>();}
     ;
 
@@ -165,7 +166,7 @@ if_clause:
     TESTONCE LPAREN arithmetic_expr RPAREN sentence_group
     ;
 
-for_clause:
+while_clause:
     TESTREP LPAREN arithmetic_expr RPAREN sentence_group
     ;
 

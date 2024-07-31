@@ -11,6 +11,10 @@ enum class NodeKind{
     Assign,
     Initialization,
     StatementList,
+    IfNode,
+    WhileNode,
+    FuncDecl,
+    FuncCall,
     MAX_TOKEN_NAMES_ID
 };
 

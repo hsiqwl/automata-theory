@@ -10,6 +10,9 @@ class VarReferenceNode;
 class AssignNode;
 class InitializationNode;
 class StatementListNode;
+class IfNode;
+class WhileNode;
+class FuncDecl;
 
 class NodeVisitor {
 public:
@@ -31,6 +34,11 @@ public:
 
     virtual void Visit(const StatementListNode &node) = 0;
 
+    virtual void Visit(const IfNode& node) = 0;
+
+    virtual void Visit(const WhileNode& node) = 0;
+
+    virtual void Visit(const FuncDecl& node) = 0;
 
     virtual ~NodeVisitor() = default;
 };

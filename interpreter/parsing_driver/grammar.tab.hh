@@ -590,7 +590,7 @@ namespace yy {
         S_initialization = 45,                   // initialization
         S_assign = 46,                           // assign
         S_if_clause = 47,                        // if_clause
-        S_for_clause = 48,                       // for_clause
+        S_while_clause = 48,                     // while_clause
         S_arithmetic_operand = 49,               // arithmetic_operand
         S_arithmetic_expr = 50                   // arithmetic_expr
       };
