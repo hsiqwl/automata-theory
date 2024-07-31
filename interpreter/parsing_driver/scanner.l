@@ -12,6 +12,7 @@ unsigned_number [0-9]+u
 simple_type signed|unsigned|Cell
 arg_list {id}([ ]{id})*
 ws [ \t]
+call_token call({ws}+)
 
 %x PARSING_ARG_LIST
 
@@ -27,7 +28,7 @@ ws [ \t]
 
 <INITIAL>{
 {ws}+ drv.location_step();
-\n drv.move_location_line(); drv.location_step(); return yy::parser::make_NEW_LINE(loc);
+\n drv.move_location_line(); drv.location_step();
 "-" return yy::parser::make_MINUS(loc);
 "+" return yy::parser::make_PLUS(loc);
 "*" return yy::parser::make_STAR(loc);
@@ -46,7 +47,7 @@ ws [ \t]
 "testrep" return yy::parser::make_TESTREP(loc);
 "testonce" return yy::parser::make_TESTONCE(loc);
 "func" return yy::parser::make_FUNC(loc);
-"call{ws}/{id}[(]{arg_list}[)]" {BEGIN(PARSING_ARG_LIST); return yy::parser::make_CALL(loc);}
+{call_token} {BEGIN(PARSING_ARG_LIST); return yy::parser::make_CALL(loc);}
 {id} return yy::parser::make_IDENTIFIER(yytext, loc);
 {signed_number} return yy::parser::make_SIGNED_NUM(std::stol(std::string(yytext)), loc);
 {unsigned_number} return yy::parser::make_UNSIGNED_NUM(std::stol(std::string(yytext)), loc);

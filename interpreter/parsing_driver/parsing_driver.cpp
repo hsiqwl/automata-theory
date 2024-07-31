@@ -5,6 +5,7 @@ driver::driver()
     : trace_parsing(false), trace_scanning(false) {}
 
 int driver::parse(const std::string &filename) {
+    std::cout<<filename << '\n';
     file = filename;
     location.initialize(&filename);
     scan_begin();

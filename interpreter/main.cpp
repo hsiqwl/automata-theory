@@ -3,6 +3,7 @@
 #include "printer.h"
 #include "semantic_analyzer_caller.h"
 
+
 int main(int argc, char *argv[]) {
     driver drv;
     for (int i = 1; i < argc; ++i) {
@@ -13,11 +14,5 @@ int main(int argc, char *argv[]) {
         else if (!drv.parse(argv[i]))
             std::cout << "parsing ended\n";
     }
-    AstPrinter printer;
-    drv.tree_->GetRoot()->Accept(printer);
-
-    SemanticAnalyzerCaller caller;
-    auto errors = caller.CallAnalyzer(*drv.tree_);
-    errors.PrintOut(std::cout);
     return 0;
 }

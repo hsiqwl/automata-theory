@@ -426,9 +426,9 @@ namespace yy {
 
       // sentence
       // statement
+      // assign
       // arithmetic_operand
       // arithmetic_expr
-      // assign
       char dummy4[sizeof (std::unique_ptr<INode>)];
 
       // initialization
@@ -576,7 +576,7 @@ namespace yy {
         S_SIMPLE_TYPE = 31,                      // SIMPLE_TYPE
         S_YYACCEPT = 32,                         // $accept
         S_program = 33,                          // program
-        S_block = 34,                            // block
+        S_program_block = 34,                    // program_block
         S_func_decl = 35,                        // func_decl
         S_func_call = 36,                        // func_call
         S_param_list = 37,                       // param_list
@@ -585,12 +585,14 @@ namespace yy {
         S_sentence_list = 40,                    // sentence_list
         S_sentence = 41,                         // sentence
         S_statement = 42,                        // statement
-        S_arithmetic_operand = 43,               // arithmetic_operand
-        S_arithmetic_expr = 44,                  // arithmetic_expr
-        S_type_info = 45,                        // type_info
-        S_var_decl = 46,                         // var_decl
-        S_initialization = 47,                   // initialization
-        S_assign = 48                            // assign
+        S_type_info = 43,                        // type_info
+        S_var_decl = 44,                         // var_decl
+        S_initialization = 45,                   // initialization
+        S_assign = 46,                           // assign
+        S_if_clause = 47,                        // if_clause
+        S_for_clause = 48,                       // for_clause
+        S_arithmetic_operand = 49,               // arithmetic_operand
+        S_arithmetic_expr = 50                   // arithmetic_expr
       };
     };
 
@@ -642,9 +644,9 @@ namespace yy {
 
       case symbol_kind::S_sentence: // sentence
       case symbol_kind::S_statement: // statement
+      case symbol_kind::S_assign: // assign
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
-      case symbol_kind::S_assign: // assign
         value.move< std::unique_ptr<INode> > (std::move (that.value));
         break;
 
@@ -839,9 +841,9 @@ switch (yykind)
 
       case symbol_kind::S_sentence: // sentence
       case symbol_kind::S_statement: // statement
+      case symbol_kind::S_assign: // assign
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
-      case symbol_kind::S_assign: // assign
         value.template destroy< std::unique_ptr<INode> > ();
         break;
 
@@ -1603,7 +1605,7 @@ switch (yykind)
     // Tables.
     // YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
     // STATE-NUM.
-    static const signed char yypact_[];
+    static const short yypact_[];
 
     // YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
     // Performed when YYTABLE does not specify something else to do.  Zero
@@ -1872,9 +1874,9 @@ switch (yykind)
     /// Constants.
     enum
     {
-      yylast_ = 98,     ///< Last index in yytable_.
-      yynnts_ = 17,  ///< Number of nonterminal symbols.
-      yyfinal_ = 2 ///< Termination state number.
+      yylast_ = 156,     ///< Last index in yytable_.
+      yynnts_ = 19,  ///< Number of nonterminal symbols.
+      yyfinal_ = 37 ///< Termination state number.
     };
 
 
@@ -1914,9 +1916,9 @@ switch (yykind)
 
       case symbol_kind::S_sentence: // sentence
       case symbol_kind::S_statement: // statement
+      case symbol_kind::S_assign: // assign
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
-      case symbol_kind::S_assign: // assign
         value.copy< std::unique_ptr<INode> > (YY_MOVE (that.value));
         break;
 
@@ -1983,9 +1985,9 @@ switch (yykind)
 
       case symbol_kind::S_sentence: // sentence
       case symbol_kind::S_statement: // statement
+      case symbol_kind::S_assign: // assign
       case symbol_kind::S_arithmetic_operand: // arithmetic_operand
       case symbol_kind::S_arithmetic_expr: // arithmetic_expr
-      case symbol_kind::S_assign: // assign
         value.move< std::unique_ptr<INode> > (YY_MOVE (s.value));
         break;
 
@@ -2072,7 +2074,7 @@ switch (yykind)
 
 
 } // yy
-#line 2076 "grammar.tab.hh"
+#line 2078 "grammar.tab.hh"
 
 
 

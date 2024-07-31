@@ -75,21 +75,22 @@
 
 %%
 program:
-    program block YYEOF
-    | %empty
-    ;
+    program_block YYEOF {}
 
-block:
-    sentence_list
-    | func_decl
-    ;
+program_block:
+    %empty {}
+    | func_decl program_block {}
+    | sentence program_block {}
+    | if_clause program_block {}
+    | for_clause program_block {}
 
 func_decl:
     FUNC IDENTIFIER LPAREN param_list RPAREN sentence_group {}
     ;
 
 func_call:
-    CALL IDENTIFIER RPAREN argument_list RPAREN {}
+    CALL IDENTIFIER LPAREN argument_list RPAREN {}
+    ;
 
 param_list:
     param_list COMMA var_decl {}
@@ -97,19 +98,23 @@ param_list:
     ;
 
 argument_list:
-    argument_list  IDENTIFIER {}
+    argument_list ARG_DELIMITER IDENTIFIER {}
     | IDENTIFIER
+    ;
 
 sentence_group:
     LPAREN sentence_list RPAREN {$$ = std::move($2);}
     ;
 
 sentence_list:
-    sentence_list sentence NEW_LINE {
+    sentence_list sentence{
         $1->AddStatement(std::move($2));
         $$ = std::move($1);
         }
-    | %empty {$$ = std::make_unique<StatementListNode>();}
+    | if_clause {}
+    | for_clause {}
+    | sentence {$$ = std::make_unique<StatementListNode>();}
+    ;
 
 sentence:
     statement SEMICOLON {$$ = std::move($1);}
@@ -119,6 +124,49 @@ statement:
     arithmetic_expr {$$ = std::move($1);}
     | assign {$$ = std::move($1);}
     | initialization {$$ = std::move($1);}
+    | %empty {}
+    ;
+
+type_info:
+    SIMPLE_TYPE {
+        if($1 == "signed")
+            $$ = {TypeToken::Signed};
+        else if($1 == "unsigned")
+            $$ = {TypeToken::Unsigned};
+        else
+            $$ = {TypeToken::Cell};
+        }
+    | MATRIX LESS type_info GREATER {
+        $$ = $3;
+        $$.MakeMatrixWrap();
+        }
+    ;
+
+var_decl:
+    type_info IDENTIFIER {$$ = std::make_unique<VarDeclNode>($2, $1);}
+    | CONST type_info IDENTIFIER {
+        $2.MakeConst();
+        $$ = std::make_unique<VarDeclNode>($3, $2, true);}
+    ;
+
+initialization:
+    var_decl {$$ = std::make_unique<InitializationNode>(std::move($1));}
+    | var_decl ASSIGN arithmetic_expr {$$ = std::make_unique<InitializationNode>(std::move($1), std::move($3));}
+    ;
+
+assign:
+    IDENTIFIER ASSIGN arithmetic_expr {
+        auto var_ref_node = std::make_unique<VarReferenceNode>($1);
+        $$ = std::make_unique<AssignNode>(std::move(var_ref_node), std::move($3));
+        }
+    ;
+
+if_clause:
+    TESTONCE LPAREN arithmetic_expr RPAREN sentence_group
+    ;
+
+for_clause:
+    TESTREP LPAREN arithmetic_expr RPAREN sentence_group
     ;
 
 arithmetic_operand:
@@ -163,46 +211,6 @@ arithmetic_expr:
         $$ = std::make_unique<BinaryOpNode>(BinaryOpKind::Equal, std::move($1), std::move($3));
         }
     ;
-
-type_info:
-    SIMPLE_TYPE {
-        if($1 == "signed")
-            $$ = {TypeToken::Signed};
-        else if($1 == "unsigned")
-            $$ = {TypeToken::Unsigned};
-        else
-            $$ = {TypeToken::Cell};
-        }
-    | MATRIX LESS type_info GREATER {
-        $$ = $3;
-        $$.MakeMatrixWrap();
-        }
-    ;
-
-var_decl:
-    type_info IDENTIFIER {$$ = std::make_unique<VarDeclNode>($2, $1);}
-    | CONST type_info IDENTIFIER {
-        $2.MakeConst();
-        $$ = std::make_unique<VarDeclNode>($3, $2, true);}
-    ;
-
-initialization:
-    var_decl {$$ = std::make_unique<InitializationNode>(std::move($1));}
-    | var_decl ASSIGN arithmetic_expr {$$ = std::make_unique<InitializationNode>(std::move($1), std::move($3));}
-    ;
-
-assign:
-    IDENTIFIER ASSIGN arithmetic_expr {
-        auto var_ref_node = std::make_unique<VarReferenceNode>($1);
-        $$ = std::make_unique<AssignNode>(std::move(var_ref_node), std::move($3));
-        }
-    ;
-
-if_clause:
-    TESTONCE LPAREN arithmetic_expr RPAREN sentence_group
-
-for_clause:
-    TESTREP LPAREN arithmetic_expr RPAREN sentence_group
 
 %%
 
