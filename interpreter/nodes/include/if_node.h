@@ -4,6 +4,7 @@
 #include "printable_interface.h"
 
 class IfNode: public INode, public IPrintable {
+public:
     IfNode(std::unique_ptr<INode>&& predicate, std::unique_ptr<INode>&& body);
 
     const std::unique_ptr<INode>& GetPredicate() const noexcept;

@@ -49,3 +49,21 @@ void TypeResolver::Visit(const StatementListNode &node) {
 void TypeResolver::Visit(const UnaryOpNode &node) {
     Return(GetValue(node.GetOperand().get(), object_ptr_));
 }
+
+void TypeResolver::Visit(const IfNode &node) {
+    Return({});
+}
+
+void TypeResolver::Visit(const WhileNode &node) {
+    Return({});
+}
+
+void TypeResolver::Visit(const FuncCall &node) {
+    auto &func_symbol = dynamic_cast<const FunctionSymbol &>(object_ptr_->GetSymbol(node.GetFuncName()));
+    auto return_type = func_symbol.GetReturnType();
+    Return(std::move(return_type));
+}
+
+void TypeResolver::Visit(const FuncDecl &node) {
+    Return({});
+}

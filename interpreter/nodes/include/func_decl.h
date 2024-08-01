@@ -7,11 +7,7 @@
 
 class FuncDecl: public INode, public IPrintable {
 public:
-    FuncDecl(std::string_view func_name);
-
-    void DefineParameter(std::unique_ptr<VarDeclNode>&& param);
-
-    void DefineBody(std::unique_ptr<StatementListNode>&& body);
+    FuncDecl(std::string_view func_name, std::unique_ptr<StatementListNode>&& body, std::vector<std::unique_ptr<VarDeclNode>>&& params);
 
     const std::string& GetFuncName() const noexcept;
 

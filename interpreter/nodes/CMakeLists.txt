@@ -19,6 +19,7 @@ add_library(nodes STATIC
         src/initialization.cpp
         src/if_clause.cpp
         src/while_node.cpp
-        src/func_decl.cpp)
+        src/func_decl.cpp
+        src/func_call.cpp)
 target_include_directories(nodes PUBLIC include)
 target_link_libraries(nodes printable visitor values)

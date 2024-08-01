@@ -13,7 +13,7 @@ private:
 public:
     SymbolTableManager();
 
-    void AddNewScope(std::string_view scope_name);
+    void AddNewScope(std::string_view scope_name, size_t scope_level);
 
     void RemoveCurrentScope();
 
@@ -26,5 +26,7 @@ public:
     const Symbol& GetSymbol(const std::string& name);
 
     const std::string& GetCurrentScopeName() const noexcept;
+
+    size_t GetCurrentScopeLevel() const noexcept;
 };
 #endif //INTERPRETER_SYM_TAB_MANAGER_H

@@ -14,6 +14,7 @@
 #include "if_node.h"
 #include "while_node.h"
 #include "func_decl.h"
+#include "func_call.h"
 
 template<NodeKind Kind>
 struct node_type_from_kind;
@@ -48,7 +49,7 @@ MAKE_NODE_TRAITS(WhileNode, NodeKind::WhileNode);
 
 MAKE_NODE_TRAITS(FuncDecl, NodeKind::FuncDecl);
 
-
+MAKE_NODE_TRAITS(FuncCall, NodeKind::FuncCall);
 
 template<std::size_t Kind, typename = void>
 struct kind_has_type : public std::false_type {};

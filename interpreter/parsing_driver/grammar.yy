@@ -62,10 +62,14 @@
 %token <int> SIGNED_NUM
 %token <unsigned int> UNSIGNED_NUM
 %token <std::string> SIMPLE_TYPE
-%nterm <std::unique_ptr<INode>> arithmetic_operand arithmetic_expr assign statement sentence
+%nterm <std::unique_ptr<INode>> arithmetic_operand arithmetic_expr assign statement sentence if_clause while_clause
 %nterm <std::unique_ptr<VarDeclNode>> var_decl
 %nterm <std::unique_ptr<InitializationNode>> initialization
-%nterm <std::unique_ptr<StatementListNode>> sentence_list sentence_group
+%nterm <std::unique_ptr<StatementListNode>> sentence_list sentence_group program_block
+%nterm <std::unique_ptr<FuncDecl>> func_decl
+%nterm <std::unique_ptr<FuncCall>> func_call
+%nterm <std::vector<std::unique_ptr<VarDeclNode>>> param_list
+%nterm <std::vector<std::unique_ptr<INode>>> argument_list
 %nterm <TypeHolder> type_info
 
 %left PLUS MINUS
@@ -75,31 +79,60 @@
 
 %%
 program:
-    program_block YYEOF {}
+    program_block YYEOF {drv.tree_ = std::make_unique<Ast>(std::move($1));}
 
 program_block:
-    %empty {}
-    | func_decl program_block {}
-    | sentence program_block {}
-    | if_clause program_block {}
-    | while_clause program_block {}
+    %empty {$$ = std::make_unique<StatementListNode>();}
+    | func_decl program_block {
+        $2->AddStatement(std::move($1));
+        $$ = std::move($2);
+        }
+    | sentence program_block {
+        $2->AddStatement(std::move($1));
+        $$ = std::move($2);
+        }
+    | if_clause program_block {
+        $2->AddStatement(std::move($1));
+        $$ = std::move($2);
+        }
+    | while_clause program_block {
+        $2->AddStatement(std::move($1));
+        $$ = std::move($2);
+        }
 
 func_decl:
-    FUNC IDENTIFIER LPAREN param_list RPAREN sentence_group {}
+    FUNC IDENTIFIER LPAREN param_list RPAREN sentence_group {
+        $$ = std::make_unique<FuncDecl>($2, std::move($6), std::move($4));
+        }
     ;
 
 func_call:
-    CALL IDENTIFIER LPAREN argument_list RPAREN {}
+    CALL IDENTIFIER LPAREN argument_list RPAREN {
+        $$ = std::make_unique<FuncCall>($2, std::move($4));
+        }
     ;
 
 param_list:
-    param_list COMMA var_decl {}
-    | var_decl {}
+    param_list COMMA var_decl {
+        $1.emplace($1.begin(), std::move($3));
+        $$ = std::move($1);
+        }
+    | var_decl {
+        $$;
+        $$.emplace($$.begin(), std::move($1));
+        }
+    | %empty {}
     ;
 
 argument_list:
-    argument_list ARG_DELIMITER IDENTIFIER {}
-    | IDENTIFIER
+    argument_list ARG_DELIMITER IDENTIFIER {
+        $1.emplace($$.begin(), std::make_unique<VarReferenceNode>($3));
+        $$ = std::move($1);
+        }
+    | IDENTIFIER {
+        $$;
+        $$.emplace($$.begin(), std::make_unique<VarReferenceNode>($1));
+        }
     | %empty {}
     ;
 
@@ -112,9 +145,18 @@ sentence_list:
         $1->AddStatement(std::move($2));
         $$ = std::move($1);
         }
-    | if_clause {}
-    | while_clause {}
-    | sentence {$$ = std::make_unique<StatementListNode>();}
+    | if_clause {
+        $$ = std::make_unique<StatementListNode>();
+        $$->AddStatement(std::move($1));
+        }
+    | while_clause {
+        $$ = std::make_unique<StatementListNode>();
+        $$->AddStatement(std::move($1));
+        }
+    | sentence {
+        $$ = std::make_unique<StatementListNode>();
+        $$->AddStatement(std::move($1));
+        }
     ;
 
 sentence:
@@ -125,7 +167,7 @@ statement:
     arithmetic_expr {$$ = std::move($1);}
     | assign {$$ = std::move($1);}
     | initialization {$$ = std::move($1);}
-    | %empty {}
+    | %empty {$$ = nullptr;}
     ;
 
 type_info:
@@ -163,18 +205,18 @@ assign:
     ;
 
 if_clause:
-    TESTONCE LPAREN arithmetic_expr RPAREN sentence_group
+    TESTONCE LPAREN arithmetic_expr RPAREN sentence_group {$$ = std::make_unique<IfNode>(std::move($3), std::move($5));}
     ;
 
 while_clause:
-    TESTREP LPAREN arithmetic_expr RPAREN sentence_group
+    TESTREP LPAREN arithmetic_expr RPAREN sentence_group {$$ = std::make_unique<WhileNode>(std::move($3), std::move($5));}
     ;
 
 arithmetic_operand:
     SIGNED_NUM {$$ = std::make_unique<SignedLiteralNode>($1);}
     | UNSIGNED_NUM {$$ = std::make_unique<UnsignedLiteralNode>($1);}
     | IDENTIFIER {$$ = std::make_unique<VarReferenceNode>($1);}
-    | func_call {}
+    | func_call {$$ = std::move($1);}
     ;
 
 arithmetic_expr:

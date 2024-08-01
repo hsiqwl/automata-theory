@@ -31,6 +31,19 @@ public:
     void Visit(const UnsignedLiteralNode& node) override;
 
     void Visit(const InitializationNode& node) override;
+
+    void Visit(const IfNode& node) override;
+
+    void Visit(const WhileNode& node) override;
+
+    void Visit(const FuncDecl& node) override;
+
+    void Visit(const FuncCall& node) override;
+
+private:
+    bool CorrectNumberOfArguments(const FuncCall& node, const FunctionSymbol& symbol);
+
+    bool ArgumentsAreOfCorrectType(const FuncCall& node, const FunctionSymbol& symbol);
 };
 
 #endif //INTERPRETER_SEMANTIC_ANALYZER_H

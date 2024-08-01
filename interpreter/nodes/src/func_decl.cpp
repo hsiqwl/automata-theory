@@ -1,15 +1,9 @@
 #include "func_decl.h"
 #include "node_visitor.h"
 
-FuncDecl::FuncDecl(std::string_view func_name): INode(NodeKind::FuncDecl), func_name_(func_name) {}
-
-void FuncDecl::DefineBody(std::unique_ptr<StatementListNode> &&body) {
-    body_ = std::move(body);
-}
-
-void FuncDecl::DefineParameter(std::unique_ptr<VarDeclNode> &&param) {
-    params_.emplace_back(std::move(param));
-}
+FuncDecl::FuncDecl(std::string_view func_name, std::unique_ptr<StatementListNode> &&body,
+                   std::vector<std::unique_ptr<VarDeclNode>> &&params)
+                   : INode(NodeKind::FuncDecl), func_name_(func_name), body_(std::move(body)), params_(std::move(params)) {}
 
 const std::unique_ptr<StatementListNode> &FuncDecl::GetFuncBody() const noexcept {
     return body_;

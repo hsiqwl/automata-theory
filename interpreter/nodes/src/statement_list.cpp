@@ -8,7 +8,8 @@ void StatementListNode::Accept(NodeVisitor &visitor) const {
 }
 
 void StatementListNode::AddStatement(std::unique_ptr<INode> &&statement) {
-    statements_.emplace_back(std::move(statement));
+    if(statement != nullptr)
+        statements_.emplace_back(std::move(statement));
 }
 
 std::size_t StatementListNode::NumOfStatements() const noexcept {

@@ -19,8 +19,8 @@ const ScopedSymTable &SymbolTableManager::GetClosestScope(const std::string &nam
     }
 }
 
-void SymbolTableManager::AddNewScope(std::string_view scope_name) {
-    scopes_.emplace_back(scope_name);
+void SymbolTableManager::AddNewScope(std::string_view scope_name, size_t scope_level) {
+    scopes_.emplace_back(scope_name, scope_level);
 }
 
 void SymbolTableManager::RemoveCurrentScope() {
@@ -41,4 +41,8 @@ const Symbol &SymbolTableManager::GetSymbol(const std::string &name) {
 
 const std::string &SymbolTableManager::GetCurrentScopeName() const noexcept {
     return scopes_.back().GetScopeName();
+}
+
+size_t SymbolTableManager::GetCurrentScopeLevel() const noexcept {
+    return scopes_.back().GetScopeLevel();
 }

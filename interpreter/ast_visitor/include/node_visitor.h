@@ -13,6 +13,7 @@ class StatementListNode;
 class IfNode;
 class WhileNode;
 class FuncDecl;
+class FuncCall;
 
 class NodeVisitor {
 public:
@@ -39,6 +40,8 @@ public:
     virtual void Visit(const WhileNode& node) = 0;
 
     virtual void Visit(const FuncDecl& node) = 0;
+
+    virtual void Visit(const FuncCall& node) = 0;
 
     virtual ~NodeVisitor() = default;
 };

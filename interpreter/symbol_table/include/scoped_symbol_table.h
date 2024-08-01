@@ -11,8 +11,12 @@ private:
 
     std::string scope_name_;
 
+    size_t scope_level_;
+
+    std::shared_ptr<ScopedSymTable> enclosing_scope_;
+
 public:
-    ScopedSymTable(std::string_view scope_name = "Global Scope");
+    ScopedSymTable(std::string_view scope_name = "Global Scope", size_t scope_level = 1);
 
     void InsertSymbol(std::unique_ptr<Symbol>&& new_symbol);
 
@@ -21,6 +25,8 @@ public:
     const Symbol & GetSymbol(const std::string& name) const;
 
     const std::string& GetScopeName() const noexcept;
+
+    size_t GetScopeLevel() const noexcept;
 };
 
 #endif //INTERPRETER_SCOPED_SYMBOL_TABLE_H

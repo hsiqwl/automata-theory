@@ -7,6 +7,7 @@
 #include "sharable_object_holder.h"
 #include "sym_tab_manager.h"
 #include "var.h"
+#include "function.h"
 #include "semantic_error.h"
 
 class TypeResolver: public SharableObjectHolder<SymbolTableManager>,
@@ -37,6 +38,14 @@ public:
     void Visit(const UnsignedLiteralNode& node) override;
 
     void Visit(const InitializationNode& node) override;
+
+    void Visit(const IfNode& node) override;
+
+    void Visit(const WhileNode& node) override;
+
+    void Visit(const FuncDecl& node) override;
+
+    void Visit(const FuncCall& node) override;
 };
 
 #endif //INTERPRETER_TYPE_RESOLVER_H

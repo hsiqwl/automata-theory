@@ -53,4 +53,18 @@ public:
     NoKnownConversion();
 };
 
+class CallToUndeclaredFunction: public SemanticError{
+public:
+    CallToUndeclaredFunction();
+};
+
+class IncorrectNumberOfArguments: public SemanticError{
+public:
+    IncorrectNumberOfArguments();
+};
+
+class ArgumentsOfIncorrectType: public SemanticError{
+public:
+    ArgumentsOfIncorrectType();
+};
 #endif //INTERPRETER_SEMANTIC_ERROR_H

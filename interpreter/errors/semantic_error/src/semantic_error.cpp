@@ -17,3 +17,9 @@ InvalidOperandTypes::InvalidOperandTypes(): SemanticError("Invalid operand types
 AssignmentOfConstVar::AssignmentOfConstVar(): SemanticError("Assignment of const variable") {}
 
 NoKnownConversion::NoKnownConversion(): SemanticError("No known conversion") {}
+
+CallToUndeclaredFunction::CallToUndeclaredFunction(): SemanticError("Call to undeclared function") {}
+
+IncorrectNumberOfArguments::IncorrectNumberOfArguments(): SemanticError("Incorrect number of arguments") {}
+
+ArgumentsOfIncorrectType::ArgumentsOfIncorrectType(): SemanticError("Arguments of incorrect type") {}
