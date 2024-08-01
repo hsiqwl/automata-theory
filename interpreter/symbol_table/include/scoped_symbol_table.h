@@ -13,8 +13,6 @@ private:
 
     size_t scope_level_;
 
-    std::shared_ptr<ScopedSymTable> enclosing_scope_;
-
 public:
     ScopedSymTable(std::string_view scope_name = "Global Scope", size_t scope_level = 1);
 
