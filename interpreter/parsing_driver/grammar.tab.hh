@@ -425,10 +425,10 @@ namespace yy {
       char dummy3[sizeof (std::string)];
 
       // func_call
-      char dummy4[sizeof (std::unique_ptr<FuncCall>)];
+      char dummy4[sizeof (std::unique_ptr<FuncCallNode>)];
 
       // func_decl
-      char dummy5[sizeof (std::unique_ptr<FuncDecl>)];
+      char dummy5[sizeof (std::unique_ptr<FuncDeclNode>)];
 
       // sentence
       // statement
@@ -658,11 +658,11 @@ namespace yy {
         break;
 
       case symbol_kind::S_func_call: // func_call
-        value.move< std::unique_ptr<FuncCall> > (std::move (that.value));
+        value.move< std::unique_ptr<FuncCallNode> > (std::move (that.value));
         break;
 
       case symbol_kind::S_func_decl: // func_decl
-        value.move< std::unique_ptr<FuncDecl> > (std::move (that.value));
+        value.move< std::unique_ptr<FuncDeclNode> > (std::move (that.value));
         break;
 
       case symbol_kind::S_sentence: // sentence
@@ -767,13 +767,13 @@ namespace yy {
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, std::unique_ptr<FuncCall>&& v, location_type&& l)
+      basic_symbol (typename Base::kind_type t, std::unique_ptr<FuncCallNode>&& v, location_type&& l)
         : Base (t)
         , value (std::move (v))
         , location (std::move (l))
       {}
 #else
-      basic_symbol (typename Base::kind_type t, const std::unique_ptr<FuncCall>& v, const location_type& l)
+      basic_symbol (typename Base::kind_type t, const std::unique_ptr<FuncCallNode>& v, const location_type& l)
         : Base (t)
         , value (v)
         , location (l)
@@ -781,13 +781,13 @@ namespace yy {
 #endif
 
 #if 201103L <= YY_CPLUSPLUS
-      basic_symbol (typename Base::kind_type t, std::unique_ptr<FuncDecl>&& v, location_type&& l)
+      basic_symbol (typename Base::kind_type t, std::unique_ptr<FuncDeclNode>&& v, location_type&& l)
         : Base (t)
         , value (std::move (v))
         , location (std::move (l))
       {}
 #else
-      basic_symbol (typename Base::kind_type t, const std::unique_ptr<FuncDecl>& v, const location_type& l)
+      basic_symbol (typename Base::kind_type t, const std::unique_ptr<FuncDeclNode>& v, const location_type& l)
         : Base (t)
         , value (v)
         , location (l)
@@ -930,11 +930,11 @@ switch (yykind)
         break;
 
       case symbol_kind::S_func_call: // func_call
-        value.template destroy< std::unique_ptr<FuncCall> > ();
+        value.template destroy< std::unique_ptr<FuncCallNode> > ();
         break;
 
       case symbol_kind::S_func_decl: // func_decl
-        value.template destroy< std::unique_ptr<FuncDecl> > ();
+        value.template destroy< std::unique_ptr<FuncDeclNode> > ();
         break;
 
       case symbol_kind::S_sentence: // sentence
@@ -2024,11 +2024,11 @@ switch (yykind)
         break;
 
       case symbol_kind::S_func_call: // func_call
-        value.copy< std::unique_ptr<FuncCall> > (YY_MOVE (that.value));
+        value.copy< std::unique_ptr<FuncCallNode> > (YY_MOVE (that.value));
         break;
 
       case symbol_kind::S_func_decl: // func_decl
-        value.copy< std::unique_ptr<FuncDecl> > (YY_MOVE (that.value));
+        value.copy< std::unique_ptr<FuncDeclNode> > (YY_MOVE (that.value));
         break;
 
       case symbol_kind::S_sentence: // sentence
@@ -2112,11 +2112,11 @@ switch (yykind)
         break;
 
       case symbol_kind::S_func_call: // func_call
-        value.move< std::unique_ptr<FuncCall> > (YY_MOVE (s.value));
+        value.move< std::unique_ptr<FuncCallNode> > (YY_MOVE (s.value));
         break;
 
       case symbol_kind::S_func_decl: // func_decl
-        value.move< std::unique_ptr<FuncDecl> > (YY_MOVE (s.value));
+        value.move< std::unique_ptr<FuncDeclNode> > (YY_MOVE (s.value));
         break;
 
       case symbol_kind::S_sentence: // sentence

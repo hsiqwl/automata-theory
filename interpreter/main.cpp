@@ -14,5 +14,7 @@ int main(int argc, char *argv[]) {
         else if (!drv.parse(argv[i]))
             std::cout << "parsing ended\n";
     }
+    AstPrinter printer;
+    drv.tree_->GetRoot()->Accept(printer);
     return 0;
 }

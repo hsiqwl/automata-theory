@@ -21,5 +21,5 @@ bool VarDeclNode::IsConst() const noexcept {
 }
 
 void VarDeclNode::PrintOut(std::ostream &stream) const {
-    stream << "VarDeclNode for variable '" << name_ << "'\n";
+    stream << "VarDeclNode for variable '" << name_ << "' with type: " << type_.GetStringRepresentation() << '\n';
 }

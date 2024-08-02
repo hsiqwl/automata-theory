@@ -221,11 +221,11 @@ namespace yy {
         break;
 
       case symbol_kind::S_func_call: // func_call
-        value.YY_MOVE_OR_COPY< std::unique_ptr<FuncCall> > (YY_MOVE (that.value));
+        value.YY_MOVE_OR_COPY< std::unique_ptr<FuncCallNode> > (YY_MOVE (that.value));
         break;
 
       case symbol_kind::S_func_decl: // func_decl
-        value.YY_MOVE_OR_COPY< std::unique_ptr<FuncDecl> > (YY_MOVE (that.value));
+        value.YY_MOVE_OR_COPY< std::unique_ptr<FuncDeclNode> > (YY_MOVE (that.value));
         break;
 
       case symbol_kind::S_sentence: // sentence
@@ -293,11 +293,11 @@ namespace yy {
         break;
 
       case symbol_kind::S_func_call: // func_call
-        value.move< std::unique_ptr<FuncCall> > (YY_MOVE (that.value));
+        value.move< std::unique_ptr<FuncCallNode> > (YY_MOVE (that.value));
         break;
 
       case symbol_kind::S_func_decl: // func_decl
-        value.move< std::unique_ptr<FuncDecl> > (YY_MOVE (that.value));
+        value.move< std::unique_ptr<FuncDeclNode> > (YY_MOVE (that.value));
         break;
 
       case symbol_kind::S_sentence: // sentence
@@ -365,11 +365,11 @@ namespace yy {
         break;
 
       case symbol_kind::S_func_call: // func_call
-        value.copy< std::unique_ptr<FuncCall> > (that.value);
+        value.copy< std::unique_ptr<FuncCallNode> > (that.value);
         break;
 
       case symbol_kind::S_func_decl: // func_decl
-        value.copy< std::unique_ptr<FuncDecl> > (that.value);
+        value.copy< std::unique_ptr<FuncDeclNode> > (that.value);
         break;
 
       case symbol_kind::S_sentence: // sentence
@@ -436,11 +436,11 @@ namespace yy {
         break;
 
       case symbol_kind::S_func_call: // func_call
-        value.move< std::unique_ptr<FuncCall> > (that.value);
+        value.move< std::unique_ptr<FuncCallNode> > (that.value);
         break;
 
       case symbol_kind::S_func_decl: // func_decl
-        value.move< std::unique_ptr<FuncDecl> > (that.value);
+        value.move< std::unique_ptr<FuncDeclNode> > (that.value);
         break;
 
       case symbol_kind::S_sentence: // sentence
@@ -762,11 +762,11 @@ namespace yy {
         break;
 
       case symbol_kind::S_func_call: // func_call
-        yylhs.value.emplace< std::unique_ptr<FuncCall> > ();
+        yylhs.value.emplace< std::unique_ptr<FuncCallNode> > ();
         break;
 
       case symbol_kind::S_func_decl: // func_decl
-        yylhs.value.emplace< std::unique_ptr<FuncDecl> > ();
+        yylhs.value.emplace< std::unique_ptr<FuncDeclNode> > ();
         break;
 
       case symbol_kind::S_sentence: // sentence
@@ -840,7 +840,7 @@ namespace yy {
   case 4: // program_block: func_decl program_block
 #line 86 "grammar.yy"
                               {
-        yystack_[0].value.as < std::unique_ptr<StatementListNode> > ()->AddStatement(std::move(yystack_[1].value.as < std::unique_ptr<FuncDecl> > ()));
+        yystack_[0].value.as < std::unique_ptr<StatementListNode> > ()->AddStatement(std::move(yystack_[1].value.as < std::unique_ptr<FuncDeclNode> > ()));
         yylhs.value.as < std::unique_ptr<StatementListNode> > () = std::move(yystack_[0].value.as < std::unique_ptr<StatementListNode> > ());
         }
 #line 847 "grammar.tab.cc"
@@ -876,7 +876,7 @@ namespace yy {
   case 8: // func_decl: FUNC IDENTIFIER LPAREN param_list RPAREN sentence_group
 #line 104 "grammar.yy"
                                                             {
-        yylhs.value.as < std::unique_ptr<FuncDecl> > () = std::make_unique<FuncDecl>(yystack_[4].value.as < std::string > (), std::move(yystack_[0].value.as < std::unique_ptr<StatementListNode> > ()), std::move(yystack_[2].value.as < std::vector<std::unique_ptr<VarDeclNode>> > ()));
+        yylhs.value.as < std::unique_ptr<FuncDeclNode> > () = std::make_unique<FuncDeclNode>(yystack_[4].value.as < std::string > (), std::move(yystack_[0].value.as < std::unique_ptr<StatementListNode> > ()), std::move(yystack_[2].value.as < std::vector<std::unique_ptr<VarDeclNode>> > ()));
         }
 #line 882 "grammar.tab.cc"
     break;
@@ -884,7 +884,7 @@ namespace yy {
   case 9: // func_call: CALL IDENTIFIER LPAREN argument_list RPAREN
 #line 110 "grammar.yy"
                                                 {
-        yylhs.value.as < std::unique_ptr<FuncCall> > () = std::make_unique<FuncCall>(yystack_[3].value.as < std::string > (), std::move(yystack_[1].value.as < std::vector<std::unique_ptr<INode>> > ()));
+        yylhs.value.as < std::unique_ptr<FuncCallNode> > () = std::make_unique<FuncCallNode>(yystack_[3].value.as < std::string > (), std::move(yystack_[1].value.as < std::vector<std::unique_ptr<INode>> > ()));
         }
 #line 890 "grammar.tab.cc"
     break;
@@ -916,7 +916,7 @@ namespace yy {
   case 13: // argument_list: argument_list ARG_DELIMITER IDENTIFIER
 #line 128 "grammar.yy"
                                            {
-        yystack_[2].value.as < std::vector<std::unique_ptr<INode>> > ().emplace(yylhs.value.as < std::vector<std::unique_ptr<INode>> > ().begin(), std::make_unique<VarReferenceNode>(yystack_[0].value.as < std::string > ()));
+        yystack_[2].value.as < std::vector<std::unique_ptr<INode>> > ().emplace(yystack_[2].value.as < std::vector<std::unique_ptr<INode>> > ().begin(), std::make_unique<VarReferenceNode>(yystack_[0].value.as < std::string > ()));
         yylhs.value.as < std::vector<std::unique_ptr<INode>> > () = std::move(yystack_[2].value.as < std::vector<std::unique_ptr<INode>> > ());
         }
 #line 923 "grammar.tab.cc"
@@ -1098,7 +1098,7 @@ namespace yy {
 
   case 38: // arithmetic_operand: func_call
 #line 219 "grammar.yy"
-                {yylhs.value.as < std::unique_ptr<INode> > () = std::move(yystack_[0].value.as < std::unique_ptr<FuncCall> > ());}
+                {yylhs.value.as < std::unique_ptr<INode> > () = std::move(yystack_[0].value.as < std::unique_ptr<FuncCallNode> > ());}
 #line 1103 "grammar.tab.cc"
     break;
 

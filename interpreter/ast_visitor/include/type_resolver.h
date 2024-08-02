@@ -43,9 +43,9 @@ public:
 
     void Visit(const WhileNode& node) override;
 
-    void Visit(const FuncDecl& node) override;
+    void Visit(const FuncDeclNode& node) override;
 
-    void Visit(const FuncCall& node) override;
+    void Visit(const FuncCallNode& node) override;
 };
 
 #endif //INTERPRETER_TYPE_RESOLVER_H

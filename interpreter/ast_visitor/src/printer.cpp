@@ -50,3 +50,30 @@ void AstPrinter::Visit(const InitializationNode &node) {
         node.GetInitExpr()->Accept(*this);
     node.PrintOut(*buf_);
 }
+
+void AstPrinter::Visit(const IfNode &node) {
+    node.PrintOut(*buf_);
+}
+
+void AstPrinter::Visit(const WhileNode &node) {
+    node.PrintOut(*buf_);
+}
+
+void AstPrinter::Visit(const FuncCallNode &node) {
+    node.PrintOut(*buf_);
+    for (const auto &arg: node.GetArgs()) {
+        *buf_ << "arg:";
+        arg->Accept(*this);
+    }
+    *buf_ << '\n';
+}
+
+void AstPrinter::Visit(const FuncDeclNode &node) {
+    node.PrintOut(*buf_);
+    *buf_ << "parameters:\n";
+    for (const auto &param: node.GetFuncParams()) {
+        param->Accept(*this);
+    }
+    *buf_ << "function body:\n";
+    node.GetFuncBody()->Accept(*this);
+}

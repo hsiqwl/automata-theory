@@ -66,8 +66,8 @@
 %nterm <std::unique_ptr<VarDeclNode>> var_decl
 %nterm <std::unique_ptr<InitializationNode>> initialization
 %nterm <std::unique_ptr<StatementListNode>> sentence_list sentence_group program_block
-%nterm <std::unique_ptr<FuncDecl>> func_decl
-%nterm <std::unique_ptr<FuncCall>> func_call
+%nterm <std::unique_ptr<FuncDeclNode>> func_decl
+%nterm <std::unique_ptr<FuncCallNode>> func_call
 %nterm <std::vector<std::unique_ptr<VarDeclNode>>> param_list
 %nterm <std::vector<std::unique_ptr<INode>>> argument_list
 %nterm <TypeHolder> type_info
@@ -102,13 +102,13 @@ program_block:
 
 func_decl:
     FUNC IDENTIFIER LPAREN param_list RPAREN sentence_group {
-        $$ = std::make_unique<FuncDecl>($2, std::move($6), std::move($4));
+        $$ = std::make_unique<FuncDeclNode>($2, std::move($6), std::move($4));
         }
     ;
 
 func_call:
     CALL IDENTIFIER LPAREN argument_list RPAREN {
-        $$ = std::make_unique<FuncCall>($2, std::move($4));
+        $$ = std::make_unique<FuncCallNode>($2, std::move($4));
         }
     ;
 
@@ -126,7 +126,7 @@ param_list:
 
 argument_list:
     argument_list ARG_DELIMITER IDENTIFIER {
-        $1.emplace($$.begin(), std::make_unique<VarReferenceNode>($3));
+        $1.emplace($1.begin(), std::make_unique<VarReferenceNode>($3));
         $$ = std::move($1);
         }
     | IDENTIFIER {

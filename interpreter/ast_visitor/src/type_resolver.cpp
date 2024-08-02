@@ -58,12 +58,12 @@ void TypeResolver::Visit(const WhileNode &node) {
     Return({});
 }
 
-void TypeResolver::Visit(const FuncCall &node) {
+void TypeResolver::Visit(const FuncCallNode &node) {
     auto &func_symbol = dynamic_cast<const FunctionSymbol &>(object_ptr_->GetSymbol(node.GetFuncName()));
     auto return_type = func_symbol.GetReturnType();
     Return(std::move(return_type));
 }
 
-void TypeResolver::Visit(const FuncDecl &node) {
+void TypeResolver::Visit(const FuncDeclNode &node) {
     Return({});
 }

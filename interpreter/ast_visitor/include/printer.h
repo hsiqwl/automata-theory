@@ -24,6 +24,14 @@ public:
 
     void Visit(const InitializationNode& node) override;
 
+    void Visit(const FuncCallNode& node) override;
+
+    void Visit(const FuncDeclNode& node) override;
+
+    void Visit(const IfNode& node) override;
+
+    void Visit(const WhileNode& node) override;
+
     std::ostream* buf_ = &std::cout;
 };
 

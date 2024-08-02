@@ -58,3 +58,26 @@ bool TypeHolderWrapper::IsNoneType() const noexcept {
 bool TypeHolderWrapper::IsConst() const noexcept {
     return const_qualified_;
 }
+
+std::string TypeHolderWrapper::GetStringForTypeToken(TypeToken token) noexcept {
+    switch (token) {
+        case TypeToken::Signed:
+            return {"signed"};
+        case TypeToken::Unsigned:
+            return {"unsigned"};
+        case TypeToken::Cell:
+            return {"Cell"};
+        case TypeToken::Matrix:
+            return {"matrix"};
+    }
+}
+
+std::string TypeHolderWrapper::GetStringRepresentation() const noexcept {
+    std::string repr;
+    if(type_.empty())
+        repr = "None";
+    for(auto token: type_){
+        repr += '<' + GetStringForTypeToken(token) + '>';
+    }
+    return repr;
+}

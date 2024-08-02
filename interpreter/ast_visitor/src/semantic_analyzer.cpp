@@ -131,7 +131,7 @@ void SemanticAnalyzer::Visit(const WhileNode &node) {
     Return(std::move(context));
 }
 
-void SemanticAnalyzer::Visit(const FuncDecl &node) {
+void SemanticAnalyzer::Visit(const FuncDeclNode &node) {
     SemanticErrorContext context;
     object_ptr_->AddNewScope(node.GetFuncName(), object_ptr_->GetCurrentScopeLevel() + 1);
     for (const auto &param: node.GetFuncParams()) {
@@ -141,7 +141,7 @@ void SemanticAnalyzer::Visit(const FuncDecl &node) {
     Return(std::move(context));
 }
 
-void SemanticAnalyzer::Visit(const FuncCall &node) {
+void SemanticAnalyzer::Visit(const FuncCallNode &node) {
     SemanticErrorContext context;
     bool symbol_declared = object_ptr_->SymbolDeclaredSomewhere(node.GetFuncName());
     auto *p_fun = dynamic_cast<const FunctionSymbol *>(&object_ptr_->GetSymbol(node.GetFuncName()));
@@ -157,11 +157,11 @@ void SemanticAnalyzer::Visit(const FuncCall &node) {
     }
 }
 
-bool SemanticAnalyzer::CorrectNumberOfArguments(const FuncCall &node, const FunctionSymbol &symbol) {
+bool SemanticAnalyzer::CorrectNumberOfArguments(const FuncCallNode &node, const FunctionSymbol &symbol) {
     return node.GetArgs().size() == symbol.GetParamNumber();
 }
 
-bool SemanticAnalyzer::ArgumentsAreOfCorrectType(const FuncCall &node, const FunctionSymbol &symbol) {
+bool SemanticAnalyzer::ArgumentsAreOfCorrectType(const FuncCallNode &node, const FunctionSymbol &symbol) {
     bool result = true;
     try {
         const auto &args = node.GetArgs();

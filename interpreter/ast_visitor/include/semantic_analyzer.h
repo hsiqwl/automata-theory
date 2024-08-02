@@ -36,14 +36,14 @@ public:
 
     void Visit(const WhileNode& node) override;
 
-    void Visit(const FuncDecl& node) override;
+    void Visit(const FuncDeclNode& node) override;
 
-    void Visit(const FuncCall& node) override;
+    void Visit(const FuncCallNode& node) override;
 
 private:
-    bool CorrectNumberOfArguments(const FuncCall& node, const FunctionSymbol& symbol);
+    bool CorrectNumberOfArguments(const FuncCallNode& node, const FunctionSymbol& symbol);
 
-    bool ArgumentsAreOfCorrectType(const FuncCall& node, const FunctionSymbol& symbol);
+    bool ArgumentsAreOfCorrectType(const FuncCallNode& node, const FunctionSymbol& symbol);
 };
 
 #endif //INTERPRETER_SEMANTIC_ANALYZER_H

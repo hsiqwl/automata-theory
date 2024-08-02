@@ -36,6 +36,8 @@ private:
 
     bool IsCellType() const noexcept;
 
+    static std::string GetStringForTypeToken(TypeToken token) noexcept;
+
 public:
     TypeHolderWrapper(const TypeHolder& type_holder);
 
@@ -52,5 +54,7 @@ public:
     bool IsNoneType() const noexcept;
 
     bool IsConst() const noexcept;
+
+    std::string GetStringRepresentation() const noexcept;
 };
 #endif //INTERPRETER_TYPE_HOLDER_H

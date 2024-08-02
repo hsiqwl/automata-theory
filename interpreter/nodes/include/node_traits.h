@@ -47,9 +47,9 @@ MAKE_NODE_TRAITS(IfNode, NodeKind::IfNode);
 
 MAKE_NODE_TRAITS(WhileNode, NodeKind::WhileNode);
 
-MAKE_NODE_TRAITS(FuncDecl, NodeKind::FuncDecl);
+MAKE_NODE_TRAITS(FuncDeclNode, NodeKind::FuncDecl);
 
-MAKE_NODE_TRAITS(FuncCall, NodeKind::FuncCall);
+MAKE_NODE_TRAITS(FuncCallNode, NodeKind::FuncCall);
 
 template<std::size_t Kind, typename = void>
 struct kind_has_type : public std::false_type {};

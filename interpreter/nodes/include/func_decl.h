@@ -5,9 +5,9 @@
 #include "var_decl.h"
 #include "statement_list.h"
 
-class FuncDecl: public INode, public IPrintable {
+class FuncDeclNode: public INode, public IPrintable {
 public:
-    FuncDecl(std::string_view func_name, std::unique_ptr<StatementListNode>&& body, std::vector<std::unique_ptr<VarDeclNode>>&& params);
+    FuncDeclNode(std::string_view func_name, std::unique_ptr<StatementListNode>&& body, std::vector<std::unique_ptr<VarDeclNode>>&& params);
 
     const std::string& GetFuncName() const noexcept;
 
