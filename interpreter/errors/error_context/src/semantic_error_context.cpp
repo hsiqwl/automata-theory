@@ -1,10 +1,10 @@
 #include "semantic_error_context.h"
 
-SemanticErrorContext::SemanticErrorContext(std::unique_ptr<SemanticError> &&error) {
+SemanticErrorContext::SemanticErrorContext(std::shared_ptr<SemanticError> &&error) {
     errors_.emplace_back(std::move(error));
 }
 
-void SemanticErrorContext::Add(std::unique_ptr<SemanticError> &&error) {
+void SemanticErrorContext::Add(std::shared_ptr<SemanticError> &&error) {
     errors_.emplace_back(std::move(error));
 }
 

@@ -13,11 +13,11 @@ private:
 public:
     SemanticErrorContext() = default;
 
-    SemanticErrorContext(std::unique_ptr<SemanticError>&& error);
+    SemanticErrorContext(std::shared_ptr<SemanticError> &&error);
 
     void Add(SemanticErrorContext&& context);
 
-    void Add(std::unique_ptr<SemanticError>&& error);
+    void Add(std::shared_ptr<SemanticError> &&error);
 
     bool IsEmpty() const noexcept;
 

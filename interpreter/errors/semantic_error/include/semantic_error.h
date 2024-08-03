@@ -28,6 +28,11 @@ public:
     UseOfUndeclaredIdentifier();
 };
 
+class InvalidIdentifierUsage: public SemanticError {
+public:
+    InvalidIdentifierUsage();
+};
+
 class RedeclarationOfIdentifier: public SemanticError{
 public:
     RedeclarationOfIdentifier();
@@ -66,5 +71,10 @@ public:
 class ArgumentsOfIncorrectType: public SemanticError{
 public:
     ArgumentsOfIncorrectType();
+};
+
+class UninitializedConstVariable: public SemanticError {
+public:
+    UninitializedConstVariable();
 };
 #endif //INTERPRETER_SEMANTIC_ERROR_H

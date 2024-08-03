@@ -1,9 +1,9 @@
 #include "function.h"
 
-FunctionSymbol::FunctionSymbol(std::string_view name, const TypeHolder &return_type)
+FunctionSymbol::FunctionSymbol(std::string_view name, const TypeHolderWrapper &return_type)
     : Symbol(name), return_type_(return_type) {}
 
-FunctionSymbol::FunctionSymbol(std::string_view name, const TypeHolder &return_type, std::vector<VarSymbol> &&params)
+FunctionSymbol::FunctionSymbol(std::string_view name, const TypeHolderWrapper &return_type, std::vector<VarSymbol> &&params)
     : Symbol(name), return_type_(return_type), params_(std::move(params)) {}
 
 const TypeHolderWrapper& FunctionSymbol::GetReturnType() const noexcept {

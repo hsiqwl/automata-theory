@@ -4,8 +4,7 @@
 TypeResolver::TypeResolver(SymbolTableManager *manager): SharableObjectHolder<SymbolTableManager>(manager) {}
 
 void TypeResolver::Visit(const VarDeclNode &node) {
-    auto var_type = node.GetType();
-    Return(std::move(var_type));
+    Return(node.GetType());
 }
 
 void TypeResolver::Visit(const SignedLiteralNode &node) {
@@ -17,8 +16,7 @@ void TypeResolver::Visit(const UnsignedLiteralNode &node) {
 }
 
 void TypeResolver::Visit(const VarReferenceNode &node) {
-    auto var_type = dynamic_cast<const VarSymbol&>(object_ptr_->GetSymbol(node.GetVarName())).GetType();
-    Return(std::move(var_type));
+    Return(object_ptr_->GetVar(node.GetVarName()).GetType());
 }
 
 void TypeResolver::Visit(const AssignNode &node) {
@@ -32,14 +30,20 @@ void TypeResolver::Visit(const InitializationNode &node) {
 
 void TypeResolver::Visit(const BinaryOpNode &node) {
     auto left_type = GetValue(node.GetLeft().get(), object_ptr_);
-    auto right_type = GetValue(node.GetRight().get(), object_ptr_);
-    if (left_type.IsSimpleType() &&
-        right_type.IsSimpleType() &&
-        right_type.IsConvertibleTo(left_type)) {
+    if (left_type.index() == 1) {
         Return(std::move(left_type));
-    } else {
-        throw NoKnownConversion{};
+        return;
     }
+    auto right_type = GetValue(node.GetRight().get(), object_ptr_);
+    if (right_type.index() == 1) {
+        Return(std::move(right_type));
+        return;
+    }
+    if (!std::get<0>(right_type).IsConvertibleTo(std::get<0>(left_type))) {
+        Return(std::make_shared<NoKnownConversion>());
+        return;
+    }
+    Return(std::move(left_type));
 }
 
 void TypeResolver::Visit(const StatementListNode &node) {
@@ -59,11 +63,9 @@ void TypeResolver::Visit(const WhileNode &node) {
 }
 
 void TypeResolver::Visit(const FuncCallNode &node) {
-    auto &func_symbol = dynamic_cast<const FunctionSymbol &>(object_ptr_->GetSymbol(node.GetFuncName()));
-    auto return_type = func_symbol.GetReturnType();
-    Return(std::move(return_type));
+    Return(object_ptr_->GetFunc(node.GetFuncName()).GetReturnType());
 }
 
 void TypeResolver::Visit(const FuncDeclNode &node) {
-    Return({});
+    Return(TypeHolderWrapper{});
 }

@@ -23,3 +23,7 @@ CallToUndeclaredFunction::CallToUndeclaredFunction(): SemanticError("Call to und
 IncorrectNumberOfArguments::IncorrectNumberOfArguments(): SemanticError("Incorrect number of arguments") {}
 
 ArgumentsOfIncorrectType::ArgumentsOfIncorrectType(): SemanticError("Arguments of incorrect type") {}
+
+InvalidIdentifierUsage::InvalidIdentifierUsage(): SemanticError("Function identifier was used as a variable") {}
+
+UninitializedConstVariable::UninitializedConstVariable(): SemanticError("Const variable must be initialized immediately after declaring") {}

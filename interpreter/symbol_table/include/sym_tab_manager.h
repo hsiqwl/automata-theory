@@ -8,7 +8,7 @@ class SymbolTableManager{
 private:
     std::vector<ScopedSymTable> scopes_;
 
-    const ScopedSymTable& GetClosestScope(const std::string& name);
+    const ScopedSymTable& GetClosestScopeForVar(const std::string& name) const;
 
 public:
     SymbolTableManager();
@@ -17,13 +17,19 @@ public:
 
     void RemoveCurrentScope();
 
-    void InsertSymbolToCurrentScope(std::unique_ptr<Symbol>&& symbol);
+    void InsertSymbol(VarSymbol new_var);
 
-    bool SymbolDeclaredSomewhere(const std::string& name);
+    void InsertSymbol(FunctionSymbol new_func);
 
-    bool SymbolDeclaredInCurrentScope(const std::string& name);
+    bool VarDeclaredInCurrentScope(const std::string& name) const noexcept;
 
-    const Symbol& GetSymbol(const std::string& name);
+    bool VarDeclaredInSomeScope(const std::string& name) const noexcept;
+
+    bool FuncDeclared(const std::string& name) const noexcept;
+
+    const VarSymbol& GetVar(const std::string& name) const;
+
+    const FunctionSymbol& GetFunc(const std::string& name) const;
 
     const std::string& GetCurrentScopeName() const noexcept;
 

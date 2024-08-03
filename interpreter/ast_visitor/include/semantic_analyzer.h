@@ -1,7 +1,6 @@
 #ifndef INTERPRETER_SEMANTIC_ANALYZER_H
 #define INTERPRETER_SEMANTIC_ANALYZER_H
-#include "type_resolver.h"
-#include "semantic_error_context.h"
+#include "check_performer.h"
 
 class SemanticAnalyzer: public SharableObjectHolder<SymbolTableManager>,
                         public ValueGetterWithSharableObjectHolder
@@ -41,9 +40,9 @@ public:
     void Visit(const FuncCallNode& node) override;
 
 private:
-    bool CorrectNumberOfArguments(const FuncCallNode& node, const FunctionSymbol& symbol);
+    static VarSymbol CreateVarSymbol(const VarDeclNode& node);
 
-    bool ArgumentsAreOfCorrectType(const FuncCallNode& node, const FunctionSymbol& symbol);
+    static FunctionSymbol CreateFuncSymbol(const FuncDeclNode& node, SymbolTableManager& manager);
 };
 
 #endif //INTERPRETER_SEMANTIC_ANALYZER_H

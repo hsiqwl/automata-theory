@@ -17,5 +17,5 @@ void IfNode::Accept(NodeVisitor &visitor) const {
 }
 
 void IfNode::PrintOut(std::ostream &stream) const {
-    stream << "IF NODE'\n'";
+    stream << "IF NODE\n";
 }

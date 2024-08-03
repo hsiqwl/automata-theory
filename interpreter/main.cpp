@@ -16,5 +16,9 @@ int main(int argc, char *argv[]) {
     }
     AstPrinter printer;
     drv.tree_->GetRoot()->Accept(printer);
+
+    SemanticAnalyzerCaller analyzer;
+    auto error_context = analyzer.CallAnalyzer(*drv.tree_);
+    error_context.PrintOut(std::cout);
     return 0;
 }

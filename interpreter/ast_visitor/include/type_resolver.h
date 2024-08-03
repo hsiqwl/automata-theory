@@ -9,13 +9,16 @@
 #include "var.h"
 #include "function.h"
 #include "semantic_error.h"
+#include <variant>
+
+using TypeResolverReturnValue = std::variant<TypeHolderWrapper, std::shared_ptr<SemanticError>>;
 
 class TypeResolver: public SharableObjectHolder<SymbolTableManager>,
                     public ValueGetterWithSharableObjectHolder
                     <
                     TypeResolver,
                     INode*,
-                    TypeHolderWrapper
+                    TypeResolverReturnValue
                     >,
                     public NodeVisitor{
 public:

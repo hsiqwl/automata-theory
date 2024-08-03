@@ -3,46 +3,40 @@
 
 SemanticAnalyzer::SemanticAnalyzer(SymbolTableManager *manager): SharableObjectHolder<SymbolTableManager>(manager) {}
 
+VarSymbol SemanticAnalyzer::CreateVarSymbol(const VarDeclNode &node) {
+    return {node.GetName(), node.GetType(), node.IsConst()};
+}
+
+FunctionSymbol SemanticAnalyzer::CreateFuncSymbol(const FuncDeclNode &node, SymbolTableManager &manager) {
+    std::vector<VarSymbol> params;
+    for (const auto &param: node.GetFuncParams())
+        params.emplace_back(CreateVarSymbol(*param));
+    auto return_type = std::get<0>(TypeResolver::GetValue(node.GetFuncBody().get(), &manager));
+    return {node.GetFuncName(), return_type, std::move(params)};
+}
+
 void SemanticAnalyzer::Visit(const AssignNode &node) {
     SemanticErrorContext context;
     context.Add(GetValue(node.GetLeft().get(), object_ptr_));
     context.Add(GetValue(node.GetRight().get(), object_ptr_));
-    try {
-        auto lhs_type = TypeResolver::GetValue(node.GetLeft().get(), object_ptr_);
-        auto rhs_type = TypeResolver::GetValue(node.GetRight().get(), object_ptr_);
-        if (lhs_type.IsConst())
-            context.Add(std::make_unique<AssignmentOfConstVar>());
-        if (!rhs_type.IsConvertibleTo(lhs_type))
-            context.Add(std::make_unique<NoKnownConversion>());
-    } catch (const SemanticError &error) {
-        context.Add(std::make_unique<NoKnownConversion>());
-    }
+    if (context.IsEmpty())
+        ChecksPerformer<AssignNode>::PerformChecks(node, *object_ptr_, context);
     Return(std::move(context));
 }
 
 void SemanticAnalyzer::Visit(const VarDeclNode &node) {
     SemanticErrorContext context;
-    if (object_ptr_->SymbolDeclaredInCurrentScope(node.GetName())) {
-        auto *p_var = dynamic_cast<const VarSymbol *>(&object_ptr_->GetSymbol(node.GetName()));
-        if (p_var != nullptr) {
-            if (node.GetType().IsSameAs(p_var->GetType())) {
-                context.Add(std::make_unique<RedeclarationOfIdentifier>());
-            } else {
-                context.Add(std::make_unique<ConflictingDeclaration>());
-            }
-        }
-    } else {
-        auto var = std::make_unique<VarSymbol>(node.GetName(), node.GetType(), node.IsConst());
-        object_ptr_->InsertSymbolToCurrentScope(std::move(var));
+    ChecksPerformer<VarDeclNode>::PerformChecks(node, *object_ptr_, context);
+    if(context.IsEmpty()) {
+        auto var_sym = std::make_unique<VarSymbol>(CreateVarSymbol(node));
+        object_ptr_->InsertSymbol(std::move(*var_sym));
     }
     Return(std::move(context));
 }
 
 void SemanticAnalyzer::Visit(const VarReferenceNode &node) {
     SemanticErrorContext context;
-    if (!object_ptr_->SymbolDeclaredSomewhere(node.GetVarName())) {
-        context.Add(std::make_unique<UseOfUndeclaredIdentifier>());
-    }
+    ChecksPerformer<VarReferenceNode>::PerformChecks(node, *object_ptr_, context);
     Return(std::move(context));
 }
 
@@ -59,17 +53,7 @@ void SemanticAnalyzer::Visit(const InitializationNode &node) {
     context.Add(GetValue(node.GetVarToInit().get(), object_ptr_));
     if(node.GetInitExpr() != nullptr)
         context.Add(GetValue(node.GetInitExpr().get(), object_ptr_));
-    try {
-        if (node.GetInitExpr() != nullptr) {
-            auto lhs_type = TypeResolver::GetValue(node.GetVarToInit().get(), object_ptr_);
-            auto rhs_type = TypeResolver::GetValue(node.GetInitExpr().get(), object_ptr_);
-            if (!lhs_type.IsConvertibleTo(rhs_type)) {
-                context.Add(std::make_unique<NoKnownConversion>());
-            }
-        }
-    } catch (const SemanticError &error) {
-        context.Add(std::make_unique<NoKnownConversion>());
-    }
+    ChecksPerformer<InitializationNode>::PerformChecks(node, *object_ptr_, context);
     Return(std::move(context));
 }
 
@@ -83,94 +67,62 @@ void SemanticAnalyzer::Visit(const StatementListNode &node) {
 
 void SemanticAnalyzer::Visit(const BinaryOpNode &node) {
     SemanticErrorContext context;
-    try {
-        context.Add(GetValue(node.GetLeft().get(), object_ptr_));
-        context.Add(GetValue(node.GetLeft().get(), object_ptr_));
-        auto lhs_type = TypeResolver::GetValue(node.GetLeft().get(), object_ptr_);
-        auto rhs_type = TypeResolver::GetValue(node.GetRight().get(), object_ptr_);
-        if (!lhs_type.IsConvertibleTo(rhs_type)) {
-            context.Add(std::make_unique<NoKnownConversion>());
-        }
-    } catch (const SemanticError &error) {
-        context.Add(std::make_unique<NoKnownConversion>());
-    }
+    context.Add(GetValue(node.GetLeft().get(), object_ptr_));
+    if(context.IsEmpty())
+        context.Add(GetValue(node.GetRight().get(), object_ptr_));
     Return(std::move(context));
 }
 
 void SemanticAnalyzer::Visit(const UnaryOpNode &node) {
-    Return(SemanticErrorContext{});
+    Return(GetValue(node.GetOperand().get(), object_ptr_));
 }
 
 void SemanticAnalyzer::Visit(const IfNode &node) {
     SemanticErrorContext context;
-    auto acceptable_predicate_type = TypeHolderWrapper{TypeHolder{TypeToken::Signed}};
-    auto actual_predicate_type = TypeResolver::GetValue(node.GetPredicate().get(), object_ptr_);
-    if (actual_predicate_type.IsConvertibleTo(acceptable_predicate_type)) {
-        object_ptr_->AddNewScope("if-clause of" + object_ptr_->GetCurrentScopeName(),
+    ChecksPerformer<IfNode>::PerformChecks(node, *object_ptr_, context);
+    if (context.IsEmpty()) {
+        object_ptr_->AddNewScope("IF_CLAUSE of " + object_ptr_->GetCurrentScopeName(),
                                  object_ptr_->GetCurrentScopeLevel() + 1);
         context.Add(GetValue(node.GetBody().get(), object_ptr_));
-    } else {
-        context.Add(std::make_unique<NoKnownConversion>());
+        object_ptr_->RemoveCurrentScope();
     }
-    object_ptr_->RemoveCurrentScope();
     Return(std::move(context));
 }
 
 void SemanticAnalyzer::Visit(const WhileNode &node) {
     SemanticErrorContext context;
-    auto acceptable_predicate_type = TypeHolderWrapper{TypeHolder{TypeToken::Signed}};
-    auto actual_predicate_type = TypeResolver::GetValue(node.GetPredicate().get(), object_ptr_);
-    if (actual_predicate_type.IsConvertibleTo(acceptable_predicate_type)) {
-        object_ptr_->AddNewScope("while-clause of" + object_ptr_->GetCurrentScopeName(),
+    ChecksPerformer<WhileNode>::PerformChecks(node, *object_ptr_, context);
+    if (context.IsEmpty()) {
+        object_ptr_->AddNewScope("WHILE_CLAUSE of" + object_ptr_->GetCurrentScopeName(),
                                  object_ptr_->GetCurrentScopeLevel() + 1);
         context.Add(GetValue(node.GetBody().get(), object_ptr_));
-    } else {
-        context.Add(std::make_unique<NoKnownConversion>());
+        object_ptr_->RemoveCurrentScope();
     }
-    object_ptr_->RemoveCurrentScope();
     Return(std::move(context));
 }
 
 void SemanticAnalyzer::Visit(const FuncDeclNode &node) {
     SemanticErrorContext context;
-    object_ptr_->AddNewScope(node.GetFuncName(), object_ptr_->GetCurrentScopeLevel() + 1);
-    for (const auto &param: node.GetFuncParams()) {
-        context.Add(GetValue(param.get(), object_ptr_));
+    ChecksPerformer<FuncDeclNode>::PerformChecks(node, *object_ptr_, context);
+    if (context.IsEmpty()) {
+        object_ptr_->AddNewScope(node.GetFuncName(), object_ptr_->GetCurrentScopeLevel() + 1);
+        for (auto &param: node.GetFuncParams())
+            context.Add(GetValue(param.get(), object_ptr_));
+        if (context.IsEmpty())
+            context.Add(GetValue(node.GetFuncBody().get(), object_ptr_));
+        std::unique_ptr<FunctionSymbol> func_symbol;
+        if (context.IsEmpty())
+            func_symbol = std::make_unique<FunctionSymbol>(CreateFuncSymbol(node, *object_ptr_));
+        object_ptr_->RemoveCurrentScope();
+        if (func_symbol != nullptr)
+            object_ptr_->InsertSymbol(std::move(*func_symbol));
     }
-    context.Add(GetValue(node.GetFuncBody().get(), object_ptr_));
     Return(std::move(context));
 }
 
 void SemanticAnalyzer::Visit(const FuncCallNode &node) {
     SemanticErrorContext context;
-    bool symbol_declared = object_ptr_->SymbolDeclaredSomewhere(node.GetFuncName());
-    auto *p_fun = dynamic_cast<const FunctionSymbol *>(&object_ptr_->GetSymbol(node.GetFuncName()));
-    if (symbol_declared && (p_fun != nullptr)) {
-        if (CorrectNumberOfArguments(node, *p_fun)) {
-            if (!ArgumentsAreOfCorrectType(node, *p_fun))
-                context.Add(std::make_unique<ArgumentsOfIncorrectType>());
-        } else {
-            context.Add(std::make_unique<IncorrectNumberOfArguments>());
-        }
-    } else {
-        context.Add(std::make_unique<CallToUndeclaredFunction>());
-    }
+    ChecksPerformer<FuncCallNode>::PerformChecks(node, *object_ptr_, context);
+    Return(std::move(context));
 }
 
-bool SemanticAnalyzer::CorrectNumberOfArguments(const FuncCallNode &node, const FunctionSymbol &symbol) {
-    return node.GetArgs().size() == symbol.GetParamNumber();
-}
-
-bool SemanticAnalyzer::ArgumentsAreOfCorrectType(const FuncCallNode &node, const FunctionSymbol &symbol) {
-    bool result = true;
-    try {
-        const auto &args = node.GetArgs();
-        for (size_t i = 0; i < args.size(); ++i) {
-            auto &param = symbol.GetParamByIndex(i);
-            result = result && TypeResolver::GetValue(args[i].get(), object_ptr_).IsConvertibleTo(param.GetType());
-        }
-    } catch (...) {
-        result = false;
-    }
-    return result;
-}
