@@ -17,9 +17,9 @@ public:
         if (manager.VarDeclaredInCurrentScope(node.GetName())) {
             auto &var = manager.GetVar(node.GetName());
             if (var.GetType().IsSameAs(node.GetType()))
-                context.Add(std::make_shared<RedeclarationOfIdentifier>());
+                context.Add(std::make_shared<RedeclarationOfIdentifier>(node.GetLocation(), node.GetName()));
             else
-                context.Add(std::make_shared<ConflictingDeclaration>());
+                context.Add(std::make_shared<ConflictingDeclaration>(node.GetLocation(), node.GetName()));
         }
     }
 };
@@ -30,7 +30,7 @@ class ChecksPerformer<FuncDeclNode> {
 public:
     static void PerformChecks(const FuncDeclNode& node, SymbolTableManager& manager, SemanticErrorContext& context) {
         if (manager.FuncDeclared(node.GetFuncName()))
-            context.Add(std::make_shared<RedeclarationOfIdentifier>());
+            context.Add(std::make_shared<RedeclarationOfIdentifier>(node.GetLocation(), node.GetFuncName()));
     }
 };
 
@@ -39,16 +39,17 @@ class ChecksPerformer<FuncCallNode> {
 public:
     static void PerformChecks(const FuncCallNode& node, SymbolTableManager& manager, SemanticErrorContext& context) {
         if (!manager.FuncDeclared(node.GetFuncName())) {
-            context.Add(std::make_shared<CallToUndeclaredFunction>());
+            context.Add(std::make_shared<CallToUndeclaredFunction>(node.GetLocation(), node.GetFuncName()));
         } else if (!CorrectNumberOfArguments(node, manager.GetFunc(node.GetFuncName()))) {
-            context.Add(std::make_shared<IncorrectNumberOfArguments>());
+            context.Add(std::make_shared<IncorrectNumberOfArguments>(node.GetLocation(), node.GetFuncName(),
+                                                                     node.GetArgs().size(), manager.GetFunc(node.GetFuncName()).GetParamNumber()));
         } else {
             auto &func_symbol = manager.GetFunc(node.GetFuncName());
             for (auto iter = node.GetArgs().begin(), end = node.GetArgs().end(); iter != end; ++iter) {
                 auto arg_type = TypeResolver::GetValue(iter->get(), &manager);
                 auto &param_type = func_symbol.GetParamByIndex(std::distance(node.GetArgs().begin(), iter)).GetType();
                 if (arg_type.index() == 1 || !std::get<0>(arg_type).IsConvertibleTo(param_type)) {
-                    context.Add(std::make_shared<ArgumentsOfIncorrectType>());
+                    context.Add(std::make_shared<ArgumentsOfIncorrectType>(node.GetLocation(), node.GetFuncName(), param_type, std::get<0>(arg_type)));
                     return;
                 }
             }
@@ -76,11 +77,11 @@ public:
             return;
         }
         if (std::get<0>(lhs_type).IsConst()) {
-            context.Add(std::make_shared<AssignmentOfConstVar>());
+            context.Add(std::make_shared<AssignmentOfConstVar>(node.GetLocation()));
             return;
         }
         if (!std::get<0>(rhs_type).IsConvertibleTo(std::get<0>(lhs_type))) {
-            context.Add(std::make_shared<NoKnownConversion>());
+            context.Add(std::make_shared<NoKnownConversion>(node.GetLocation(), std::get<0>(rhs_type), std::get<0>(lhs_type)));
             return;
         }
     }
@@ -93,9 +94,9 @@ public:
         bool var_declared = manager.VarDeclaredInSomeScope(node.GetVarName());
         bool func_declared = manager.FuncDeclared(node.GetVarName());
         if (!(var_declared || func_declared)) {
-            context.Add(std::make_shared<UseOfUndeclaredIdentifier>());
+            context.Add(std::make_shared<UseOfUndeclaredIdentifier>(node.GetLocation(), node.GetVarName()));
         } else if (!var_declared) {
-            context.Add(std::make_shared<InvalidIdentifierUsage>());
+            context.Add(std::make_shared<InvalidIdentifierUsage>(node.GetLocation(), node.GetVarName()));
         }
     }
 };
@@ -111,7 +112,7 @@ public:
         }
         auto &lhs_type_wrapper = std::get<0>(lhs_type);
         if (lhs_type_wrapper.IsConst() && node.GetInitExpr() == nullptr) {
-            context.Add(std::make_shared<UninitializedConstVariable>());
+            context.Add(std::make_shared<UninitializedConstVariable>(node.GetLocation(), node.GetVarToInit()->GetName()));
             return;
         }
         if (node.GetInitExpr() != nullptr) {
@@ -121,7 +122,7 @@ public:
                 return;
             }
             if (!std::get<0>(rhs_type).IsConvertibleTo(lhs_type_wrapper))
-                context.Add(std::make_shared<NoKnownConversion>());
+                context.Add(std::make_shared<NoKnownConversion>(node.GetLocation(), std::get<0>(rhs_type), lhs_type_wrapper));
         }
     }
 };
@@ -149,7 +150,7 @@ public:
             return;
         }
         if (!std::get<0>(actual_predicate_type).IsConvertibleTo(acceptable_predicate_type))
-            context.Add(std::make_shared<NoKnownConversion>());
+            context.Add(std::make_shared<NoKnownConversion>(node.GetLocation(), std::get<0>(actual_predicate_type), acceptable_predicate_type));
     }
 };
 
@@ -164,7 +165,7 @@ public:
             return;
         }
         if (!std::get<0>(actual_predicate_type).IsConvertibleTo(acceptable_predicate_type))
-            context.Add(std::make_shared<NoKnownConversion>());
+            context.Add(std::make_shared<NoKnownConversion>(node.GetLocation(), std::get<0>(actual_predicate_type), acceptable_predicate_type));
     }
 };
 

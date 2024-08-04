@@ -1,29 +1,81 @@
 #include "semantic_error.h"
 
-SemanticError::SemanticError(std::string_view err_msg): std::exception(), msg_(err_msg) {}
-
 const char *SemanticError::what() const noexcept {
     return msg_.c_str();
 }
 
-UseOfUndeclaredIdentifier::UseOfUndeclaredIdentifier(): SemanticError("Use of undeclared identifier") {}
+UseOfUndeclaredIdentifier::UseOfUndeclaredIdentifier(const yy::location &loc, std::string_view id) {
+    msg_
+    = (boost::format("In file: %1%, at %2%:%3% - %4%:%5%: use of undeclared identifier: %6%")
+            % *loc.begin.filename % loc.begin.line % loc.begin.column % loc.end.line % loc.end.column % id).str();
+}
 
-RedeclarationOfIdentifier::RedeclarationOfIdentifier(): SemanticError("Redeclaration of identifier") {}
+InvalidIdentifierUsage::InvalidIdentifierUsage(const yy::location &loc, std::string_view id) {
+    msg_
+    = (boost::format("In file: %1%, at %2%:%3% - %4%:%5%: invalid usage of identifier: %6%")
+            % *loc.begin.filename % loc.begin.line % loc.begin.column % loc.end.line % loc.end.column % id).str();
+}
 
-ConflictingDeclaration::ConflictingDeclaration(): SemanticError("Conflicting declaration") {}
+RedeclarationOfIdentifier::RedeclarationOfIdentifier(const yy::location &loc, std::string_view id) {
+    msg_
+    = (boost::format("In file: %1%, at %2%:%3% - %4%:%5%: redeclaration of identifier: %6%."
+                     " Identifier with same type was declared before")
+            % *loc.begin.filename % loc.begin.line % loc.begin.column % loc.end.line % loc.end.column % id).str();
+}
 
-InvalidOperandTypes::InvalidOperandTypes(): SemanticError("Invalid operand types") {}
+ConflictingDeclaration::ConflictingDeclaration(const yy::location &loc, std::string_view id) {
+    msg_
+    = (boost::format("In file: %1%, at %2%:%3% - %4%:%5%: conflicting declaration of identifier: %6%."
+                     " Same identifier with different type was declared before")
+            % *loc.begin.filename % loc.begin.line % loc.begin.column % loc.end.line % loc.end.column % id).str();
+}
 
-AssignmentOfConstVar::AssignmentOfConstVar(): SemanticError("Assignment of const variable") {}
+InvalidOperandTypes::InvalidOperandTypes(const yy::location &loc) {
+    msg_
+    = (boost::format("In file: %1%, at %2%:%3% - %4%:%5%: invalid operand types")
+            % *loc.begin.filename % loc.begin.line % loc.begin.column % loc.end.line % loc.end.column).str();
+}
 
-NoKnownConversion::NoKnownConversion(): SemanticError("No known conversion") {}
+AssignmentOfConstVar::AssignmentOfConstVar(const yy::location &loc) {
+    msg_
+    = (boost::format("In file: %1%, at %2%:%3% - %4%:%5%: Cannot assign read-only variable")
+            % *loc.begin.filename % loc.begin.line % loc.begin.column % loc.end.line % loc.end.column).str();
+}
 
-CallToUndeclaredFunction::CallToUndeclaredFunction(): SemanticError("Call to undeclared function") {}
+NoKnownConversion::NoKnownConversion(const yy::location &loc, const TypeHolderWrapper &from,
+                                     const TypeHolderWrapper &to) {
+    msg_
+    = (boost::format("In file: %1, at %2%:%3% - %4%:%5%: Cannot convert from type '%6%' to type '%7%'")
+            % *loc.begin.filename % loc.begin.line % loc.begin.column % loc.end.line % loc.end.column %
+            from.GetStringRepresentation() % to.GetStringRepresentation()).str();
+}
 
-IncorrectNumberOfArguments::IncorrectNumberOfArguments(): SemanticError("Incorrect number of arguments") {}
+CallToUndeclaredFunction::CallToUndeclaredFunction(const yy::location &loc, std::string_view id) {
+    msg_
+    = (boost::format("In file: %1, at %2%:%3% - %4%:%5%: call to undeclared function '%6%'")
+            % *loc.begin.filename % loc.begin.line % loc.begin.column % loc.end.line % loc.end.column
+            % id).str();
+}
 
-ArgumentsOfIncorrectType::ArgumentsOfIncorrectType(): SemanticError("Arguments of incorrect type") {}
+IncorrectNumberOfArguments::IncorrectNumberOfArguments(const yy::location &loc, std::string_view id, size_t expected,
+                                                       size_t actual) {
+    msg_
+    = (boost::format("In file: %1, at %2%:%3% - %4%:%5%: when calling function '%6%' expected %7% args, but passed only %8%")
+            % *loc.begin.filename % loc.begin.line % loc.begin.column % loc.end.line % loc.end.column
+            % id % expected % actual).str();
+}
 
-InvalidIdentifierUsage::InvalidIdentifierUsage(): SemanticError("Function identifier was used as a variable") {}
+ArgumentsOfIncorrectType::ArgumentsOfIncorrectType(const yy::location &loc, std::string_view id,
+                                                   const TypeHolderWrapper &expected, const TypeHolderWrapper &actual) {
+    msg_
+    = (boost::format("In file: %1, at %2%:%3% - %4%:%5%: when calling function '%6%' expected arg of '%7%' type, but passed of type '%8%'")
+            % *loc.begin.filename % loc.begin.line % loc.begin.column % loc.end.line % loc.end.column
+            % id % expected.GetStringRepresentation() % actual.GetStringRepresentation()).str();
+}
 
-UninitializedConstVariable::UninitializedConstVariable(): SemanticError("Const variable must be initialized immediately after declaring") {}
+UninitializedConstVariable::UninitializedConstVariable(const yy::location &loc, std::string_view id) {
+    msg_
+    = (boost::format("In file: %1, at %2%:%3% - %4%:%5%: const variable %6% must be initialized when declared")
+            % *loc.begin.filename % loc.begin.line % loc.begin.column % loc.end.line % loc.end.column
+            % id).str();
+}

@@ -1,6 +1,9 @@
 #ifndef INTERPRETER_SEMANTIC_ERROR_H
 #define INTERPRETER_SEMANTIC_ERROR_H
 #include <stdexcept>
+#include "location.hh"
+#include <boost/format.hpp>
+#include "type_holder.h"
 
 //POSSIBLE SEMANTIC ERRORS
 // 1. USE OF UNDECLARED IDENTIFIER
@@ -16,8 +19,6 @@ protected:
     std::string msg_;
 
 public:
-    SemanticError(std::string_view err_msg);
-
     const char * what() const noexcept override;
 
     virtual ~SemanticError() = default;
@@ -25,56 +26,56 @@ public:
 
 class UseOfUndeclaredIdentifier: public SemanticError{
 public:
-    UseOfUndeclaredIdentifier();
+    UseOfUndeclaredIdentifier(const yy::location& loc, std::string_view id);
 };
 
 class InvalidIdentifierUsage: public SemanticError {
 public:
-    InvalidIdentifierUsage();
+    InvalidIdentifierUsage(const yy::location& loc, std::string_view id);
 };
 
 class RedeclarationOfIdentifier: public SemanticError{
 public:
-    RedeclarationOfIdentifier();
+    RedeclarationOfIdentifier(const yy::location& loc, std::string_view id);
 };
 
 class ConflictingDeclaration: public SemanticError {
 public:
-    ConflictingDeclaration();
+    ConflictingDeclaration(const yy::location& loc, std::string_view id);
 };
 
 class InvalidOperandTypes: public SemanticError{
 public:
-    InvalidOperandTypes();
+    InvalidOperandTypes(const yy::location& loc);
 };
 
 class AssignmentOfConstVar: public SemanticError{
 public:
-    AssignmentOfConstVar();
+    AssignmentOfConstVar(const yy::location& loc);
 };
 
 class NoKnownConversion: public SemanticError{
 public:
-    NoKnownConversion();
+    NoKnownConversion(const yy::location& loc, const TypeHolderWrapper& from, const TypeHolderWrapper& to);
 };
 
 class CallToUndeclaredFunction: public SemanticError{
 public:
-    CallToUndeclaredFunction();
+    CallToUndeclaredFunction(const yy::location& loc, std::string_view id);
 };
 
 class IncorrectNumberOfArguments: public SemanticError{
 public:
-    IncorrectNumberOfArguments();
+    IncorrectNumberOfArguments(const yy::location& loc, std::string_view id, size_t expected, size_t actual);
 };
 
 class ArgumentsOfIncorrectType: public SemanticError{
 public:
-    ArgumentsOfIncorrectType();
+    ArgumentsOfIncorrectType(const yy::location& loc, std::string_view id, const TypeHolderWrapper& expected, const TypeHolderWrapper& actual);
 };
 
 class UninitializedConstVariable: public SemanticError {
 public:
-    UninitializedConstVariable();
+    UninitializedConstVariable(const yy::location& loc, std::string_view id);
 };
 #endif //INTERPRETER_SEMANTIC_ERROR_H

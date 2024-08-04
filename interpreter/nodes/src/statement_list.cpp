@@ -9,8 +9,8 @@ void StatementListNode::Accept(NodeVisitor &visitor) const {
 
 void StatementListNode::AddStatement(std::unique_ptr<INode> &&statement) {
     if (statement != nullptr) {
-        statements_.emplace(statements_.begin(), std::move(statement));
         location_.begin = statement->GetLocation().begin;
+        statements_.emplace(statements_.begin(), std::move(statement));
         location_.end = statements_.back()->GetLocation().end;
     }
 }

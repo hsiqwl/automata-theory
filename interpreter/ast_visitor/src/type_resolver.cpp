@@ -40,7 +40,7 @@ void TypeResolver::Visit(const BinaryOpNode &node) {
         return;
     }
     if (!std::get<0>(right_type).IsConvertibleTo(std::get<0>(left_type))) {
-        Return(std::make_shared<NoKnownConversion>());
+        Return(std::make_shared<NoKnownConversion>(node.GetLocation(), std::get<0>(right_type), std::get<0>(left_type)));
         return;
     }
     Return(std::move(left_type));
