@@ -1,7 +1,7 @@
 #include "signed_literal.h"
 #include "node_visitor.h"
 
-SignedLiteralNode::SignedLiteralNode(int value): INode(NodeKind::SignedLiteral), value_(value) {}
+SignedLiteralNode::SignedLiteralNode(int value, const location_t &loc) : INode(NodeKind::SignedLiteral, loc), value_(value) {}
 
 Value SignedLiteralNode::GetValue() const noexcept {
     return {SignedValue{value_}};

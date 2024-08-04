@@ -1,7 +1,8 @@
 #include "unsigned_literal.h"
 #include "node_visitor.h"
 
-UnsignedLiteralNode::UnsignedLiteralNode(unsigned int value): INode(NodeKind::UnsignedLiteral), value_(value) {}
+UnsignedLiteralNode::UnsignedLiteralNode(unsigned value, const location_t &loc)
+        : INode(NodeKind::UnsignedLiteral, loc), value_(value) {}
 
 void UnsignedLiteralNode::Accept(NodeVisitor &visitor) const {
     visitor.Visit(*this);

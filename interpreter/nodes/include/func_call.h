@@ -6,7 +6,7 @@
 
 class FuncCallNode: public INode, public IPrintable {
 public:
-    FuncCallNode(std::string_view func_name, std::vector<std::unique_ptr<INode>>&& args);
+    FuncCallNode(std::string_view func_name, std::vector<std::unique_ptr<INode>> &&args, const location_t &loc);
 
     const std::string& GetFuncName() const noexcept;
 

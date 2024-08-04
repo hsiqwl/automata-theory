@@ -1,8 +1,9 @@
 #include "func_call.h"
 #include "node_visitor.h"
 
-FuncCallNode::FuncCallNode(std::string_view func_name, std::vector<std::unique_ptr<INode>> &&args)
-    : INode(NodeKind::FuncCall), func_name_(func_name), args_(std::move(args)){}
+FuncCallNode::FuncCallNode(std::string_view func_name, std::vector<std::unique_ptr<INode>> &&args,
+                           const location_t &loc)
+    : INode(NodeKind::FuncCall, loc), func_name_(func_name), args_(std::move(args)){}
 
 const std::string &FuncCallNode::GetFuncName() const noexcept {
     return func_name_;

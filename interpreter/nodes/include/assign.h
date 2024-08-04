@@ -5,7 +5,7 @@
 
 class AssignNode: public INode, public IPrintable{
 public:
-    AssignNode(std::unique_ptr<INode> &&lhs, std::unique_ptr<INode> &&rhs);
+    AssignNode(std::unique_ptr<INode> &&lhs, std::unique_ptr<INode> &&rhs, const location_t &loc);
 
     [[nodiscard]] const std::unique_ptr<INode> &GetLeft() const noexcept;
 

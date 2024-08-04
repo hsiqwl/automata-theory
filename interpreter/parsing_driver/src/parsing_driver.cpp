@@ -1,5 +1,5 @@
-#include "parsing_driver.h"
-#include "grammar.tab.hh"
+#include "../include/parsing_driver.h"
+#include "../include/grammar.tab.hh"
 
 driver::driver()
     : trace_parsing(false), trace_scanning(false) {}

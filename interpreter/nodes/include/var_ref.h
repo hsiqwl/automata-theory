@@ -5,7 +5,7 @@
 
 class VarReferenceNode: public INode, public IPrintable{
 public:
-    VarReferenceNode(std::string_view name);
+    VarReferenceNode(std::string_view name, const location_t &loc);
 
     [[nodiscard]] const std::string& GetVarName() const noexcept;
 

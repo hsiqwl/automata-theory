@@ -5,7 +5,7 @@
 
 class UnaryOpNode : public INode, public IPrintable{
 public:
-    UnaryOpNode(UnaryOpKind op_kind, std::unique_ptr<INode>&& operand);
+    UnaryOpNode(UnaryOpKind op_kind, std::unique_ptr<INode> &&operand, const location_t &loc);
 
     void Accept(NodeVisitor& visitor) const override;
 

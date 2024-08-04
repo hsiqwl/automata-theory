@@ -7,7 +7,7 @@
 
 class UnsignedLiteralNode: public INode, public IPrintable{
 public:
-    UnsignedLiteralNode(unsigned value);
+    UnsignedLiteralNode(unsigned value, const location_t &loc);
 
     Value GetValue() const noexcept;
 

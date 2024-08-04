@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_library(node_traits INTERFACE)
 target_include_directories(node_traits INTERFACE include)
-target_link_libraries(node_traits INTERFACE printable values)
+target_link_libraries(node_traits INTERFACE locations printable values)
 
 add_library(nodes STATIC
         src/binary_op.cpp
@@ -22,4 +22,4 @@ add_library(nodes STATIC
         src/func_decl.cpp
         src/func_call.cpp)
 target_include_directories(nodes PUBLIC include)
-target_link_libraries(nodes printable visitor values)
+target_link_libraries(nodes locations printable visitor values)

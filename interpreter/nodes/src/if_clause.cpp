@@ -1,8 +1,8 @@
 #include "if_node.h"
 #include "node_visitor.h"
 
-IfNode::IfNode(std::unique_ptr<INode> &&predicate, std::unique_ptr<INode> &&body)
-    : INode(NodeKind::IfNode), predicate_(std::move(predicate)), body_(std::move(body)) {}
+IfNode::IfNode(std::unique_ptr<INode> &&predicate, std::unique_ptr<INode> &&body, const location_t &loc)
+    : INode(NodeKind::IfNode, loc), predicate_(std::move(predicate)), body_(std::move(body)) {}
 
 const std::unique_ptr<INode> &IfNode::GetBody() const noexcept {
     return body_;

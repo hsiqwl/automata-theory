@@ -6,7 +6,7 @@
 
 class VarDeclNode: public INode, public IPrintable{
 public:
-    VarDeclNode(std::string_view name, const TypeHolder& type, bool is_const = false);
+    VarDeclNode(std::string_view name, const TypeHolder &type, const location_t &loc, bool is_const = false);
 
     [[nodiscard]] const std::string& GetName() const noexcept;
 

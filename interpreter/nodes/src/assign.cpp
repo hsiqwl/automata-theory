@@ -1,8 +1,8 @@
 #include "assign.h"
 #include "node_visitor.h"
 
-AssignNode::AssignNode(std::unique_ptr<INode> &&lhs, std::unique_ptr<INode> &&rhs)
-    : INode(NodeKind::Assign), lhs_(std::move(lhs)), rhs_(std::move(rhs)) {
+AssignNode::AssignNode(std::unique_ptr<INode> &&lhs, std::unique_ptr<INode> &&rhs, const yy::location& loc)
+    : INode(NodeKind::Assign, loc), lhs_(std::move(lhs)), rhs_(std::move(rhs)) {
 }
 
 const std::unique_ptr<INode> &AssignNode::GetLeft() const noexcept {

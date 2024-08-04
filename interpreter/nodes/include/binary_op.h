@@ -5,7 +5,8 @@
 
 class BinaryOpNode: public INode, public IPrintable{
 public:
-    BinaryOpNode(BinaryOpKind op_kind, std::unique_ptr<INode>&& lhs, std::unique_ptr<INode>&& rhs);
+    BinaryOpNode(BinaryOpKind op_kind, std::unique_ptr<INode> &&lhs, std::unique_ptr<INode> &&rhs,
+                 const location_t &loc);
 
     void Accept(NodeVisitor& visitor) const override;
 

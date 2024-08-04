@@ -7,7 +7,8 @@
 
 class InitializationNode: public INode, public IPrintable{
 public:
-    InitializationNode(std::unique_ptr<VarDeclNode>&& var_to_init, std::unique_ptr<INode>&& init_expr = nullptr);
+    InitializationNode(std::unique_ptr<VarDeclNode> &&var_to_init, std::unique_ptr<INode> &&init_expr,
+                       const location_t &loc);
 
     const std::unique_ptr<INode>& GetInitExpr() const noexcept;
 

@@ -5,7 +5,7 @@
 
 class IfNode: public INode, public IPrintable {
 public:
-    IfNode(std::unique_ptr<INode>&& predicate, std::unique_ptr<INode>&& body);
+    IfNode(std::unique_ptr<INode> &&predicate, std::unique_ptr<INode> &&body, const location_t &loc);
 
     const std::unique_ptr<INode>& GetPredicate() const noexcept;
 

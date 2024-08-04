@@ -7,7 +7,7 @@
 
 class SignedLiteralNode: public INode, public IPrintable{
 public:
-    SignedLiteralNode(int value);
+    SignedLiteralNode(int value, const location_t &loc);
 
     Value GetValue() const noexcept;
 

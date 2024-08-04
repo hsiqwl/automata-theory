@@ -590,8 +590,8 @@ char *yytext;
 #line 1 "scanner.l"
 #line 2 "scanner.l"
 #include <string>
-#include "parsing_driver.h"
-#include "grammar.tab.hh"
+#include "../include/parsing_driver.h"
+#include "../include/grammar.tab.hh"
 #line 595 "lex.yy.c"
 #define YY_NO_INPUT 1
 

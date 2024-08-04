@@ -22,8 +22,9 @@ char BinaryOpNode::GetLabel() const{
     }
 }
 
-BinaryOpNode::BinaryOpNode(BinaryOpKind op_kind, std::unique_ptr<INode>&& lhs, std::unique_ptr<INode>&& rhs)
-    : INode(NodeKind::BinaryOp), op_kind_(op_kind), lhs_(std::move(lhs)), rhs_(std::move(rhs)) {
+BinaryOpNode::BinaryOpNode(BinaryOpKind op_kind, std::unique_ptr<INode> &&lhs, std::unique_ptr<INode> &&rhs,
+                           const location_t &loc)
+    : INode(NodeKind::BinaryOp, loc), op_kind_(op_kind), lhs_(std::move(lhs)), rhs_(std::move(rhs)) {
 }
 
 void BinaryOpNode::Accept(NodeVisitor &visitor) const {
