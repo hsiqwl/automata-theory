@@ -16,6 +16,8 @@ add_subdirectory(nodes)
 add_subdirectory(ast)
 add_subdirectory(ast_visitor)
 add_subdirectory(parsing_driver)
+add_subdirectory(activation_record)
+add_subdirectory(call_stack)
 
 add_executable(main main.cpp)
 target_link_libraries(main parse_driver printer semantic_analyzer)

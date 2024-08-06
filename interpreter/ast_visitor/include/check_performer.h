@@ -37,19 +37,22 @@ public:
 template <>
 class ChecksPerformer<FuncCallNode> {
 public:
-    static void PerformChecks(const FuncCallNode& node, SymbolTableManager& manager, SemanticErrorContext& context) {
+    static void PerformChecks(const FuncCallNode &node, SymbolTableManager &manager, SemanticErrorContext &context) {
         if (!manager.FuncDeclared(node.GetFuncName())) {
             context.Add(std::make_shared<CallToUndeclaredFunction>(node.GetLocation(), node.GetFuncName()));
         } else if (!CorrectNumberOfArguments(node, manager.GetFunc(node.GetFuncName()))) {
             context.Add(std::make_shared<IncorrectNumberOfArguments>(node.GetLocation(), node.GetFuncName(),
-                                                                     node.GetArgs().size(), manager.GetFunc(node.GetFuncName()).GetParamNumber()));
+                                                                     manager.GetFunc(
+                                                                             node.GetFuncName()).GetParamNumber(),
+                                                                     node.GetArgs().size()));
         } else {
             auto &func_symbol = manager.GetFunc(node.GetFuncName());
             for (auto iter = node.GetArgs().begin(), end = node.GetArgs().end(); iter != end; ++iter) {
                 auto arg_type = TypeResolver::GetValue(iter->get(), &manager);
                 auto &param_type = func_symbol.GetParamByIndex(std::distance(node.GetArgs().begin(), iter)).GetType();
                 if (arg_type.index() == 1 || !std::get<0>(arg_type).IsConvertibleTo(param_type)) {
-                    context.Add(std::make_shared<ArgumentsOfIncorrectType>(node.GetLocation(), node.GetFuncName(), param_type, std::get<0>(arg_type)));
+                    context.Add(std::make_shared<ArgumentsOfIncorrectType>(node.GetLocation(), node.GetFuncName(),
+                                                                           param_type, std::get<0>(arg_type)));
                     return;
                 }
             }
@@ -57,7 +60,7 @@ public:
     }
 
 private:
-    static bool CorrectNumberOfArguments(const FuncCallNode& node, const FunctionSymbol& symbol) {
+    static bool CorrectNumberOfArguments(const FuncCallNode &node, const FunctionSymbol &symbol) {
         return node.GetArgs().size() == symbol.GetParamNumber();
     }
 };

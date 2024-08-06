@@ -1,14 +1,14 @@
 #include "type_holder.h"
 
 TypeHolder::TypeHolder(TypeToken simple_type_token) {
-    if(simple_type_token != TypeToken::Matrix)
-        type_.push_front(simple_type_token);
+    if (simple_type_token != TypeToken::Matrix)
+        type_.emplace(type_.begin(), simple_type_token);
     else
         throw std::logic_error("cannot start type with non built-in type");
 }
 
 void TypeHolder::MakeMatrixWrap() {
-    type_.push_front(TypeToken::Matrix);
+    type_.emplace(type_.begin(), TypeToken::Matrix);
 }
 
 void TypeHolder::MakeConst() noexcept {
@@ -37,8 +37,8 @@ bool TypeHolderWrapper::IsNumericType() const noexcept {
 }
 
 bool TypeHolderWrapper::IsConvertibleTo(const TypeHolderWrapper &other) const noexcept {
-    if(IsSameAs(other) || IsSimpleType() && other.IsSimpleType()) {
-        if((IsNumericType() || IsCellType()) && (other.IsNumericType() || other.IsCellType()))
+    if (IsSameAs(other) || IsSimpleType() && other.IsSimpleType()) {
+        if ((IsNumericType() || IsCellType()) && (other.IsNumericType() || other.IsCellType()))
             return true;
     }
     return false;
@@ -74,9 +74,9 @@ std::string TypeHolderWrapper::GetStringForTypeToken(TypeToken token) noexcept {
 
 std::string TypeHolderWrapper::GetStringRepresentation() const noexcept {
     std::string repr;
-    if(type_.empty())
+    if (type_.empty())
         repr = "None";
-    for(auto token: type_){
+    for (auto token: type_) {
         repr += '<' + GetStringForTypeToken(token) + '>';
     }
     return repr;

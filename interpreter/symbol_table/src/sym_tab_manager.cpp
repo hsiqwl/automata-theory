@@ -29,7 +29,7 @@ const VarSymbol &SymbolTableManager::GetVar(const std::string &name) const {
 }
 
 const FunctionSymbol &SymbolTableManager::GetFunc(const std::string &name) const {
-    scopes_.front().GetFunc(name);
+    return scopes_.front().GetFunc(name);
 }
 
 void SymbolTableManager::InsertSymbol(VarSymbol new_var) {

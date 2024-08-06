@@ -45,14 +45,14 @@ AssignmentOfConstVar::AssignmentOfConstVar(const yy::location &loc) {
 NoKnownConversion::NoKnownConversion(const yy::location &loc, const TypeHolderWrapper &from,
                                      const TypeHolderWrapper &to) {
     msg_
-    = (boost::format("In file: %1, at %2%:%3% - %4%:%5%: Cannot convert from type '%6%' to type '%7%'")
+    = (boost::format("In file: %1%, at %2%:%3% - %4%:%5%: Cannot convert from type '%6%' to type '%7%'")
             % *loc.begin.filename % loc.begin.line % loc.begin.column % loc.end.line % loc.end.column %
             from.GetStringRepresentation() % to.GetStringRepresentation()).str();
 }
 
 CallToUndeclaredFunction::CallToUndeclaredFunction(const yy::location &loc, std::string_view id) {
     msg_
-    = (boost::format("In file: %1, at %2%:%3% - %4%:%5%: call to undeclared function '%6%'")
+    = (boost::format("In file: %1%, at %2%:%3% - %4%:%5%: call to undeclared function '%6%'")
             % *loc.begin.filename % loc.begin.line % loc.begin.column % loc.end.line % loc.end.column
             % id).str();
 }
@@ -60,7 +60,7 @@ CallToUndeclaredFunction::CallToUndeclaredFunction(const yy::location &loc, std:
 IncorrectNumberOfArguments::IncorrectNumberOfArguments(const yy::location &loc, std::string_view id, size_t expected,
                                                        size_t actual) {
     msg_
-    = (boost::format("In file: %1, at %2%:%3% - %4%:%5%: when calling function '%6%' expected %7% args, but passed only %8%")
+    = (boost::format("In file: %1%, at %2%:%3% - %4%:%5%: when calling function '%6%' expected %7% args, but passed %8%")
             % *loc.begin.filename % loc.begin.line % loc.begin.column % loc.end.line % loc.end.column
             % id % expected % actual).str();
 }
@@ -68,14 +68,14 @@ IncorrectNumberOfArguments::IncorrectNumberOfArguments(const yy::location &loc, 
 ArgumentsOfIncorrectType::ArgumentsOfIncorrectType(const yy::location &loc, std::string_view id,
                                                    const TypeHolderWrapper &expected, const TypeHolderWrapper &actual) {
     msg_
-    = (boost::format("In file: %1, at %2%:%3% - %4%:%5%: when calling function '%6%' expected arg of '%7%' type, but passed of type '%8%'")
+    = (boost::format("In file: %1%, at %2%:%3% - %4%:%5%: when calling function '%6%' expected arg of '%7%' type, but passed of type '%8%'")
             % *loc.begin.filename % loc.begin.line % loc.begin.column % loc.end.line % loc.end.column
             % id % expected.GetStringRepresentation() % actual.GetStringRepresentation()).str();
 }
 
 UninitializedConstVariable::UninitializedConstVariable(const yy::location &loc, std::string_view id) {
     msg_
-    = (boost::format("In file: %1, at %2%:%3% - %4%:%5%: const variable %6% must be initialized when declared")
+    = (boost::format("In file: %1%, at %2%:%3% - %4%:%5%: const variable %6% must be initialized when declared")
             % *loc.begin.filename % loc.begin.line % loc.begin.column % loc.end.line % loc.end.column
             % id).str();
 }

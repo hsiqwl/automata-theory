@@ -1,7 +1,7 @@
 #ifndef INTERPRETER_TYPE_HOLDER_H
 #define INTERPRETER_TYPE_HOLDER_H
 #include "type_token.h"
-#include <deque>
+#include <vector>
 #include <variant>
 #include <stdexcept>
 
@@ -9,7 +9,7 @@ class TypeHolderWrapper;
 
 class TypeHolder{
 private:
-    std::deque<TypeToken> type_;
+    std::vector<TypeToken> type_;
 
     bool const_qualified_ = false;
 
@@ -28,9 +28,9 @@ public:
 
 class TypeHolderWrapper{
 private:
-    std::deque<TypeToken> type_;
+    std::vector<TypeToken> type_;
 
-    bool const_qualified_;
+    bool const_qualified_ = false;
 
     bool IsNumericType() const noexcept;
 
